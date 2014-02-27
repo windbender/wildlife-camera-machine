@@ -9,6 +9,7 @@ import java.util.TreeMap;
 
 import org.joda.time.DateTime;
 
+import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.User;
 

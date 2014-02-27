@@ -10,6 +10,7 @@ import com.github.windbender.core.FileImageStore;
 import com.github.windbender.core.HibernateDataStore;
 import com.github.windbender.core.ImageStore;
 import com.github.windbender.core.S3ImageStore;
+import com.github.windbender.dao.EventDAO;
 import com.github.windbender.dao.HibernateUserDAO;
 import com.github.windbender.dao.IdentificationDAO;
 import com.github.windbender.dao.ImageRecordDAO;
@@ -71,9 +72,10 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
         final ImageRecordDAO irDAO = new ImageRecordDAO(hibernate.getSessionFactory());
         final SpeciesDAO spDAO = new SpeciesDAO(hibernate.getSessionFactory());
         final HibernateUserDAO uDAO = new HibernateUserDAO(hibernate.getSessionFactory());
+        final EventDAO ieDAO = new EventDAO(hibernate.getSessionFactory());
         
         
-    	DataStore ds = new HibernateDataStore(idDAO,irDAO,spDAO,uDAO);
+    	DataStore ds = new HibernateDataStore(idDAO,irDAO,spDAO,uDAO, ieDAO);
     	
     	String bucketName = "wlcdm-test";
     	ImageStore store = new S3ImageStore(configuration.getAmazon().getAccesskey(), configuration.getAmazon().getSecretkey(), bucketName);

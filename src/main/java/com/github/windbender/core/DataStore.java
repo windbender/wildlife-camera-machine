@@ -2,6 +2,7 @@ package com.github.windbender.core;
 
 import java.util.List;
 
+import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.User;
 
