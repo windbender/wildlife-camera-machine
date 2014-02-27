@@ -79,5 +79,725 @@
 			</column>
 		</createTable>
 	</changeSet>
+	<changeSet id="5" author="windbender">
+		<addColumn tableName="species">
+        	<column name="latin_name" type="varchar(255)"/>
+   		 </addColumn>
+   		 <renameColumn 
+            newColumnName="common_name"
+            oldColumnName="name"
+            columnDataType="varchar(255)"
+            tableName="species"/>
+         <addColumn tableName="species">
+        	<column name="cros_id" type="int(6)"/>
+   		 </addColumn>
+   		 
+         <dropNotNullConstraint 
+            columnDataType="varchar(255)"
+            columnName="keychar"
+            tableName="species"/>
+	</changeSet>
+	<changeSet id="6" author="windbender" dbms="mysql">
+		<comment>These are species which are california specific from the CROS project</comment>
 	
+		<sql >insert into species (cros_id,common_name, latin_name) values (400, "Abert's Towhee", "Pipilo aberti")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (287, "Acorn Woodpecker", "Melanerpes formicivorus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (521, "Allen's Chipmunk", "Tamias senex")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (284, "Allen's Hummingbird", "Selasphorus sasin")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (517, "Alpine Chipmunk", "Tamias alpinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (199, "American Avocet", "Recurvirostra americana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (622, "American Badger", "Taxidea taxus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (574, "American Beaver", "Castor canadensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (113, "American Bittern", "Botaurus lentiginosus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (190, "American Coot", "Fulica americana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (330, "American Crow", "Corvus brachyrhynchos")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (349, "American Dipper", "Cinclus mexicanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (438, "American Goldfinch", "Carduelis tristis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (171, "American Kestrel", "Falco sparverius")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (616, "American Marten", "Martes americana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (620, "American Mink", "Mustela vison")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (455, "American Oystercatcher", "Haematopus palliatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (508, "American Pika", "Ochotona princeps")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (368, "American Pipit", "Anthus rubescens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (462, "American Redstart", "Setophaga ruticilla")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (359, "American Robin", "Turdus migratorius")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (108, "American White Pelican", "Pelecanus erythrorhynchos")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (138, "American Wigeon", "Anas americana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (245, "Ancient Murrelet", "Synthliboramphus antiquus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (279, "Anna's Hummingbird", "Calypte anna")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (725, "Aquatic Garter Snake", "Thamnophis atratus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (57, "Arboreal Salamander", "Aneides lugubris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (586, "Arizona Cotton Rat", "Sigmodon arizonae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (487, "Arizona Myotis", "Myotis occultus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (70, "Arroyo Toad", "Bufo californicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (310, "Ash Throated Flycatcher", "Myiarchus cinerascens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (450, "Ashy Storm Petrel", "Oceanodroma homochroa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (641, "Axis Deer", "Axis axis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (456, "Baird's Sandpiper", "Calidris bairdii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (728, "Baja Black Collared Lizard", "Crotaphytus vestigium")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (555, "Baja California Pocket Mouse", "Chaetodipus rudinoris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (649, "Baja Mouse", "Peromyscus fraterculus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (160, "Bald Eagle", "Haliaeetus leucocephalus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (250, "Band Tailed Pigeon", "Patagioenas fasciata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (675, "Banded Rock Lizard", "Petrosaurus mearnsi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (320, "Bank Swallow", "Riparia riparia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (645, "Barbary Sheep", "Ammotragus lervia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (655, "Barefoot Gecko", "Coleonyx switaki")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (259, "Barn Owl", "Tyto alba")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (322, "Barn Swallow", "Hirundo rustica")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (460, "Barred Owl", "Strix varia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (150, "Barrow's Goldeneye", "Bucephala islandica")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (534, "Belding's Ground Squirrel", "Spermophilus beldingi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (374, "Bell's Vireo", "Vireo bellii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (285, "Belted Kingfisher", "Megaceryle alcyon")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (364, "Bendire's Thrasher", "Toxostoma bendirei")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (345, "Bewick's Wren", "Thryomanes bewickii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (497, "Big Brown Bat", "Eptesicus fuscus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (506, "Big Free Tailed Bat", "Nyctinomops macrotis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (644, "Bighorn Sheep", "Ovis canadensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (613, "Black Bear", "Ursus americanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (197, "Black Oystercatcher", "Haematopus bachmani")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (307, "Black Phoebe", "Sayornis nigricans")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (185, "Black Rail", "Laterallus jamaicensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (602, "Black Rat", "Rattus rattus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (146, "Black Scoter", "Melanitta nigra")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (240, "Black Skimmer", "Rynchops niger")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (451, "Black Storm Petrel", "Oceanodroma melania")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (275, "Black Swift", "Cypseloides niger")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (239, "Black Tern", "Chlidonias niger")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (66, "Black Toad", "Bufo exsul")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (209, "Black Turnstone", "Arenaria melanocephala")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (297, "Black Backed Woodpecker", "Picoides arcticus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (192, "Black Bellied Plover", "Pluvialis squatarola")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (328, "Black Billed Magpie", "Pica hudsonia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (332, "Black Capped Chickadee", "Poecile atricapillus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (278, "Black Chinned Hummingbird", "Archilochus alexandri")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (404, "Black Chinned Sparrow", "Spizella atrogularis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (120, "Black Crowned Night Heron", "Nycticorax nycticorax")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (394, "Black Headed Grosbeak", "Pheucticus melanocephalus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (198, "Black Necked Stilt", "Himantopus mexicanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (353, "Black Tailed Gnatcatcher", "Polioptila melanura")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (515, "Black Tailed Jackrabbit", "Lepus californicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (385, "Black Throated Gray Warbler", "Dendroica nigrescens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (407, "Black Throated Sparrow", "Amphispiza bilineata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (50, "Blackbelly Slender Salamander", "Batrachoseps nigriventris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (674, "Blacktail Brush Lizard", "Urosaurus nigricaudus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (395, "Blue Grosbeak", "Passerina caerulea")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (730, "Blue Grouse", "Dendragapus obscurus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (352, "Blue Gray Gnatcatcher", "Polioptila caerulea")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (133, "Blue Winged Teal", "Anas discors")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (666, "Blunt Nosed Leopard Lizard", "Gambelia sila")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (628, "Bobcat", "Lynx rufus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (222, "Bonaparte's Gull", "Larus philadelphia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (545, "Botta's Pocket Gopher", "Thomomys bottae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (111, "Brandt's Cormorant", "Phalacrocorax penicillatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (127, "Brant", "Branta bernicla")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (504, "Brazilian Free Tailed Bat", "Tadarida brasiliensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (422, "Brewer's Blackbird", "Euphagus cyanocephalus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (403, "Brewer's Sparrow", "Spizella breweri")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (483, "Broad Footed Mole", "Scapanus latimanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (282, "Broad Tailed Hummingbird", "Selasphorus platycercus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (424, "Bronzed Cowbird", "Molothrus aeneus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (341, "Brown Creeper", "Certhia americana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (109, "Brown Pelican", "Pelecanus occidentalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (311, "Brown Crested Flycatcher", "Myiarchus tyrannulus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (425, "Brown Headed Cowbird", "Molothrus ater")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (672, "Brush Lizard", "Urosaurus graciosus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (581, "Brush Mouse", "Peromyscus boylii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (510, "Brush Rabbit", "Sylvilagus bachmani")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (151, "Bufflehead", "Bucephala albeola")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (81, "Bullfrog", "Rana catesbeiana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (427, "Bullock's Oriole", "Icterus bullockii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (265, "Burrowing Owl", "Athene cunicularia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (337, "Bushtit", "Psaltriparus minimus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (590, "Bushy Tailed Woodrat", "Neotoma cinerea")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (467, "Cackling Goose", "Branta hutchinsii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (577, "Cactus Mouse", "Peromyscus eremicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (342, "Cactus Wren", "Campylorhynchus brunneicapillus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (525, "California Chipmunk", "Tamias obscurus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (73, "California Chorus Frog", "Pseudacris cadaverina")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (157, "California Condor", "Gymnogyps californianus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (39, "California Giant Salamander", "Dicamptodon ensatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (446, "California Gnatcatcher", "Polioptila californica")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (536, "California Ground Squirrel", "Spermophilus beecheyi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (226, "California Gull", "Larus californicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (567, "California Kangaroo Rat", "Dipodomys californicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (484, "California Leaf Nosed Bat", "Macrotus californicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (690, "California Legless Lizard", "Anniella pulchra")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (706, "California Mountain Kingsnake", "Lampropeltis zonata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (578, "California Mouse", "Peromyscus californicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (493, "California Myotis", "Myotis californicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (42, "California Newt", "Taricha torosa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (558, "California Pocket Mouse", "Chaetodipus californicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (183, "California Quail", "Callipepla californica")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (99, "California Red Legged Frog", "Rana draytonii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (632, "California Sea Lion", "Zalophus californianus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (49, "California Slender Salamander", "Batrachoseps attenuatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (365, "California Thrasher", "Toxostoma redivivum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (36, "California Tiger Salamander", "Ambystoma californiense")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (399, "California Towhee", "Pipilo crissalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (596, "California Vole", "Microtus californicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (281, "Calliope Hummingbird", "Stellula calliope")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (128, "Canada Goose", "Branta canadensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (139, "Canvasback", "Aythya valisineria")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (580, "Canyon Mouse", "Peromyscus crinitus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (344, "Canyon Wren", "Catherpes mexicanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (77, "Cascades Frog", "Rana cascadae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (233, "Caspian Tern", "Hydroprogne caspia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (246, "Cassin's Auklet", "Ptychoramphus aleuticus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (432, "Cassin's Finch", "Carpodacus cassinii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (312, "Cassin's Kingbird", "Tyrannus vociferans")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (376, "Cassin's Vireo", "Vireo cassinii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (118, "Cattle Egret", "Bubulcus ibis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (489, "Cave Myotis", "Myotis velifer")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (369, "Cedar Waxwing", "Bombycilla cedrorum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (51, "Channel Islands Slender Salamander", "Batrachoseps pacificus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (712, "Checkered Garter Snake", "Thamnophis marcianus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (334, "Chestnut Backed Chickadee", "Poecile rufescens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (461, "Chimney Swift", "Chaetura pelagica")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (402, "Chipping Sparrow", "Spizella passerina")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (563, "Chisel Toothed Kangaroo Rat", "Dipodomys microps")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (659, "Chuckwalla", "Sauromalus ater")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (175, "Chukar", "Alectoris chukar")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (134, "Cinnamon Teal", "Anas cyanoptera")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (186, "Clapper Rail", "Rallus longirostris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (441, "Clark's Grebe", "Aechmophorus clarkii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (327, "Clark's Nutcracker", "Nucifraga columbiana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (321, "Cliff Swallow", "Petrochelidon pyrrhonota")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (56, "Clouded Salamander", "Aneides ferreus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (662, "Coachella Valley Fringe Toed Lizard", "Uma inornata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (699, "Coachwhip", "Masticophis flagellum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (676, "Coast Horned Lizard", "Phrynosoma coronatum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (482, "Coast Mole", "Scapanus orarius")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (661, "Colorado Desert Fringe Toed Lizard", "Uma notata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (65, "Colorado River Toad", "Bufo alvarius")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (47, "Common Ensatina", "Ensatina eschscholtzii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (708, "Common Garter Snake", "Thamnophis sirtalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (149, "Common Goldeneye", "Bucephala clangula")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (256, "Common Ground Dove", "Columbina passerina")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (705, "Common Kingsnake", "Lampropeltis getula")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (102, "Common Loon", "Gavia immer")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (153, "Common Merganser", "Mergus merganser")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (189, "Common Moorhen", "Gallinula chloropus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (241, "Common Murre", "Uria aalge")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (601, "Common Muskrat", "Ondatra zibethicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (272, "Common Nighthawk", "Chordeiles minor")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (19312, "Common Peafowl", "Pavo cristatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (273, "Common Poorwill", "Phalaenoptilus nuttallii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (607, "Common Porcupine", "Erethizon dorsatum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (331, "Common Raven", "Corvus corax")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (236, "Common Tern", "Sterna hirundo")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (389, "Common Yellowthroat", "Geothlypis trichas")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (163, "Cooper's Hawk", "Accipiter cooperii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (443, "Cordilleran Flycatcher", "Empidonax occidentalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (280, "Costa's Hummingbird", "Calypte costae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (62, "Couch's Spadefoot", "Scaphiopus couchii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (608, "Coyote", "Canis latrans")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (599, "Creeping Vole", "Microtus oregoni")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (366, "Crissal Thrasher", "Toxostoma crissale")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (560, "Dark Kangaroo Mouse", "Microdipodops megacephalus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (416, "Dark Eyed Junco", "Junco hyemalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (579, "Deer Mouse", "Peromyscus maniculatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (45, "Del Norte Salamander", "Plethodon elongatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (512, "Desert Cottontail", "Sylvilagus audubonii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (677, "Desert Horned Lizard", "Phrynosoma platyrhinos")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (658, "Desert Iguana", "Dipsosaurus dorsalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (571, "Desert Kangaroo Rat", "Dipodomys deserti")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (681, "Desert Night Lizard", "Xantusia vigilis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (556, "Desert Pocket Mouse", "Chaetodipus penicillatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (479, "Desert Shrew", "Notiosorex crawfordi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (667, "Desert Spiny Lizard", "Sceloporus magister")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (653, "Desert Tortoise", "Gopherus agassizii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (588, "Desert Woodrat", "Neotoma lepida")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (110, "Double Crested Cormorant", "Phalacrocorax auritus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (543, "Douglas' Squirrel", "Tamiasciurus douglasii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (294, "Downy Woodpecker", "Picoides pubescens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (216, "Dunlin", "Calidris alpina")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (44, "Dunn's Salamander", "Plethodon dunni")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (304, "Dusky Flycatcher", "Empidonax oberholseri")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (471, "Dusky Shrew", "Sorex monticolus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (589, "Dusky Footed Woodrat", "Neotoma fuscipes")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (106, "Eared Grebe", "Podiceps nigricollis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (542, "Eastern Fox Squirrel", "Sciurus niger")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (540, "Eastern Gray Squirrel", "Sciurus carolinensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (314, "Eastern Kingbird", "Tyrannus tyrannus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (82, "Eastern Tiger Salamander", "Ambystoma tigrinum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (235, "Elegant Tern", "Thalasseus elegans")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (264, "Elf Owl", "Micrathene whitneyi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (638, "Elk", "Cervus elaphus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (618, "Ermine", "Mustela erminea")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (15548, "Eurasian Collared Dove", "Streptopelia decaocto")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (137, "Eurasian Wigeon", "Anas penelope")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (373, "European Starling", "Sturnus vulgaris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (439, "Evening Grosbeak", "Coccothraustes vespertinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (639, "Fallow Deer", "Dama dama")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (636, "Feral Ass", "Equus asinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (647, "Feral Goat", "Capra hircus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (635, "Feral Horse", "Equus caballus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (168, "Ferruginous Hawk", "Buteo regalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (617, "Fisher", "Martes pennanti")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (260, "Flammulated Owl", "Otus flammeolus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (679, "Flat Tail Horned Lizard", "Phrynosoma mcallii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (472, "Fog Shrew", "Sorex sonomae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (78, "Foothill Yellow Legged Frog", "Rana boylii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (448, "Fork Tailed Storm Petrel", "Oceanodroma furcata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (237, "Forster's Tern", "Sterna forsteri")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (411, "Fox Sparrow", "Passerella iliaca")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (573, "Fresno Kangaroo Rat", "Dipodomys nitratoides")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (491, "Fringed Myotis", "Myotis thysanodes")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (122, "Fulvous Whistling Duck", "Dendrocygna bicolor")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (87, "Gabilan Mtns Slender Salamander", "Batrachoseps gavilanensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (136, "Gadwall", "Anas strepera")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (182, "Gambel's Quail", "Callipepla gambelii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (48, "Garden Slender Salamander", "Batrachoseps major")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (726, "Giant Garter Snake", "Thamnophis gigas")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (568, "Giant Kangaroo Rat", "Dipodomys ingens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (691, "Gila Monster", "Heloderma suspectum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (288, "Gila Woodpecker", "Melanerpes uropygialis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (684, "Gilbert's Skink", "Eumeces gilberti")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (442, "Gilded Flicker", "Colaptes chrysoides")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (231, "Glaucous Winged Gull", "Larus glaucescens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (703, "Glossy Snake", "Arizona elegans")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (170, "Golden Eagle", "Aquila chrysaetos")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (350, "Golden Crowned Kinglet", "Regulus satrapa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (414, "Golden Crowned Sparrow", "Zonotrichia atricapilla")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (539, "Golden Mantled Ground Squirrel", "Spermophilus lateralis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (704, "Gopher Snake", "Pituophis catenifer")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (680, "Granite Night Lizard", "Xantusia henshawi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (668, "Granite Spiny Lizard", "Sceloporus orcutti")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (410, "Grasshopper Sparrow", "Ammodramus savannarum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (305, "Gray Flycatcher", "Empidonax wrightii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (611, "Gray Fox", "Urocyon cinereoargenteus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (323, "Gray Jay", "Perisoreus canadensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (375, "Gray Vireo", "Vireo vicinior")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (429, "Gray Crowned Rosy Finch", "Leucosticte tephrocotis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (552, "Great Basin Pocket Mouse", "Perognathus parvus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (64, "Great Basin Spadefoot", "Spea intermontana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (115, "Great Blue Heron", "Ardea herodias")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (116, "Great Egret", "Ardea alba")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (267, "Great Gray Owl", "Strix nebulosa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (262, "Great Horned Owl", "Bubo virginianus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (72, "Great Plains Toad", "Bufo cognatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (423, "Great Tailed Grackle", "Quiscalus mexicanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (258, "Greater Roadrunner", "Geococcyx californianus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (180, "Greater Sage Grouse", "Centrocercus urophasianus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (142, "Greater Scaup", "Aythya marila")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (124, "Greater White Fronted Goose", "Anser albifrons")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (200, "Greater Yellowlegs", "Tringa melanoleuca")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (119, "Green Heron", "Butorides virescens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (397, "Green Tailed Towhee", "Pipilo chlorurus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (130, "Green Winged Teal", "Anas crecca")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (630, "Guadalupe Fur Seal", "Arctocephalus townsendi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (232, "Gull Billed Tern", "Gelochelidon nilotica")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (295, "Hairy Woodpecker", "Picoides villosus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (303, "Hammond's Flycatcher", "Empidonax hammondii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (633, "Harbor Seal", "Phoca vitulina")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (144, "Harlequin Duck", "Histrionicus histrionicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (453, "Harris' S Hawk", "Parabuteo unicinctus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (464, "Harris's Sparrow", "Zonotrichia querula")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (592, "Heather Vole", "Phenacomys intermedius")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (223, "Heermann's Gull", "Larus heermanni")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (566, "Heermann's Kangaroo Rat", "Dipodomys heermanni")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (93, "Hell Hollow Slender Salamander", "Batrachoseps diabolicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (358, "Hermit Thrush", "Catharus guttatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (387, "Hermit Warbler", "Dendroica occidentalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (227, "Herring Gull", "Larus argentatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (646, "Himalayan Tahr", "Hemitragus jemlahicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (585, "Hispid Cotton Rat", "Sigmodon hispidus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (499, "Hoary Bat", "Lasiurus cinereus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (152, "Hooded Merganser", "Lophodytes cucullatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (426, "Hooded Oriole", "Icterus cucullatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (104, "Horned Grebe", "Podiceps auritus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (315, "Horned Lark", "Eremophila alpestris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (433, "House Finch", "Carpodacus mexicanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (604, "House Mouse", "Mus musculus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (440, "House Sparrow", "Passer domesticus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (346, "House Wren", "Troglodytes aedon")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (377, "Hutton's Vireo", "Vireo huttoni")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (255, "Inca Dove", "Columbina inca")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (466, "Indigo Bunting", "Passerina cyanea")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (54, "Inyo Mountains Salamander", "Batrachoseps campi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (474, "Inyo Shrew", "Sorex tenellus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (612, "Island Gray Fox", "Urocyon littoralis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (682, "Island Night Lizard", "Xantusia riversiana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (444, "Island Scrub Jay", "Aphelocoma insularis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (445, "Juniper Titmouse", "Baeolophus ridgwayi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (52, "Kern Canyon Slender Salamander", "Batrachoseps simatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (94, "Kern Plateau Salamander", "Batrachoseps robustus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (195, "Killdeer", "Charadrius vociferus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (91, "Kings River Slender Salamander", "Batrachoseps regius")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (610, "Kit Fox", "Vulpes macrotis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (292, "Ladder Backed Woodpecker", "Picoides scalaris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (417, "Lapland Longspur", "Calcarius lapponicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (95, "Large Blotched Ensatina", "Ensatina klauberi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (648, "Large Eared Woodrat", "Neotoma macrotis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (406, "Lark Sparrow", "Chondestes grammacus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (437, "Lawrence's Goldfinch", "Carduelis lawrencei")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (396, "Lazuli Bunting", "Passerina amoena")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (367, "Le Conte's Thrasher", "Toxostoma lecontei")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (449, "Leach's Storm Petrel", "Oceanodroma leucorhoa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (657, "Leaf Toed Gecko", "Phyllodactylus xanti")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (114, "Least Bittern", "Ixobrychus exilis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (518, "Least Chipmunk", "Tamias minimus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (214, "Least Sandpiper", "Calidris minutilla")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (238, "Least Tern", "Sterna antillarum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (436, "Lesser Goldfinch", "Carduelis psaltria")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (271, "Lesser Nighthawk", "Chordeiles acutipennis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (143, "Lesser Scaup", "Aythya affinis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (89, "Lesser Slender Salamander", "Batrachoseps minor")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (201, "Lesser Yellowlegs", "Tringa flavipes")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (286, "Lewis's Woodpecker", "Melanerpes lewis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (60, "Limestone Salamander", "Hydromantes brunus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (413, "Lincoln's Sparrow", "Melospiza lincolnii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (486, "Little Brown Bat", "Myotis lucifugus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (550, "Little Pocket Mouse", "Perognathus longimembris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (527, "Lodgepole Chipmunk", "Tamias speciosus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (372, "Loggerhead Shrike", "Lanius ludovicianus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (206, "Long Billed Curlew", "Numenius americanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (219, "Long Billed Dowitcher", "Limnodromus scolopaceus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (526, "Long Eared Chipmunk", "Tamias quadrimaculatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (490, "Long Eared Myotis", "Myotis evotis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (268, "Long Eared Owl", "Asio otus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (492, "Long Legged Myotis", "Myotis volans")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (665, "Long Nosed Leopard Lizard", "Gambelia wislizenii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (145, "Long Tailed Duck", "Clangula hyemalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (554, "Long Tailed Pocket Mouse", "Chaetodipus formosus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (598, "Long Tailed Vole", "Microtus longicaudus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (619, "Long Tailed Weasel", "Mustela frenata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (38, "Long Toed Salamander", "Ambystoma macrodactylum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (707, "Longnose Snake", "Rhinocheilus lecontei")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (382, "Lucy's Warbler", "Vermivora luciae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (388, "Macgillivray's Warbler", "Oporornis tolmiei")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (131, "Mallard", "Anas platyrhynchos")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (207, "Marbled Godwit", "Limosa fedoa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (243, "Marbled Murrelet", "Brachyramphus marmoratus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (476, "Marsh Shrew", "Sorex bendirii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (348, "Marsh Wren", "Cistothorus palustris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (172, "Merlin", "Falco columbarius")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (524, "Merriam's Chipmunk", "Tamias merriami")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (572, "Merriam's Kangaroo Rat", "Dipodomys merriami")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (478, "Merriam's Shrew", "Sorex merriami")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (224, "Mew Gull", "Larus canus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (485, "Mexican Long Tongued Bat", "Choeronycteris mexicana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (537, "Mohave Ground Squirrel", "Spermophilus mohavensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (664, "Mojave Black Collared Lizard", "Crotaphytus bicinctores")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (663, "Mojave Fringe Toed Lizard", "Uma scoparia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (724, "Mojave Rattlesnake", "Crotalus scutulatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (595, "Montane Vole", "Microtus montanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (58, "Mount Lyell Salamander", "Hydromantes platycephalus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (516, "Mountain Beaver", "Aplodontia rufa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (355, "Mountain Bluebird", "Sialia currucoides")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (333, "Mountain Chickadee", "Poecile gambeli")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (511, "Mountain Cottontail", "Sylvilagus nuttallii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (627, "Mountain Lion", "Puma concolor")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (196, "Mountain Plover", "Charadrius montanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (549, "Mountain Pocket Gopher", "Thomomys monticola")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (184, "Mountain Quail", "Oreortyx pictus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (254, "Mourning Dove", "Zenaida macroura")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (469, "Mt. Lyell Shrew", "Sorex lyelli")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (642, "Mule (or Black tailed) Deer", "Odocoileus hemionus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (564, "Narrow Faced Kangaroo Rat", "Dipodomys venustus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (380, "Nashville Warbler", "Vermivora ruficapilla")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (532, "Nelson's Antelope Squirrel", "Ammospermophilus nelsoni")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (718, "Night Snake", "Hypsiglena torquata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (631, "Northern (Steller) Sea Lion", "Eumetopias jubatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (689, "Northern Alligator Lizard", "Elgaria coerulea")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (465, "Northern Cardinal", "Cardinalis cardinalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (634, "Northern Elephant Seal", "Mirounga angustirostris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (298, "Northern Flicker", "Colaptes auratus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (544, "Northern Flying Squirrel", "Glaucomys sabrinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (629, "Northern Fur Seal", "Callorhinus ursinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (164, "Northern Goshawk", "Accipiter gentilis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (583, "Northern Grasshopper Mouse", "Onychomys leucogaster")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (161, "Northern Harrier", "Circus cyaneus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (80, "Northern Leopard Frog", "Rana pipiens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (362, "Northern Mockingbird", "Mimus polyglottos")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (132, "Northern Pintail", "Anas acuta")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (547, "Northern Pocket Gopher", "Thomomys talpoides")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (263, "Northern Pygmy Owl", "Glaucidium gnoma")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (75, "Northern Red Legged Frog", "Rana aurora")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (625, "Northern River Otter", "Lontra canadensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (319, "Northern Rough Winged Swallow", "Stelgidopteryx serripennis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (270, "Northern Saw Whet Owl", "Aegolius acadicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (135, "Northern Shoveler", "Anas clypeata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (371, "Northern Shrike", "Lanius excubitor")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (711, "Northwestern Garter Snake", "Thamnophis ordinoides")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (37, "Northwestern Salamander", "Ambystoma gracile")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (603, "Norway Rat", "Rattus norvegicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (293, "Nuttall's Woodpecker", "Picoides nuttallii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (335, "Oak Titmouse", "Baeolophus inornatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (300, "Olive Sided Flycatcher", "Contopus cooperi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (379, "Orange Crowned Warbler", "Vermivora celata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (685, "Orange Throated Whiptail", "Cnemidophorus hyperythrus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (562, "Ord's Kangaroo Rat", "Dipodomys ordii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (76, "Oregon Spotted Frog", "Rana pretiosa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (473, "Ornate Shrew", "Sorex ornatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (158, "Osprey", "Pandion haliaetus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (15645, "Ovenbird", "Seiurus aurocapillus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (74, "Pacific Chorus Frog", "Pseudacris regilla")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (83, "Pacific Giant Salamander", "Dicamptodon tenebrosus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (454, "Pacific Golden Plover", "Pluvialis fulva")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (606, "Pacific Jumping Mouse", "Zapus trinotatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (565, "Pacific Kangaroo Rat", "Dipodomys agilis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (101, "Pacific Loon", "Gavia pacifica")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (306, "Pacific Slope Flycatcher", "Empidonax difficilis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (561, "Pale Kangaroo Mouse", "Microdipodops pallidus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (503, "Pallid Bat", "Antrozous pallidus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (15644, "Palm Warbler", "Dendroica palmarum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (688, "Panamint Alligator Lizard", "Elgaria panamintina")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (528, "Panamint Chipmunk", "Tamias panamintinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (569, "Panamint Kangaroo Rat", "Dipodomys panamintinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (457, "Pectoral Sandpiper", "Calidris melanotos")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (112, "Pelagic Cormorant", "Phalacrocorax pelagicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (173, "Peregrine Falcon", "Falco peregrinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (370, "Phainopepla", "Phainopepla nitens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (103, "Pied Billed Grebe", "Podilymbus podiceps")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (242, "Pigeon Guillemot", "Cepphus columba")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (678, "Pigmy Short Horned Lizard", "Phrynosoma douglasii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (299, "Pileated Woodpecker", "Dryocopus pileatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (430, "Pine Grosbeak", "Pinicola enucleator")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (435, "Pine Siskin", "Carduelis pinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (326, "Pinyon Jay", "Gymnorhinus cyanocephalus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (582, "Pinyon Mouse", "Peromyscus truei")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (447, "Plumbeous Vireo", "Vireo plumbeus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (505, "Pocketed Free Tailed Bat", "Nyctinomops femorosaccus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (174, "Prairie Falcon", "Falco mexicanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (643, "Pronghorn", "Antilocapra americana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (431, "Purple Finch", "Carpodacus purpureus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (316, "Purple Martin", "Progne subis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (340, "Pygmy Nuthatch", "Sitta pygmaea")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (509, "Pygmy Rabbit", "Brachylagus idahoensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (615, "Raccoon", "Procyon lotor")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (698, "Racer", "Coluber constrictor")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (434, "Red Crossbill", "Loxia curvirostra")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (720, "Red Diamond Rattlesnake", "Crotalus ruber")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (609, "Red Fox", "Vulpes vulpes")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (211, "Red Knot", "Calidris canutus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (459, "Red Phalarope", "Phalaropus fulicarius")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (43, "Red Bellied Newt", "Taricha rivularis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (154, "Red Breasted Merganser", "Mergus serrator")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (338, "Red Breasted Nuthatch", "Sitta canadensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (290, "Red Breasted Sapsucker", "Sphyrapicus ruber")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (289, "Red Naped Sapsucker", "Sphyrapicus nuchalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (105, "Red Necked Grebe", "Podiceps grisegena")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (458, "Red Necked Phalarope", "Phalaropus lobatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (165, "Red Shouldered Hawk", "Buteo lineatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (71, "Red Spotted Toad", "Bufo punctatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (167, "Red Tailed Hawk", "Buteo jamaicensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (100, "Red Throated Loon", "Gavia stellata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (418, "Red Winged Blackbird", "Agelaius phoeniceus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (140, "Redhead", "Aythya americana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (84, "Relictual Slender Salamander", "Batrachoseps relictus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (247, "Rhinoceros Auklet", "Cerorhinca monocerata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (225, "Ring Billed Gull", "Larus delawarensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (141, "Ring Necked Duck", "Aythya collaris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (176, "Ring Necked Pheasant", "Phasianus colchicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (251, "Ringed Turtle Dove", "Streptopelia risoria")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (695, "Ringneck Snake", "Diadophis punctatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (614, "Ringtail", "Bassariscus astutus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (85, "Rio Grande Leopard Frog", "Rana berlandieri")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (249, "Rock Pigeon", "Columba livia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (215, "Rock Sandpiper", "Calidris ptilocnemis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (535, "Rock Squirrel", "Spermophilus variegatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (343, "Rock Wren", "Salpinctes obsoletus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (126, "Ross' S Goose", "Chen rossii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (694, "Rosy Boa", "Charina trivirgata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (169, "Rough Legged Hawk", "Buteo lagopus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (41, "Roughskin Newt", "Taricha granulosa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (538, "Round Tailed Ground Squirrel", "Spermophilus tereticaudus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (234, "Royal Tern", "Sterna maxima")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (693, "Rubber Boa", "Charina bottae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (351, "Ruby Crowned Kinglet", "Regulus calendula")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (155, "Ruddy Duck", "Oxyura jamaicensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (208, "Ruddy Turnstone", "Arenaria interpres")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (179, "Ruffed Grouse", "Bonasa umbellus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (283, "Rufous Hummingbird", "Selasphorus rufus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (401, "Rufous Crowned Sparrow", "Aimophila ruficeps")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (408, "Sage Sparrow", "Amphispiza belli")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (363, "Sage Thrasher", "Oreoscoptes montanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (670, "Sagebrush Lizard", "Sceloporus graciosus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (600, "Sagebrush Vole", "Lemmiscus curtatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (576, "Salt Marsh Harvest Mouse", "Reithrodontomys raviventris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (640, "Sambar Deer", "Cervus unicolor")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (557, "San Diego Pocket Mouse", "Chaetodipus fallax")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (86, "San Gabriel Slender Salamander", "Batrachoseps gabrieli")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (551, "San Joaquin Pocket Mouse", "Perognathus inornatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (90, "San Simeon Slender Salamander", "Batrachoseps incognitus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (212, "Sanderling", "Calidris alba")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (191, "Sandhill Crane", "Grus canadensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (729, "Sandstone Night Lizard", "Xantusia gracilis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (88, "Santa Lucia Slender Salamander", "Batrachoseps luciae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (409, "Savannah Sparrow", "Passerculus sandwichensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (308, "Say's Phoebe", "Sayornis saya")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (96, "Scott Bar Salamander", "Plethodon asupak")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (428, "Scott's Oriole", "Icterus parisorum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (626, "Sea Otter", "Enhydra lutris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (194, "Semipalmated Plover", "Charadrius semipalmatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (92, "Sequoia Slender Salamander", "Batrachoseps kawia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (162, "Sharp Shinned Hawk", "Accipiter striatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (696, "Sharptail Snake", "Contia tenuis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (59, "Shasta Salamander", "Hydromantes shastae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (218, "Short Billed Dowitcher", "Limnodromus griseus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (269, "Short Eared Owl", "Asio flammeus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (480, "Shrew Mole", "Neurotrichus gibbsii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (671, "Side Blotched Lizard", "Uta stansburiana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (722, "Sidewinder", "Crotalus cerastes")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (79, "Sierra Madre Yellow Legged Frog", "Rana muscosa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (98, "Sierra Nevada Yellow Legged Frog", "Rana sierrae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (495, "Silver Haired Bat", "Lasionycteris noctivagans")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (522, "Siskiyou Chipmunk", "Tamias siskiyou")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (46, "Siskiyou Mountains Salamander", "Plethodon stormi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (651, "Slider", "Trachemys scripta")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (125, "Snow Goose", "Chen caerulescens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (513, "Snowshoe Hare", "Lepus americanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (117, "Snowy Egret", "Egretta thula")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (193, "Snowy Plover", "Charadrius alexandrinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (412, "Song Sparrow", "Melospiza melodia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (523, "Sonoma Chipmunk", "Tamias sonomae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (594, "Sonoma Tree Vole", "Arborimus pomo")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (650, "Sonoran Mud Turtle", "Kinosternon sonoriense")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (177, "Sooty Grouse", "Dendragapus fuliginosus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (188, "Sora", "Porzana carolina")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (687, "Southern Alligator Lizard", "Elgaria multicarinata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (584, "Southern Grasshopper Mouse", "Onychomys torridus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (40, "Southern Torrent Salamander", "Rhyacotriton variegatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (716, "Southwestern Blackhead Snake", "Tantilla hobartsmithi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (55, "Speckled Black Salamander", "Aneides flavipunctatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (721, "Speckled Rattlesnake", "Crotalus mitchellii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (559, "Spiny Pocket Mouse", "Chaetodipus spinatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (654, "Spiny Softshell", "Trionyx spiniferus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (501, "Spotted Bat", "Euderma maculatum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (252, "Spotted Dove", "Streptopelia chinensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (697, "Spotted Leafnose Snake", "Phyllorhynchus decurtatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (266, "Spotted Owl", "Strix occidentalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (204, "Spotted Sandpiper", "Actitis macularius")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (398, "Spotted Towhee", "Pipilo maculatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (324, "Steller's Jay", "Cyanocitta stelleri")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (570, "Stephens' Kangaroo Rat", "Dipodomys stephensi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (217, "Stilt Sandpiper", "Calidris himantopus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (700, "Striped Racer", "Masticophis lateralis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (624, "Striped Skunk", "Mephitis mephitis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (701, "Striped Whipsnake", "Masticophis taeniatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (392, "Summer Tanager", "Piranga rubra")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (147, "Surf Scoter", "Melanitta perspicillata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (210, "Surfbird", "Aphriza virgata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (166, "Swainson's Hawk", "Buteo swainsoni")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (357, "Swainson's Thrush", "Catharus ustulatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (53, "Tehachapi Slender Salamander", "Batrachoseps stebbinsi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (228, "Thayer's Gull", "Larus thayeri")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (502, "Townsend's Big Eared Bat", "Corynorhinus townsendii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (533, "Townsend's Ground Squirrel", "Spermophilus townsendii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (481, "Townsend's Mole", "Scapanus townsendii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (546, "Townsend's Pocket Gopher", "Thomomys townsendii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (356, "Townsend's Solitaire", "Myadestes townsendi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (597, "Townsend's Vole", "Microtus townsendii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (386, "Townsend's Warbler", "Dendroica townsendi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (673, "Tree Lizard", "Urosaurus ornatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (317, "Tree Swallow", "Tachycineta bicolor")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (419, "Tricolored Blackbird", "Agelaius tricolor")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (477, "Trowbridge's Shrew", "Sorex trowbridgii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (248, "Tufted Puffin", "Fratercula cirrhata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (123, "Tundra Swan", "Cygnus columbianus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (156, "Turkey Vulture", "Cathartes aura")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (727, "Two Striped Garter Snake", "Thamnophis hammondii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (529, "Uinta Chipmunk", "Tamias umbrinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (470, "Vagrant Shrew", "Sorex vagrans")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (360, "Varied Thrush", "Ixoreus naevius")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (276, "Vaux's Swift", "Chaetura vauxi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (336, "Verdin", "Auriparus flaviceps")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (309, "Vermilion Flycatcher", "Pyrocephalus rubinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (405, "Vesper Sparrow", "Pooecetes gramineus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (318, "Violet Green Swallow", "Tachycineta thalassina")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (468, "Virginia Opossum", "Didelphis virginiana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (187, "Virginia Rail", "Rallus limicola")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (381, "Virginia's Warbler", "Vermivora virginiae")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (97, "Wandering Salamander", "Aneides vagrans")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (203, "Wandering Tattler", "Tringa incana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (378, "Warbling Vireo", "Vireo gilvus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (475, "Water Shrew", "Sorex palustris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (710, "Western Aquatic Garter Snake", "Thamnophis couchii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (656, "Western Banded Gecko", "Coleonyx variegatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (715, "Western Blackhead Snake", "Tantilla planiceps")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (692, "Western Blind Snake", "Leptotyphlops humilis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (354, "Western Bluebird", "Sialia mexicana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (719, "Western Diamond Backed Rattlesnake", "Crotalus atrox")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (669, "Western Fence Lizard", "Sceloporus occidentalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (541, "Western Gray Squirrel", "Sciurus griseus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (107, "Western Grebe", "Aechmophorus occidentalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (713, "Western Ground Snake", "Sonora semiannulata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (230, "Western Gull", "Larus occidentalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (575, "Western Harvest Mouse", "Reithrodontomys megalotis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (605, "Western Jumping Mouse", "Zapus princeps")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (313, "Western Kingbird", "Tyrannus verticalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (717, "Western Lyre Snake", "Trimorphodon biscutatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (507, "Western Mastiff Bat", "Eumops perotis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (420, "Western Meadowlark", "Sturnella neglecta")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (702, "Western Patchnose Snake", "Salvadora hexalepis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (496, "Western Pipistrelle", "Pipistrellus hesperus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (548, "Western Pocket Gopher", "Thomomys mazama")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (652, "Western Pond Turtle", "Actinemys marmorata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (723, "Western Rattlesnake", "Crotalus viridis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (498, "Western Red Bat", "Lasiurus blossevillii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (591, "Western Red Backed Vole", "Clethrionomys californicus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (213, "Western Sandpiper", "Calidris mauri")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (261, "Western Screech Owl", "Megascops kennicottii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (325, "Western Scrub Jay", "Aphelocoma californica")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (714, "Western Shovelnose Snake", "Chionactis occipitalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (683, "Western Skink", "Eumeces skiltonianus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (494, "Western Small Footed Myotis", "Myotis ciliolabrum")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (63, "Western Spadefoot", "Spea hammondii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (623, "Western Spotted Skunk", "Spilogale gracilis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (61, "Western Tailed Frog", "Ascaphus truei")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (393, "Western Tanager", "Piranga ludoviciana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (709, "Western Terrestrial Garter Snake", "Thamnophis elegans")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (67, "Western Toad", "Bufo boreas")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (686, "Western Whiptail", "Cnemidophorus tigris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (301, "Western Wood Pewee", "Contopus sordidulus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (500, "Western Yellow Bat", "Lasiurus xanthinus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (205, "Whimbrel", "Numenius phaeopus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (274, "Whip Poor Will", "Caprimulgus vociferus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (339, "White Breasted Nuthatch", "Sitta carolinensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (415, "White Crowned Sparrow", "Zonotrichia leucophrys")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (553, "White Eared Pocket Mouse", "Perognathus alticola")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (121, "White Faced Ibis", "Plegadis chihi")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (593, "White Footed Vole", "Arborimus albipes")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (296, "White Headed Woodpecker", "Picoides albolarvatus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (531, "White Tailed Antelope Squirrel", "Ammospermophilus leucurus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (514, "White Tailed Jackrabbit", "Lepus townsendii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (159, "White Tailed Kite", "Elanus leucurus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (178, "White Tailed Ptarmigan", "Lagopus leucura")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (463, "White Throated Sparrow", "Zonotrichia albicollis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (277, "White Throated Swift", "Aeronautes saxatalis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (587, "White Throated Woodrat", "Neotoma albigula")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (253, "White Winged Dove", "Zenaida asiatica")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (148, "White Winged Scoter", "Melanitta fusca")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (637, "Wild Pig", "Sus scrofa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (181, "Wild Turkey", "Meleagris gallopavo")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (202, "Willet", "Tringa semipalmata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (291, "Williamson's Sapsucker", "Sphyrapicus thyroideus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (302, "Willow Flycatcher", "Empidonax traillii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (221, "Wilson's Phalarope", "Phalaropus tricolor")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (220, "Wilson's Snipe", "Gallinago delicata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (390, "Wilson's Warbler", "Wilsonia pusilla")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (347, "Winter Wren", "Troglodytes troglodytes")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (621, "Wolverine", "Gulo gulo")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (129, "Wood Duck", "Aix sponsa")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (452, "Wood Stork", "Mycteria americana")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (69, "Woodhouse's Toad", "Bufo woodhousii")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (361, "Wrentit", "Chamaea fasciata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (244, "Xantus's Murrelet", "Synthliboramphus hypoleucus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (383, "Yellow Warbler", "Dendroica petechia")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (530, "Yellow Bellied Marmot", "Marmota flaviventris")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (257, "Yellow Billed Cuckoo", "Coccyzus americanus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (329, "Yellow Billed Magpie", "Pica nuttalli")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (391, "Yellow Breasted Chat", "Icteria virens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (520, "Yellow Cheeked Chipmunk", "Tamias ochrogenys")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (229, "Yellow Footed Gull", "Larus livens")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (421, "Yellow Headed Blackbird", "Xanthocephalus xanthocephalus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (519, "Yellow Pine Chipmunk", "Tamias amoenus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (384, "Yellow Rumped Warbler", "Dendroica coronata")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (68, "Yosemite Toad", "Bufo canorus")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (488, "Yuma Myotis", "Myotis yumanensis")</sql>
+<sql >insert into species (cros_id,common_name, latin_name) values (660, "Zebratail Lizard", "Callisaurus draconoides")</sql>
+	</changeSet>
 </databaseChangeLog>
