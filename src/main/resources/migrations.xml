@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="1" author="windbender">
+		<createTable tableName="images">
+			<column name="id" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="lat" type="Double">
+				<constraints nullable="true" />
+			</column>
+			<column name="lon" type="Double">
+				<constraints nullable="true" />
+			</column>
+			<column name="imageTime" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="filename" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="2" author="windbender">
+		<createTable tableName="identifications">
+			<column name="id" type="int(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="user_id" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="identificationTime" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="image_id" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<!-- <column name="image_event_id" type="int(11)"> -->
+			<!-- <constraints nullable="false"/> -->
+			<!-- </column> -->
+
+			<column name="species_id" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+
+
+			<column name="number" type="int(11)">
+				<constraints nullable="true" />
+			</column>
+
+		</createTable>
+	</changeSet>
+	<changeSet id="3" author="windbender">
+		<createTable tableName="species">
+			<column name="id" type="int(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="keychar" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="4" author="windbender">
+		<createTable tableName="users">
+			<column name="id" type="int(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="username" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="hashedpassword" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+</databaseChangeLog>

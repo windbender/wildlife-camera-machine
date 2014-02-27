@@ -1,0 +1,34 @@
+<div class="slider">
+	<div id="slide" class="slide">
+		<img class="innerImg" ng-src="{{selected.imagesrc}}" /> <img
+			class="innerImg" ng-src="{{next.imagesrc}}" ng-hide="true" /> <img
+			class="innerImg" ng-src="{{nextnext.imagesrc}}" ng-hide="true" />
+	</div>
+	<div class="controls">
+		<div class="arrows">
+			<a ng-click="prev()"> <img src="img/left.png" /></a>
+			<a ng-click="next()"> <img src="img/right.png" /></a>
+		</div>
+		<div>
+			<table>
+				<tr>
+					<td>image name</td>
+					<td>{{imagename}}</td>
+				</tr>
+			</table>
+		</div>
+		<div>
+			<table>
+				<tr><td><button type="button" ng-click="sendKey(32)" class="btn btn-primary btn-lg">spc</button></td><td>nothing found</td></tr>
+				<tr ng-repeat=" key in keys">
+					<td><button type="button" ng-click="sendKey(key.character)" class="btn btn-primary btn-lg">{{key.character}}</button></td><td>{{key.species}}</td>
+				</tr>
+			</table>
+		</div>
+		<div id="map">
+			<google-map center="map.center" zoom="map.zoom">
+				<marker coords='map.center' ></marker>
+			</google-map>
+		</div>
+	</div>
+</div>

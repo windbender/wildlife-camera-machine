@@ -1,5 +1,12 @@
+src/main/resources/assets/bower_components
 *.class
-
+serverconfig.yml
+target
+.settings
+.project
+.classpath
+.DS_Store
+.metadata
 # Package Files #
 *.jar
 *.war
