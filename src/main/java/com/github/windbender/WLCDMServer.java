@@ -1,6 +1,9 @@
 package com.github.windbender;
 
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import org.eclipse.jetty.server.session.SessionHandler;
 
 import com.bazaarvoice.dropwizard.assets.ConfiguredAssetsBundle;
@@ -9,13 +12,13 @@ import com.github.windbender.core.DataStore;
 import com.github.windbender.core.FileImageStore;
 import com.github.windbender.core.HibernateDataStore;
 import com.github.windbender.core.ImageStore;
-import com.github.windbender.core.S3ImageStore;
 import com.github.windbender.dao.EventDAO;
 import com.github.windbender.dao.HibernateUserDAO;
 import com.github.windbender.dao.IdentificationDAO;
 import com.github.windbender.dao.ImageRecordDAO;
 import com.github.windbender.dao.SpeciesDAO;
 import com.github.windbender.domain.Identification;
+import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.Species;
 import com.github.windbender.domain.User;
@@ -57,7 +60,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
       
 
 	private final HibernateBundle<WLCDMServerConfiguration> hibernate = new HibernateBundle<WLCDMServerConfiguration>(
-			Identification.class,ImageRecord.class,User.class,Species.class) {
+			Identification.class,ImageRecord.class,ImageEvent.class,User.class,Species.class) {
 	    @Override
 	    public DatabaseConfiguration getDatabaseConfiguration(WLCDMServerConfiguration configuration) {
 	        return configuration.getDatabaseConfiguration();
@@ -74,12 +77,11 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
         final HibernateUserDAO uDAO = new HibernateUserDAO(hibernate.getSessionFactory());
         final EventDAO ieDAO = new EventDAO(hibernate.getSessionFactory());
         
-        
-    	DataStore ds = new HibernateDataStore(idDAO,irDAO,spDAO,uDAO, ieDAO);
-    	
+        HibernateDataStore ds = new HibernateDataStore(idDAO,irDAO,spDAO,uDAO, ieDAO, hibernate.getSessionFactory());
+    	environment.manage(ds);
     	String bucketName = "wlcdm-test";
-    	ImageStore store = new S3ImageStore(configuration.getAmazon().getAccesskey(), configuration.getAmazon().getSecretkey(), bucketName);
-    	ImageStore bStore = new FileImageStore("/Users/chris/Sites/s3fake/upload");
+    	//ImageStore store = new S3ImageStore(configuration.getAmazon().getAccesskey(), configuration.getAmazon().getSecretkey(), bucketName);
+    	ImageStore store = new FileImageStore("/Users/chris/Sites/s3fake/upload");
 
 		environment.addResource(new UserResource());
 		environment.addResource(new ImageResource(ds, store, irDAO));

@@ -37,4 +37,22 @@ public class EventDAO extends AbstractDAO<ImageEvent> {
 		return findList;
 	}
 
+	public List<ImageEvent> findEventsBetween(String cameraID, DateTime before,
+			DateTime after) {
+		Session currentSession = this.currentSession();
+		Criteria crit = currentSession.createCriteria(ImageEvent.class);
+		crit.add(Restrictions.ge("eventStartTime", before));
+		crit.add(Restrictions.le("eventStartTime", after));
+		crit.add(Restrictions.eq("cameraID",cameraID));
+		crit.addOrder( Property.forName("eventStartTime").desc() );
+		List<ImageEvent> findList = crit.list();
+		return findList;
+		
+	}
+
+	public void save(ImageEvent ie) {
+		this.currentSession().saveOrUpdate(ie);
+		
+	}
+
 }

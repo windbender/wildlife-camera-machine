@@ -166,8 +166,8 @@ public class ImageResource {
 					Metadata md = JpegMetadataReader.readMetadata(bis);
 					ExifSubIFDDirectory directory = md.getDirectory(ExifSubIFDDirectory.class);
 					GpsDirectory gpsDirectory = md.getDirectory(GpsDirectory.class);
-	
-					newImage = ImageRecord.makeImageFromExif(directory,gpsDirectory,filename);
+					String cameraID = null; // perhaps part of the form upload ?
+					newImage = ImageRecord.makeImageFromExif(directory,gpsDirectory,filename,cameraID);
 				}
 				ImageRecord exist = irDAO.findById(newImage.getId());
 				if(exist == null) {

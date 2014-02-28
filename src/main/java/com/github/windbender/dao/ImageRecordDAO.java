@@ -26,4 +26,9 @@ public class ImageRecordDAO extends AbstractDAO<ImageRecord>{
         return list(namedQuery("com.github.windbender.ImageRecord.FindAllOrderByTime"));
     }
 
+
+	public void save(ImageRecord addImage) {
+		this.currentSession().saveOrUpdate(addImage);
+	}
+
 }

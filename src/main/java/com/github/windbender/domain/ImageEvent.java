@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -20,6 +21,9 @@ import org.joda.time.DateTime;
 @Table(name="events")
 public class ImageEvent {
 	
+	public ImageEvent() {
+		this.images = new ArrayList<ImageRecord>();
+	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id", nullable=false)
@@ -34,7 +38,19 @@ public class ImageEvent {
 		this.id = id;
 	}
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "events")
+	@Column(name="camera_id", nullable=true)
+	String cameraID;
+	
+	public String getCameraID() {
+		return cameraID;
+	}
+
+	public void setCameraID(String cameraID) {
+		this.cameraID = cameraID;
+	}
+
+	@OneToMany(fetch = FetchType.EAGER, targetEntity=ImageRecord.class)
+	@JoinColumn(name="event_id",referencedColumnName="id")
 	List<ImageRecord> images;
 	
 	@Column(name="event_start_time", nullable=false)
@@ -58,10 +74,45 @@ public class ImageEvent {
 	}
 
 	public void addImage(ImageRecord newImage) {
-		if(this.images == null) {
-			this.images = new ArrayList<ImageRecord>();
-		}
 		images.add(newImage);
+		if(this.eventStartTime.isAfter(newImage.getDatetime()) ){
+			this.eventStartTime = newImage.getDatetime();
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((eventStartTime == null) ? 0 : eventStartTime.hashCode());
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((images == null) ? 0 : images.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ImageEvent other = (ImageEvent) obj;
+		if (eventStartTime == null) {
+			if (other.eventStartTime != null)
+				return false;
+		} else if (!eventStartTime.equals(other.eventStartTime))
+			return false;
+		if (id != other.id)
+			return false;
+		if (images == null) {
+			if (other.images != null)
+				return false;
+		} else if (!images.equals(other.images))
+			return false;
+		return true;
 	}
 
 }

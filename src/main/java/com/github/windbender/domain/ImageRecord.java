@@ -4,7 +4,10 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
@@ -36,20 +39,40 @@ public class ImageRecord {
 	double lon;
 	String originalFileName;
 	
+	String cameraID;
+	
+	@Column(name="camera_id", nullable=true)
+	public String getCameraID() {
+		return cameraID;
+	}
+
+	public void setCameraID(String cameraID) {
+		this.cameraID = cameraID;
+	}
+
 	@Id
 	@Column(name="id")
 	public String getId() {
 		return id;
 	}
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "event_id", nullable = true)
+	ImageEvent image;
+	
 	public static ImageRecord makeImageFromExif(ExifSubIFDDirectory directory,
-			GpsDirectory gpsDirectory, String filename) {
+			GpsDirectory gpsDirectory, String filename, String cameraId) {
 		Date date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
 		GeoLocation location = gpsDirectory.getGeoLocation();
 		ImageRecord ir = new ImageRecord();
 		ir.setLat(location.getLatitude());
 		ir.setLon(location.getLongitude());
 		ir.setOriginalFileName(filename);
+		if(cameraId == null) {
+			// use latlongsomehow
+			cameraId = "loc"+ir.getLat()+"x"+ir.getLon();
+		}
+		ir.setCameraID(cameraId);
 		
 		String stripped = filename.toUpperCase().replaceAll("[A-Z]", "").replaceAll("[^0-9]","");
 		Long seq = Long.parseLong(stripped);

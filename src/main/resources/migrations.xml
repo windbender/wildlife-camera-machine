@@ -800,4 +800,30 @@
 <sql >insert into species (cros_id,common_name, latin_name) values (488, "Yuma Myotis", "Myotis yumanensis")</sql>
 <sql >insert into species (cros_id,common_name, latin_name) values (660, "Zebratail Lizard", "Callisaurus draconoides")</sql>
 	</changeSet>
+	
+	<changeSet id="7" author="windbender">
+		<createTable tableName="events">
+			<column name="id" type="int(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			
+			<column name="event_start_time" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			
+		</createTable>
+		<addColumn tableName="images">
+			<column name="event_id" type="int(11)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="8" author="windbender">
+		<addColumn tableName="images">
+			<column name="camera_id" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="9" author="windbender">
+		<addColumn tableName="events">
+			<column name="camera_id" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
