@@ -135,7 +135,7 @@ public class ImageRecord {
 	
 	 public ImageEvent event;
 
-	 @ManyToOne
+	 @ManyToOne(fetch=FetchType.EAGER)
 	 @JoinColumn(name="event_id")
 	public ImageEvent getEvent() {
 		return event;

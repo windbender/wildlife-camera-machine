@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +22,7 @@ import org.joda.time.DateTime;
 public class ImageEvent {
 	
 	public ImageEvent() {
-		this.images = new ArrayList<ImageRecord>();
+		this.imageRecords = new ArrayList<ImageRecord>();
 	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -48,16 +49,16 @@ public class ImageEvent {
 		this.cameraID = cameraID;
 	}
 
-	@OneToMany(mappedBy="event")
-	public List<ImageRecord> getImages() {
-		return images;
+	public List<ImageRecord> getImageRecords() {
+		return imageRecords;
 	}
 	
+	@OneToMany(mappedBy="event",fetch=FetchType.EAGER)
 	@ElementCollection(targetClass=ImageRecord.class)
-    List<ImageRecord> images;
+    List<ImageRecord> imageRecords;
 
-	public void setImages(List<ImageRecord> images) {
-		this.images = images;
+	public void setImageRecords(List<ImageRecord> images) {
+		this.imageRecords = images;
 	}
 
 	@Column(name="event_start_time", nullable=false)
@@ -75,7 +76,7 @@ public class ImageEvent {
 
 
 	public void addImage(ImageRecord newImage) {
-		images.add(newImage);
+		imageRecords.add(newImage);
 		if(this.eventStartTime.isAfter(newImage.getDatetime()) ){
 			this.eventStartTime = newImage.getDatetime();
 		}
@@ -90,7 +91,7 @@ public class ImageEvent {
 		result = prime * result
 				+ ((eventStartTime == null) ? 0 : eventStartTime.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + ((images == null) ? 0 : images.hashCode());
+		result = prime * result + ((imageRecords == null) ? 0 : imageRecords.hashCode());
 		return result;
 	}
 
@@ -115,10 +116,10 @@ public class ImageEvent {
 			return false;
 		if (id != other.id)
 			return false;
-		if (images == null) {
-			if (other.images != null)
+		if (imageRecords == null) {
+			if (other.imageRecords != null)
 				return false;
-		} else if (!images.equals(other.images))
+		} else if (!imageRecords.equals(other.imageRecords))
 			return false;
 		return true;
 	}
