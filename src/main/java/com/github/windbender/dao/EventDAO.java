@@ -55,4 +55,12 @@ public class EventDAO extends AbstractDAO<ImageEvent> {
 		
 	}
 
+	public List<ImageEvent> findAll() {
+		Session currentSession = this.currentSession();
+		Criteria crit = currentSession.createCriteria(ImageEvent.class);
+		crit.addOrder( Property.forName("eventStartTime").desc() );
+		List<ImageEvent> findList = crit.list();
+		return findList;
+	}
+
 }

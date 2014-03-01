@@ -195,8 +195,7 @@ public class HibernateDataStore implements DataStore, Managed, Runnable {
 
 	@Override
 	public List<ImageEvent> getImageEvents() {
-		// TODO Auto-generated method stub
-		return null;
+		return eventDAO.findAll();
 	}
 
 	@Override
