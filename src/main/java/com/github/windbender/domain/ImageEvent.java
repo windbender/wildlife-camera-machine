@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -49,10 +48,18 @@ public class ImageEvent {
 		this.cameraID = cameraID;
 	}
 
-	@OneToMany(fetch = FetchType.EAGER, targetEntity=ImageRecord.class)
-	@JoinColumn(name="event_id",referencedColumnName="id")
-	List<ImageRecord> images;
+	@OneToMany(mappedBy="event")
+	public List<ImageRecord> getImages() {
+		return images;
+	}
 	
+	@ElementCollection(targetClass=ImageRecord.class)
+    List<ImageRecord> images;
+
+	public void setImages(List<ImageRecord> images) {
+		this.images = images;
+	}
+
 	@Column(name="event_start_time", nullable=false)
 	DateTime eventStartTime;
 	
@@ -65,13 +72,7 @@ public class ImageEvent {
 		this.eventStartTime = eventStartTime;
 	}
 
-	public List<ImageRecord> getImages() {
-		return images;
-	}
 
-	public void setImages(List<ImageRecord> images) {
-		this.images = images;
-	}
 
 	public void addImage(ImageRecord newImage) {
 		images.add(newImage);
@@ -84,6 +85,8 @@ public class ImageEvent {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result
+				+ ((cameraID == null) ? 0 : cameraID.hashCode());
 		result = prime * result
 				+ ((eventStartTime == null) ? 0 : eventStartTime.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
@@ -100,6 +103,11 @@ public class ImageEvent {
 		if (getClass() != obj.getClass())
 			return false;
 		ImageEvent other = (ImageEvent) obj;
+		if (cameraID == null) {
+			if (other.cameraID != null)
+				return false;
+		} else if (!cameraID.equals(other.cameraID))
+			return false;
 		if (eventStartTime == null) {
 			if (other.eventStartTime != null)
 				return false;
@@ -114,5 +122,7 @@ public class ImageEvent {
 			return false;
 		return true;
 	}
+
+	
 
 }

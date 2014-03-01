@@ -56,9 +56,6 @@ public class ImageRecord {
 		return id;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "event_id", nullable = true)
-	ImageEvent image;
 	
 	public static ImageRecord makeImageFromExif(ExifSubIFDDirectory directory,
 			GpsDirectory gpsDirectory, String filename, String cameraId) {
@@ -134,6 +131,80 @@ public class ImageRecord {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	 public ImageEvent event;
+
+	 @ManyToOne
+	 @JoinColumn(name="event_id")
+	public ImageEvent getEvent() {
+		return event;
+	}
+
+	public void setEvent(ImageEvent event) {
+		this.event = event;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((cameraID == null) ? 0 : cameraID.hashCode());
+		result = prime * result
+				+ ((datetime == null) ? 0 : datetime.hashCode());
+		result = prime * result + ((event == null) ? 0 : event.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(lat);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(lon);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime
+				* result
+				+ ((originalFileName == null) ? 0 : originalFileName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ImageRecord other = (ImageRecord) obj;
+		if (cameraID == null) {
+			if (other.cameraID != null)
+				return false;
+		} else if (!cameraID.equals(other.cameraID))
+			return false;
+		if (datetime == null) {
+			if (other.datetime != null)
+				return false;
+		} else if (!datetime.equals(other.datetime))
+			return false;
+		if (event == null) {
+			if (other.event != null)
+				return false;
+		} else if (!event.equals(other.event))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (Double.doubleToLongBits(lat) != Double.doubleToLongBits(other.lat))
+			return false;
+		if (Double.doubleToLongBits(lon) != Double.doubleToLongBits(other.lon))
+			return false;
+		if (originalFileName == null) {
+			if (other.originalFileName != null)
+				return false;
+		} else if (!originalFileName.equals(other.originalFileName))
+			return false;
+		return true;
 	}
 
 	
