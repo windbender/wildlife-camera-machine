@@ -100,7 +100,8 @@ public class ImageResource {
 	@UnitOfWork
 	@Path("events")
 	public List<ImageEvent> listEvents() {
-		return ds.getImageEvents();
+		List<ImageEvent> imageEvents = ds.getImageEvents();
+		return imageEvents;
 	}
 	
 	@GET
