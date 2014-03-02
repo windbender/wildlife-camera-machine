@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 import com.drew.lang.GeoLocation;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @NamedNativeQueries({
@@ -30,7 +31,7 @@ import com.drew.metadata.exif.GpsDirectory;
 
 @Entity
 @Table(name="images")
-public class ImageRecord {
+public class ImageRecord implements Comparable<ImageRecord>{
 
 	String id;
 	DateTime datetime;
@@ -41,6 +42,10 @@ public class ImageRecord {
 	
 	String cameraID;
 	
+	public int compareTo(ImageRecord other) {
+		  int x = this.id.compareTo(other.getId());
+		  return x;
+	}
 	@Column(name="camera_id", nullable=true)
 	public String getCameraID() {
 		return cameraID;
@@ -135,8 +140,9 @@ public class ImageRecord {
 	
 	 public ImageEvent event;
 
-	 @ManyToOne(fetch=FetchType.EAGER)
-	 @JoinColumn(name="event_id")
+	@JsonIgnore
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="event_id")
 	public ImageEvent getEvent() {
 		return event;
 	}
@@ -153,7 +159,6 @@ public class ImageRecord {
 				+ ((cameraID == null) ? 0 : cameraID.hashCode());
 		result = prime * result
 				+ ((datetime == null) ? 0 : datetime.hashCode());
-		result = prime * result + ((event == null) ? 0 : event.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(lat);

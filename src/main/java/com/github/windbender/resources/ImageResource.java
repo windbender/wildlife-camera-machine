@@ -107,6 +107,23 @@ public class ImageResource {
 	@GET
 	@Timed
 	@Produces(MediaType.APPLICATION_JSON)
+	@UnitOfWork
+	@Path("nextEvent")
+	public ImageEvent getNextEvent() {
+		List<ImageEvent> imageEvents = ds.getImageEvents();
+// TODO better algo here please
+		int max = imageEvents.size();
+		int index = (int) (Math.random() * max);
+		ImageEvent ie = imageEvents.get(index);
+		
+		
+		return ie;
+	}
+	
+	
+	@GET
+	@Timed
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("species")
 	public List<Species> listSpecies() {
 		

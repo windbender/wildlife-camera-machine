@@ -11,16 +11,10 @@ angular.module('wlcdm.controllers', [])
 	$scope.nextnext = {};
 	$scope.numberOfAnimals =1;
 
-	$http.get('/api/images').success(function(data) {
-		$scope.images = data;
+	$http.get('/api/images/nextEvent').success(function(data) {
+		$scope.images = data.imageRecords;
 		$scope.maxindex = $scope.images.length;
 		$scope.currentIndex=0;
-	}).error(function(data,status,headers,config) {
-		toastr.error("sorry unable to retrive list");
-	});
-	
-	$http.get('/api/images/events').success(function(data) {
-		$scope.events = data;
 	}).error(function(data,status,headers,config) {
 		toastr.error("sorry unable to retrive list");
 	});
@@ -117,21 +111,8 @@ angular.module('wlcdm.controllers', [])
 		var w = el.clientWidth;
 		var size = ''+w;
 		
-		//query the size of "slide"
-		// add something on the end of the URL to indicate the size needed.
-		$scope.selected.imagesrc = $scope.images[$scope.currentIndex].src+'?sz='+size;
-		$scope.imagename = $scope.images[$scope.currentIndex].title;
-		// now preload two into the future
-//		var next = $scope.currentIndex +1;
-//		if(next >= $scope.maxindex) {
-//			next =0;
-//		}
-//		var nextnext = next +1;
-//		if(nextnext >= $scope.maxindex) {
-//			nextnext =0;
-//		}
-//		$scope.next.imagesrc = $scope.images[next].src+'?sz='+size;
-//		$scope.nextnext.imagesrc = $scope.images[nextnext].src+'?sz='+size;
+		$scope.selected.imagesrc = '/api/images/'+$scope.images[$scope.currentIndex].id+'?sz='+size;
+		$scope.imagename = $scope.images[$scope.currentIndex].originalFileName;
 		
 	});
 	

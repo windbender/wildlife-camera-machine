@@ -1,7 +1,7 @@
 package com.github.windbender.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.joda.time.DateTime;
 
 
@@ -21,9 +23,7 @@ import org.joda.time.DateTime;
 @Table(name="events")
 public class ImageEvent {
 	
-	public ImageEvent() {
-		this.imageRecords = new ArrayList<ImageRecord>();
-	}
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id", nullable=false)
@@ -49,15 +49,16 @@ public class ImageEvent {
 		this.cameraID = cameraID;
 	}
 
-	public List<ImageRecord> getImageRecords() {
+	public SortedSet<ImageRecord> getImageRecords() {
 		return imageRecords;
 	}
 	
 	@OneToMany(mappedBy="event",fetch=FetchType.EAGER)
+	@Sort(type=SortType.NATURAL)
 	@ElementCollection(targetClass=ImageRecord.class)
-    List<ImageRecord> imageRecords;
+    SortedSet<ImageRecord> imageRecords = new TreeSet<ImageRecord>();
 
-	public void setImageRecords(List<ImageRecord> images) {
+	public void setImageRecords(SortedSet<ImageRecord> images) {
 		this.imageRecords = images;
 	}
 
@@ -91,7 +92,7 @@ public class ImageEvent {
 		result = prime * result
 				+ ((eventStartTime == null) ? 0 : eventStartTime.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + ((imageRecords == null) ? 0 : imageRecords.hashCode());
+
 		return result;
 	}
 
