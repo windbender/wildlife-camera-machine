@@ -1,7 +1,13 @@
-<div >
-  <input type="file" ng-file-select="onFileSelect($files)" multiple>
+<div class="well">
+  <span class="btn btn-default btn-file">Select Files To Upload<input type="file" ng-file-select="onFileSelect($files)" multiple></span>
   <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class" ng-show="dropSupported">drop files here</div>
   <div ng-file-drop-available="dropSupported=true" ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
-  <button ng-click="upload.abort()">Cancel Upload</button>
-  <progressbar type="success" max="uploads.length * 100" value="actualProg"><span style="color:black; white-space:nowrap;">{{actualProg/100}} / {{uploads.length }}</span></progressbar>
+  <button class="btn btn-warning" ng-click="doAbort()">Cancel Upload</button>
+  <div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+  <progressbar type="success" max="100" value="actualPercent"><span style="color:black; white-space:nowrap;">{{actualProg/100}} / {{possibleProg/100 }}</span></progressbar>
+  </div>
+  <div class="col-md-2"></div>
+  </div>
 </div>

@@ -139,19 +139,13 @@ angular.module('wlcdm.controllers', [])
 	$scope.actualProg = 0;
 	$scope.possibleProg = 0;
 	$scope.updateBar = function() {
-		var possibleTotal = 0;
 		var actualTotal = 0;
 		for(var prog in $scope.progress) {
 			actualTotal = actualTotal + $scope.progress[prog];
-			possibleTotal = possibleTotal + 100;	
 		}
-//		for(var i=0; i < $scope.progress.length; i++) {
-//			possibleTotal = possibleTotal + 100;
-//			actualTotal = actualTotal + $scope.progress[i];
-//		}
 		$scope.actualProg = actualTotal;
-		$scope.possibleProg = possibleTotal;
-		
+		$scope.possibleProg = $scope.uploads.length * 100;
+		$scope.actualPercent = 100 *$scope.actualProg / $scope.possibleProg;
 	}
 	$scope.update = function(which, percent) {
 		$scope.progress[which] = percent;
@@ -160,6 +154,7 @@ angular.module('wlcdm.controllers', [])
 	
 	$scope.onFileSelect = function($files) {
 		//$files: an array of files selected, each file has name, size, and type.
+		
 		$scope.progress = {};
 		$scope.uploads = [];
 		for (var i = 0; i < $files.length; i++) {
@@ -188,6 +183,13 @@ angular.module('wlcdm.controllers', [])
 			$scope.uploads.push(upload);
 
 		}
+		//alert(" done starting uploads");
 	};
+	
+	$scope.doAbort = function() {
+		for(var i=0; i < $scope.uploads.length; i++) {
+			$scope.uploads[i].abort();
+		}
+	}
   }]);
 
