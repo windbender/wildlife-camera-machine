@@ -1,0 +1,16 @@
+<div >
+
+<div ng-hide="verified">
+Verification in progress...
+</div>
+<div ng-show="verified">
+Thank you for verifying.<p>
+{{ code }}
+<p>
+<a href="/" > Please login</a>
+</div>
+
+<div ng-show="failedverify" >
+I'm sorry we were unable to verify the code: {{code }}
+</div>
+</div>

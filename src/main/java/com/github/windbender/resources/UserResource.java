@@ -1,28 +1,53 @@
 package com.github.windbender.resources;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.codec.binary.Base64;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.CurUser;
 import com.github.windbender.core.LoginObject;
-import com.github.windbender.dao.DummyUserDAO;
+import com.github.windbender.core.ResetPWRequest;
+import com.github.windbender.core.SetPWRequest;
+import com.github.windbender.core.SignUpResponse;
+import com.github.windbender.core.SignupRequest;
+import com.github.windbender.core.UserUpdate;
+import com.github.windbender.core.VerifyRequest;
+import com.github.windbender.core.VerifyResponse;
+import com.github.windbender.dao.HibernateUserDAO;
+import com.github.windbender.dao.TokenDAO;
 import com.github.windbender.dao.UserDAO;
 import com.github.windbender.domain.User;
+import com.github.windbender.service.EmailService;
+import com.sun.jersey.api.ConflictException;
+import com.sun.jersey.api.NotFoundException;
+import com.yammer.dropwizard.hibernate.UnitOfWork;
 import com.yammer.metrics.annotation.Timed;
 
 @Path("/users/")
@@ -31,54 +56,21 @@ import com.yammer.metrics.annotation.Timed;
 public class UserResource {
 	Logger log = LoggerFactory.getLogger(UserResource.class);
 
-	UserDAO ud = new DummyUserDAO();
+	private UserDAO ud;
+	private TokenDAO tokendao;
+	private EmailService emailService;
+
 	
-	@GET
-	@Timed
-	@Path("menus")
-	public List<MenuItem> getMenus(@SessionUser(required=false) User user) {
-		log.info("looking for menus for user "+user);
-		List<MenuItem> list = new ArrayList<MenuItem>();
-		if(user != null) {
-			list.add(new MenuItem("Books","#/books"));  // <a href="#/books">Books</a>
-		}
-		return list;
+	
+
+	public UserResource(UserDAO ud, TokenDAO tokendao,
+			EmailService emailService) {
+		super();
+		this.ud = ud;
+		this.tokendao = tokendao;
+		this.emailService = emailService;
 	}
-	
-	@GET
-	@Timed
-	@Path("getLoggedIn")
-	public CurUser getLoggedInUser(@Context HttpServletRequest request) {
-		User user = (User) request.getSession().getAttribute("user");
-		if(user == null) return new CurUser(null);
-		String username = user.getUsername();
-		CurUser cu = new CurUser(username);
-		return cu;
-	}
-	@POST
-	@Timed
-	@Path("login")
-	public Response login(  @Valid LoginObject login, @Context HttpServletRequest request) {
-		log.info("attempting login for user "+login.getUsername());
-		
-		if(ud.checkPassword(login.getUsername(), login.getPassword())) {
-			log.info("success");
-			
-			request.getSession().setAttribute("user", new User(login.getUsername()));
 
-			return Response.status(Response.Status.OK).build();
-		    
-		} else {
-			log.info("fail");
-			request.getSession().setAttribute("user", null);
-
-			return Response.status(Response.Status.FORBIDDEN).build();
-
-		}
-
-	}
-	
-	
 
 	@POST
 	@Timed
@@ -89,6 +81,339 @@ public class UserResource {
 		request.getSession().setAttribute("user", null);
 
 		return Response.status(Response.Status.OK).build();
+	}
+	
 
+	@GET
+	@Timed
+	@Path("check")
+	@UnitOfWork
+	public Response checkExists(@QueryParam("username") String username) {
+		if(username == null) throw new NotFoundException("needs query param \"username\"");
+		if(username.length() < 4) throw new NotFoundException("username needs decent length > 3");
+		User u = ud.findByUsername(username);
+		if(u == null) {
+			throw new NotFoundException("user does not exist");
+		}
+		return Response.ok( MediaType.APPLICATION_JSON).build();
+	}
+	
+	
+
+	
+	@GET
+	@Timed
+	@Path("getLoggedIn")
+	@UnitOfWork
+	public CurUser getLoggedInUser(@Context HttpServletRequest request) {
+		User user = (User) request.getSession().getAttribute("user");
+		if(user == null) return new CurUser(null);
+		String username = user.getUsername();
+		CurUser cu = new CurUser(username);
+		return cu;
+	}
+
+	@POST
+	@Timed
+	@Path("userupdate")
+	@UnitOfWork
+	public Response userupdate(@SessionUser User user, @Context HttpServletRequest request, UserUpdate updatedCurUser) {
+		int userId = user.getId();
+		User editUser = this.ud.findById(userId);
+		
+//		email  -- this should require a REVERIFICATION
+		
+		
+		this.ud.save(editUser);
+		// OK, we should probalby also blast the session value
+		loadAssociatedAndSetSessionWith(request, editUser);
+
+		
+		// there is an implicit SAVE on editUser
+		return Response.status(Response.Status.OK).build();
+	}
+	
+	public static <T> T initializeAndUnproxy(T entity) {
+	    if (entity == null) {
+	        throw new 
+	           NullPointerException("Entity passed for initialization is null");
+	    }
+
+	    Hibernate.initialize(entity);
+	    if (entity instanceof HibernateProxy) {
+	        entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer().getImplementation();
+	    }
+	    return entity;
+	}
+	
+	@POST
+	@Timed
+	@Path("login")
+	@UnitOfWork
+	public Response login(  @Valid LoginObject login, @Context HttpServletRequest request) {
+		log.info("attempting login for user "+login.getUsername());
+		
+		if(ud.checkPassword(login.getUsername(), login.getPassword())) {
+			log.info("success");
+			User p = ud.findByUsername(login.getUsername());
+			if(p == null) {
+				log.info("fail");
+				request.getSession().setAttribute("user", null);
+				request.getSession().setAttribute("UserAccounts", null);
+				
+				return Response.status(Response.Status.FORBIDDEN).build();
+			}
+			boolean ver = false;
+			if(p.getVerified() != null) {
+				ver = p.getVerified().booleanValue();
+			}
+			if(ver) {
+				loadAssociatedAndSetSessionWith(request, p);
+
+				return Response.status(Response.Status.OK).build();
+			} else {
+				log.info("fail not verified");
+				request.getSession().setAttribute("user", null);
+				request.getSession().setAttribute("UserAccounts", null);
+				//throw new ForbiddenException("sorry that user is not yet verified");
+				return Response.status(Response.Status.FORBIDDEN).build();
+			}
+		    
+		} else {
+			log.info("fail");
+			request.getSession().setAttribute("user", null);
+			request.getSession().setAttribute("UserAccounts", null);
+			
+			return Response.status(Response.Status.FORBIDDEN).build();
+
+		}
+
+	}
+
+	private void loadAssociatedAndSetSessionWith(HttpServletRequest request,
+			User p) {
+		request.getSession().setAttribute("user", p);
+	}
+	
+	@POST
+	@Timed
+	@Path("logout")
+	@UnitOfWork
+	public Response logout(@SessionUser User User, @Context HttpServletRequest request, String req) {
+		log.info("attempting logout for user "+User.toString());
+		request.getSession().setAttribute("UserAccounts", null);
+		request.getSession().setAttribute("user", null);
+		
+		request.getSession().invalidate();
+		return Response.status(Response.Status.OK).build();
+
+	}
+	
+	@POST
+	@Timed
+	@Path("signup")
+	@UnitOfWork
+	public Response signup(SignupRequest req) {
+		log.info("sign up started");
+
+		User oldUser = ud.findByUsername(req.getUsername());
+		if(oldUser != null) {
+			throw new ConflictException("That username is already taken");
+		}
+				
+		User emailUser = ud.findByEmail(req.getEmail());
+		if(emailUser != null) {
+			throw new ConflictException("That email already has an account. Consider using password recovery");
+		}
+		if(!validatePassword(req.getPassword())) {
+			throw new ConflictException("Password does not follow the complexity rules");
+		}
+		
+		
+		log.info("no conflicts. ");
+		User u = new User();
+		u.setEmail(req.getEmail());
+		u.setUsername(req.getUsername());
+		u.setPassword(req.getPassword());
+		
+		String verifyCode;
+		try {
+			verifyCode = makeVerifyCode();
+		} catch (NoSuchAlgorithmException e1) {
+			throw new ConflictException("unable to create a verification code");
+		}
+		log.info(" verify code created");
+
+		u.setVerifyCode(verifyCode);
+		try {
+			long userid = ud.create(u);
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e1) {
+			log.error("can't create the user because ",e1);
+			throw new WebApplicationException(e1);
+		}
+		log.info(" user created");
+		
+		DateTime verifySent = null;
+		try {
+			emailService.sendVerificationEmail(u);
+			verifySent = new DateTime();
+		} catch (MessagingException e) {
+			log.error("unable to send email because of ",e);
+			throw new ConflictException("unable to send an email to that address");
+		}
+		u.setVerifyCodeSentDate(verifySent);
+		// note that the update is automatic thanks to hibernate session magic!!
+		
+		SignUpResponse sur = new SignUpResponse(true,"worked!");
+		return Response.ok(sur, MediaType.APPLICATION_JSON).build();
+	}
+
+	
+	public static int indexOf(Pattern pattern, String s) {
+	    Matcher matcher = pattern.matcher(s);
+	    return matcher.find() ? matcher.start() : -1;
+	}
+
+	public static boolean validatePassword(String password) {
+		// must be 8 or longer characters
+		if(password.length() < 8) {
+			return false;
+		}
+		// must have a letter
+		int index = indexOf(Pattern.compile("[A-z]"), password);
+		if(index < 0) return false;
+		// must have a number
+		int index2 = indexOf(Pattern.compile("[0-9]"), password);
+		if(index2 < 0) return false;
+		
+		return true;
+	}
+
+	@GET
+	@Timed
+	@Path("validtoken/{token}")
+	@UnitOfWork
+	public Response isValidToken(@PathParam("token") String token) {
+		if(tokendao.isTokenValid(token)) {
+			return Response.status(Response.Status.OK).build();
+		} else {
+	        ResponseBuilder b = Response.status(Status.NOT_FOUND);
+		    b.tag("invalid password reset token");
+		    return b.build();
+		}
+	}
+	
+	@POST
+	@Timed
+	@Path("lostpw")
+	@UnitOfWork
+	public Response lostpw(String resetemail) {
+		log.info("starting reset password on "+resetemail);
+		// now create and send via email a token which will return to a page on which a new PW can be chosen.
+		// that page should simple reset the password IF  the token is valid and matches the email.
+		// token should live for a fixed amount of time. 10 minutes ?
+		User p = this.ud.findByEmail(resetemail);
+		if(p != null) {
+			String token = tokendao.createToken(p);
+			try {
+				emailService.sendPasswordResetEmail(p, token);
+			} catch (MessagingException e) {
+
+			}
+		}
+		// return OK regardless so that we don't "leak" data about membership.
+		return Response.status(Response.Status.OK).build();
+	}
+	
+	@POST
+	@Timed
+	@Path("resetpw")
+	@UnitOfWork
+	public Response resetpw(ResetPWRequest request) {
+		log.info("starting reset password on "+request);
+		User u = tokendao.getUserForToken(request.getToken());
+		try {
+			if(u != null) {
+				if(!validatePassword(request.getPass())) {
+					throw new ConflictException("Password does not follow the complexity rules");
+				}
+				String pass = request.getPass();
+				String hashedPW = HibernateUserDAO.getSaltedHash(pass);
+				u.setHashedPassword(hashedPW);
+				this.emailService.sendUpdatedPassword(u);
+				return Response.status(Response.Status.OK).build();
+			}
+		} catch (NoSuchAlgorithmException e) {
+			log.error("unable to update password for "+u,e);
+		} catch (InvalidKeySpecException e) {
+			log.error("unable to update password for "+u,e);
+		} catch (MessagingException e) {
+			log.error("unable to update password for "+u,e);
+		}
+		ResponseBuilder b = Response.status(Status.NOT_FOUND);
+	    b.tag("invalid password reset token");
+	    return b.build();	    
+	}
+	
+	@POST
+	@Timed
+	@Path("setpassword")
+	@UnitOfWork
+	public Response setpassword(@SessionUser User user, SetPWRequest request) {
+		log.info("starting reset password on "+request);
+		try {
+			if(user != null) {
+				String pass = request.getPass();
+				String hashedPW = HibernateUserDAO.getSaltedHash(pass);
+				user.setHashedPassword(hashedPW);
+				this.emailService.sendUpdatedPassword(user);
+				return Response.status(Response.Status.OK).build();
+			}
+		} catch (NoSuchAlgorithmException e) {
+			log.error("unable to set password for "+user,e);
+		} catch (InvalidKeySpecException e) {
+			log.error("unable to set password for "+user,e);
+		} catch (MessagingException e) {
+			log.error("unable to set password for "+user,e);
+		}
+		ResponseBuilder b = Response.status(Status.NOT_FOUND);
+	    b.tag("unable to reset password");
+	    return b.build();	    
+	}
+	
+	
+	@POST
+	@Timed
+	@Path("verify")
+	@UnitOfWork
+	public Response verify(VerifyRequest req) {
+		String code = req.getVerifyCode();
+		User p = ud.findByVerifyCode(code);
+		if(p == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		p.setVerified(true);
+		try {
+			this.emailService.sendUsANotification(p);
+		} catch (MessagingException e) {
+			// do nothing here
+		}
+		VerifyResponse vr = new VerifyResponse(p);
+		return Response.ok(vr, MediaType.APPLICATION_JSON).build();
+	}
+	
+	final static int CODE_LENGTH = 25;
+	public static String makeVerifyCode() throws NoSuchAlgorithmException {
+		int saltLen = 35;
+		String finalCode = null;
+		int len =0;
+		do {
+			byte[] randomBytes = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLen);
+			String code = Base64.encodeBase64String(randomBytes);
+			String newCode = code.replaceAll("[^a-zA-Z0-9]" , "");
+			finalCode = newCode.substring(0, CODE_LENGTH);
+			len = finalCode.length();
+		} while(len  != CODE_LENGTH);
+		return finalCode;
 	}
 }

@@ -29,6 +29,7 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.DataStore;
 import com.github.windbender.core.IdentificationRequest;
 import com.github.windbender.core.ImageRecordTO;
@@ -37,6 +38,7 @@ import com.github.windbender.dao.ImageRecordDAO;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.Species;
+import com.github.windbender.domain.User;
 import com.sun.jersey.api.ConflictException;
 import com.sun.jersey.multipart.BodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
@@ -63,9 +65,7 @@ public class ImageResource {
 	@Timed
 	@Path("{id}")
 	@UnitOfWork
-	// public Response fetch(@SessionUser(required=false) User user,
-	// @PathParam("id") String id) {
-	public Response fetch(@PathParam("id") String id, @QueryParam("sz") int displayWidth) {
+	public Response fetch(@SessionUser User user, @PathParam("id") String id, @QueryParam("sz") int displayWidth) {
 		log.info("attempting to fetch image id = " + id+" with width "+displayWidth);
 		try {
 			ImageRecord ir = this.ds.getRecordFromId(id);
@@ -82,7 +82,7 @@ public class ImageResource {
 	@Timed
 	@UnitOfWork
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<ImageRecordTO> list() {
+	public List<ImageRecordTO> list(@SessionUser User user) {
 		List<ImageRecord> list = ds.getTimeOrderedImages();
 		
 		List<ImageRecordTO> outList = new ArrayList<ImageRecordTO>();
@@ -99,7 +99,7 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("events")
-	public List<ImageEvent> listEvents() {
+	public List<ImageEvent> listEvents(@SessionUser User user) {
 		List<ImageEvent> imageEvents = ds.getImageEvents();
 		return imageEvents;
 	}
@@ -109,10 +109,11 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("nextEvent")
-	public ImageEvent getNextEvent() {
+	public ImageEvent getNextEvent(@SessionUser User user) {
 		List<ImageEvent> imageEvents = ds.getImageEvents();
 // TODO better algo here please
 		int max = imageEvents.size();
+		if(max == 0) return null;
 		int index = (int) (Math.random() * max);
 		ImageEvent ie = imageEvents.get(index);
 		
@@ -125,7 +126,7 @@ public class ImageResource {
 	@Timed
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("species")
-	public List<Species> listSpecies() {
+	public List<Species> listSpecies(@SessionUser User user) {
 		
 		List<Species> l = new ArrayList<Species>();
 		l.add(new Species().setC('p').setName("puma").setId(1));
@@ -144,7 +145,7 @@ public class ImageResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("identification")
-	public Response identify(IdentificationRequest idRequest) {
+	public Response identify(@SessionUser User user,IdentificationRequest idRequest) {
 		log.info("GOT an ID "+idRequest);
 		// null sh ould be the user
 		this.ds.recordIdentification(idRequest, null);
@@ -155,8 +156,7 @@ public class ImageResource {
 	@Timed
 	@UnitOfWork
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	// public Response add(@SessionUser User user, FormDataMultiPart formData) {
-	public Response add(FormDataMultiPart formData) {
+	public Response add(@SessionUser User user,FormDataMultiPart formData) {
 
 		ImageRecord newImage = null;
 		try {

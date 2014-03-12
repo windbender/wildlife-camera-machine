@@ -1,22 +1,20 @@
 package com.github.windbender;
 
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.eclipse.jetty.server.session.SessionHandler;
 
 import com.bazaarvoice.dropwizard.assets.ConfiguredAssetsBundle;
 import com.github.windbender.auth.SessionUserProvider;
-import com.github.windbender.core.DataStore;
 import com.github.windbender.core.FileImageStore;
 import com.github.windbender.core.HibernateDataStore;
 import com.github.windbender.core.ImageStore;
+import com.github.windbender.core.S3ImageStore;
 import com.github.windbender.dao.EventDAO;
 import com.github.windbender.dao.HibernateUserDAO;
 import com.github.windbender.dao.IdentificationDAO;
 import com.github.windbender.dao.ImageRecordDAO;
 import com.github.windbender.dao.SpeciesDAO;
+import com.github.windbender.dao.TokenDAO;
 import com.github.windbender.domain.Identification;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
@@ -24,6 +22,11 @@ import com.github.windbender.domain.Species;
 import com.github.windbender.domain.User;
 import com.github.windbender.resources.ImageResource;
 import com.github.windbender.resources.UserResource;
+import com.github.windbender.service.AmazonMessageSender;
+import com.github.windbender.service.AsyncEmailSender;
+import com.github.windbender.service.EmailService;
+import com.github.windbender.service.MessageSender;
+import com.github.windbender.service.SMTPMessageSender;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
@@ -76,14 +79,33 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
         final SpeciesDAO spDAO = new SpeciesDAO(hibernate.getSessionFactory());
         final HibernateUserDAO uDAO = new HibernateUserDAO(hibernate.getSessionFactory());
         final EventDAO ieDAO = new EventDAO(hibernate.getSessionFactory());
+        final TokenDAO tokenDAO = new TokenDAO(hibernate.getSessionFactory());
         
         HibernateDataStore ds = new HibernateDataStore(idDAO,irDAO,spDAO,uDAO, ieDAO, hibernate.getSessionFactory());
     	environment.manage(ds);
     	String bucketName = "wlcdm-test";
-    	//ImageStore store = new S3ImageStore(configuration.getAmazon().getAccesskey(), configuration.getAmazon().getSecretkey(), bucketName);
-    	ImageStore store = new FileImageStore("/Users/chris/Sites/s3fake/upload");
-
-		environment.addResource(new UserResource());
+    	ImageStore store = null;
+    	if(configuration.isAmazon()) {
+    		store = new S3ImageStore(configuration.getAmazon().getAccesskey(), configuration.getAmazon().getSecretkey(), bucketName);
+    	} else {
+    		store = new FileImageStore("/Users/chris/Sites/s3fake/upload");
+    	}
+    	
+    	MessageSender ms = null;
+		if(configuration.isAmazon()) {
+			ms = new AmazonMessageSender(configuration);
+		} else {
+			ms = new SMTPMessageSender(configuration);
+		}
+		EmailService emailService;
+		if(configuration.isAsync() ) {
+			AsyncEmailSender ams = new AsyncEmailSender(configuration, ms);
+			environment.manage(ams);
+			emailService = new EmailService(configuration, ams);
+		} else {
+			emailService = new EmailService(configuration, ms);
+		}
+		environment.addResource(new UserResource(uDAO, tokenDAO, emailService));
 		environment.addResource(new ImageResource(ds, store, irDAO));
 		
 		environment.setSessionHandler(new SessionHandler());

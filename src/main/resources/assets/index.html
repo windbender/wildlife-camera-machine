@@ -1,18 +1,61 @@
 <!doctype html>
-<html lang="en" ng-app="wlcdm">
+<html lang="en" ng-app="wlcdm"  class="auth-demo-application waiting-for-angular">
 <head>
   <meta charset="utf-8">
-  <title>My AngularJS App</title>
+  <title>wildlife camera</title>
   <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="/bower_components/toastr/toastr.min.css" />
-  
   <link rel="stylesheet" href="/css/app.css"/>
 </head>
 <body>
+<div class="hidden-print" id="login-holder">
+		<div id="loginbox">
+			<div  id="login-inner" ng:controller="LoginController">
+				<div class="row">
+					<div class="col-md-3 col-md-offset-3 well" > 
+					<form >
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><th></th><th style="align:center" >login</th></tr>
+							<tr ng-show="failMsg.length">
+								<th>&nbsp;</th>
+								<td>{{failMsg}}</td>
+							</tr>
+							<tr>
+								<th>Username</th>
+								<td><input id="loginusername" type="text" class="login-inp form-control" ng-model="username" autofocus=""></td>
+							</tr>
+							<tr>
+								<th>Password</th>
+								<td><input id="loginpassword" type="password" class="login-inp form-control" ng-model="password"></td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<a id="signuplink" href="/signup.htm" >signup</a>
+									&nbsp;
+									<a id="cancel" href="#" ng-click="cancel()" >cancel</a>
+									<button id="loginButton" name="submit" ng-click="submit()" type="submit" class="btn btn-success">Login</button>
+								</td>
+							</tr>
+						</table>
+					</form>
+					</div>
+				</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+</div> <!--  login-holder -->
+
 <div id="all">
 
 <div class="navbar navbar-inverse navbar-fixed-top hidden-print navbar-default" >
     <div class="navbar-header"><a class="navbar-brand menutext hidden-xs"  href="">WLCDM</a>
+    
+    	<div class="menutext navbar-text pull-left visible-xs" id="logout" ng:controller="LogoutController">
+        	<span id="loggedinGreeting" ng-show="isLoggedIn()"><a href="/#/account">user: {{curUser.getCurUser().username}}</a> &nbsp; &nbsp; <a id="logoutLink" href="" ng-click="logout()">logout</a></span>
+            <span id="loginlink" ng-hide="isLoggedIn()"><a href="" ng-click="gotoLogin()">login</a>&nbsp; &nbsp;<a class="menutext" id="signuplink" href="/signup.htm">signup</a>&nbsp; &nbsp;<a class="menutext" id="lostpwlink" href="/#/lostpw">lost pw</a></span>
+        </div>
+    	
     </div>
     
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -36,10 +79,14 @@
   -->
 <script src="/bower_components/ng-file-upload/angular-file-upload-shim.min.js"></script> 
 
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
   <script src="/bower_components/angular/angular.js"></script>
   <script src="/bower_components/angular-route/angular-route.js"></script>
+  <script src="/bower_components/angular-cookies/angular-cookies.js"></script>
+  <script src="/bower_components/angular-loading-bar/src/loading-bar.js"></script>
 
-<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="/js/angular-http-auth.js"></script>
+  
 <!-- <script src="/~chris/wlcdm/bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script> -->
 <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
@@ -55,11 +102,11 @@
 <!--   <script src='/bower_components/underscore/underscore-min.js'></script> -->
 <!--   <script src='/bower_components/angular-google-maps/dist/angular-google-maps.min.js'></script> -->
 
-  <script src="js/app.js"></script>
-  <script src="js/services.js"></script>
-  <script src="js/controllers.js"></script>
-  <script src="js/filters.js"></script>
-  <script src="js/directives.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/services.js"></script>
+  <script src="/js/controllers.js"></script>
+  <script src="/js/filters.js"></script>
+  <script src="/js/directives.js"></script>
   <script> <!-- this hack to make content always below menu bar -->
 $(window).on('load resize', function() {
     $('body').css({"padding-top": $(".navbar").height()  + "px"});

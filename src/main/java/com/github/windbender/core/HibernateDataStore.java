@@ -202,11 +202,7 @@ public class HibernateDataStore implements DataStore, Managed, Runnable {
 	public void recordIdentification(IdentificationRequest idRequest, User u) {
 		ImageRecord identifiedImage = irDAO.findById(idRequest.getImageid());
 		Species speciesIdentified = speciesDAO.findById(idRequest.getSpeciesId());
-		
-//TODO remove
-		if(u == null) {
-			u = uDAO.findByID(1);
-		}
+
 		Identification id = new Identification();
 		id.setIdentifiedImage(identifiedImage);
 		id.setIdentifier(u);

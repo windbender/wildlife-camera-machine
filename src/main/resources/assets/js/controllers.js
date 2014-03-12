@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-angular.module('wlcdm.controllers', [])
+var app = angular.module('wlcdm.controllers', [])
 .controller('CategorizeController', function($http, $scope, focus) {
 
 	$scope.currentIndex = 1; // Initially the index is at the second image, but this doesn't actually EXIST!  :-)
@@ -12,6 +12,7 @@ angular.module('wlcdm.controllers', [])
 	$scope.numberOfAnimals =1;
 
 	$http.get('/api/images/nextEvent').success(function(data) {
+		if(data == "") return;
 		$scope.images = data.imageRecords;
 		$scope.maxindex = $scope.images.length;
 		$scope.currentIndex=0;
@@ -110,7 +111,8 @@ angular.module('wlcdm.controllers', [])
 		var el = elements[0]
 		var w = el.clientWidth;
 		var size = ''+w;
-		
+		if(typeof $scope.images === 'undefined') return;
+		if($scope.images.length ==0) return;
 		$scope.selected.imagesrc = '/api/images/'+$scope.images[$scope.currentIndex].id+'?sz='+size;
 		$scope.imagename = $scope.images[$scope.currentIndex].originalFileName;
 		
@@ -191,5 +193,227 @@ angular.module('wlcdm.controllers', [])
 			$scope.uploads[i].abort();
 		}
 	}
-  }]);
+  }])
+.controller({
+	LoginController : function($cookies, $scope, $rootScope, $http, authService, CurUser) {
+		$scope.curUser = CurUser;
+		
+		$scope.submit = function() {
+			$scope.failMsg = "";
+			$http.post('/api/users/login', {
+				username : $scope.username,
+				password : $scope.password
+			}).success(function() {
+				authService.loginConfirmed();
+				$scope.curUser.setUsername($scope.username);
+				$scope.failMsg = "";
+				$rootScope.$broadcast('reloadMenus');
+				$scope.password = "";
+			}).error(function(data, status, headers, config) {
+				$scope.failMsg = "sorry that user or password invalid";
+				$scope.password = "";
+			});
+		};
+		
+		$scope.cancel = function() {
+			$scope.failMsg = "";
+			$rootScope.$broadcast('event:auth-loginCanceled');
+		};
 
+	}
+
+});
+
+app.controller({
+	LogoutController : function($rootScope, $scope,$http, $window, CurUser) {
+		$scope.logout = function() {
+			$http.post('/api/users/logout','please log me out').success(function() {
+				CurUser.setUsername(undefined);
+				$window.location.href = "/#/";
+				$rootScope.$broadcast('reloadMenus');
+			});
+		};
+		$scope.gotoLogin = function() {
+			$rootScope.$broadcast('event:auth-loginRequired');
+		};
+		$scope.isLoggedIn = function() {
+			if(CurUser.getCurUser().username == "(none)") return false;
+			if(CurUser.getCurUser().username === null) return false;
+			if(CurUser.getCurUser().username === undefined) return false;
+			return true;
+		};
+		
+		$scope.curUser = CurUser;
+	}
+});
+
+
+app.config(function(authServiceProvider) {
+	authServiceProvider.addIgnoreUrlExpression(function(response) {
+		// this keeps the auth provider from intercepting the actual login attempt!
+		return response.config.url === "users/login";
+	});
+});
+
+app.factory('CurUser',function($http) {
+	var CurUser = {};
+	var myCurUser = {
+		username:"(none)",
+		landingPage: "/dash"	
+	};
+	
+	$http.get('/api/users/getLoggedIn').success(function(data) {
+		myCurUser = data;
+	});
+	
+	CurUser.getLandingPage = function() {
+		if(typeof myCurUser.prefs == 'undefined' || myCurUser.pref === null) {
+			return "/dash";
+		}
+		if(typeof myCurUser.prefs.landingPage =='undefined' || myCurUser.prefs.landingPage === null) {
+			return "/dash";
+		}
+		return myCurUser.prefs.landingPage;
+	};
+	CurUser.getCurUser = function() {
+		return myCurUser;
+	};
+	CurUser.setUsername = function(inp) {
+		myCurUser.username = inp;
+	};
+	CurUser.showHelp = function() {
+		return myCurUser.showHelp;
+	};
+	return CurUser;
+
+});
+
+app.directive('ensureUnique', [ '$http', function($http) {
+	return {
+		require : 'ngModel',
+		link : function(scope, ele, attrs, c) {
+			scope.$watch(attrs.ngModel, function() {
+				$http({
+					method : 'GET',
+					url : '/api/users/check',
+					params : {
+						username : ele.val()
+					}
+				}).success(function(data, status, headers, cfg) {
+					scope.usernameIsUnique = 'invalid';
+					c.$setValidity('username', false);
+				}).error(function(data, status, headers, cfg) {
+					scope.usernameIsUnique = 'valid';
+					c.$setValidity('username', true);
+				});
+			});
+		}
+	};
+} ]);
+
+app.controller({
+	SignupController : function($scope, $http, $location) {
+		$scope.usernameIsLowercase = 'valid';
+		$scope.usernameIsNoSpace = 'valid';
+		$scope.usernameIsUnique = 'valid';
+
+		// should be one of
+//		BARE,
+//		UNITS_ONLY,
+//		UNIT_AND_ATTRIBUTES,
+//		FULL_SAMPLE;		
+		$scope.initialData = "FULL_SAMPLE";
+		$scope.submit = function() {
+			$http.post('api/users/signup', {
+				firstName : $scope.firstName,
+				lastName : $scope.lastName,
+				mobile : $scope.mobile,
+				username : $scope.username,
+				email : $scope.email,
+				password : $scope.password,
+				initialData : $scope.initialData
+			})
+			.success(function() {
+				toastr.success("signup successful!");
+				$scope.msg = "Thank you for signing up! Please check your email. You should a message. Please follow the link in the email to complete your signup";
+			}).error(function(data, status, headers, config) {
+				toastr.error("there was a problem");
+				$scope.msg = data;
+			});
+		};
+		
+		$scope.cancel = function() {
+			window.location.href = "/";
+		};
+	}
+});
+
+app.controller({
+	VerifyController: function($scope,$timeout, $location, $http) {
+		$scope.code = $location.search()['verifyCode'];
+		
+		$scope.verified = false;
+		$scope.failedverify = false;
+		$http.post('/api/users/verify', {
+				verifyCode : $scope.code
+			}).success(function(data) {
+				$scope.verified = true;
+				$scope.failedverify = false;
+				$scope.username = data.username;
+				var shortWait = $timeout(function() {
+					$location.path('/dash');	
+					$location.replace();
+					$location.search('verifyCode', null);
+				},4000);
+				//$rootScope.$broadcast('reloadMenus');
+			}).error(function(data) {
+				$scope.failedverify = true;
+				toastr.error("sorry unable to verify your account ");
+			});
+	}
+});
+app.directive('forceLowercase', function() {
+	return {
+		require : 'ngModel',
+		link : function(scope, element, attrs, modelCtrl) {
+			var lowercaseit = function(inputValue) {
+				if (typeof inputValue == 'undefined')
+					return inputValue;
+				var lowercase = inputValue.toLowerCase();
+				if (lowercase !== inputValue) {
+					modelCtrl.$setViewValue(lowercase);
+					modelCtrl.$render();
+				}
+				return lowercase;
+			};
+			modelCtrl.$parsers.push(lowercaseit);
+			lowercaseit(scope[attrs.ngModel]); // capitalize initial value
+		}
+	};
+});
+
+app.directive(
+	'passwordValidate',
+	function() {
+		return {
+			require : 'ngModel',
+			link : function(scope, elm, attrs, ctrl) {
+				ctrl.$parsers.unshift(function(viewValue) {
+
+					scope.pwdValidLength = (viewValue && viewValue.length >= 8 ? 'valid' : undefined);
+					
+					scope.pwdHasLetter = (viewValue && /[A-z]/.test(viewValue)) ? 'valid' : undefined;
+					
+					scope.pwdHasNumber = (viewValue && /\d/.test(viewValue)) ? 'valid' : undefined;
+
+					if (scope.pwdValidLength && scope.pwdHasLetter && scope.pwdHasNumber) {
+						ctrl.$setValidity('pwd', true);
+						return viewValue;
+					} else {
+						ctrl.$setValidity('pwd', false);
+						return undefined;
+					}
+				});
+			}
+		};
+	});
