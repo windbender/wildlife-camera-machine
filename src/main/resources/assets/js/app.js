@@ -21,7 +21,7 @@ config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/categorize/:gridId', {templateUrl: '/partials/categorize.html', controller: 'CategorizeController'});
   $routeProvider.when('/report', {templateUrl: '/partials/report.html', controller: 'ReportController'});
   $routeProvider.when('/signup', {templateUrl: '/partials/signup.html', controller: 'SignupController'});
-  $routeProvider.when('/verify/', {templateUrl: '/partials/verify.html', controller: 'VerifyController'})
-
+  $routeProvider.when('/verify', {templateUrl: '/partials/verify.html', controller: 'VerifyController'})
+  $routeProvider.when('/createJoin', {templateUrl: '/partials/createOrJoin.html', controller: 'CreateJoinController'})
   $routeProvider.otherwise({redirectTo: '/categorize'});
 }]);

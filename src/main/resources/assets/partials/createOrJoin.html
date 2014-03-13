@@ -1,0 +1,47 @@
+Next you must be a member of a project.  You may either create your own project  or you may request to join another project.
+	
+	<div class="well row">
+		<h3>create project</h3>
+		<form class="form-horizontal" >
+			<div class="form-group">
+				<label class="col-sm-3 control-label" for="projectName">Project&nbsp;Name</label>
+				<div class="controls">
+					<input type="text" id="projectName" placeholder="new project" ng-model="projectName" autofocus class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label" for="projectDescription">Project&nbsp;Description</label>
+				<div class="controls">
+					<input type="text" id="projectDescription" placeholder="new project" ng-model="projectDescription" class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="controls">
+					<button type="submit" ng-click="submitCreate()" class="btn btn-submit btn-success">Create Project</button>
+				</div>
+				<div id="httpwaiting" style="color:#FF0000;display:none">
+					PLEASE WAIT.....
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="well">
+		<h3>request to join another project</h3>
+		<form  class="form-horizontal" >
+			<div class="form-group">
+				<label class="col-sm-3 control-label" for="selectedProject">Select&nbsp;A&nbsp;Project</label>
+				<div class="controls">
+					<input type="text" ng-model="selectedProject" typeahead="name for name in projects | filter:selected">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="controls">
+					<button type="submit" ng-click="submitJoinRequest()" class="btn btn-submit btn-success">Request To Join Project</button>
+				</div>
+				<div id="httpwaiting" style="color:#FF0000;display:none">
+					PLEASE WAIT.....
+				</div>
+			</div>
+  		</form>
+	</div>

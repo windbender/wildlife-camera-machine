@@ -59,7 +59,11 @@ AssetsBundleConfiguration {
 	
 	@JsonProperty
 	@NotNull
-	private String rootURL;;
+	private String rootURL;
+
+	@JsonProperty
+	@NotNull
+	private String sessionPersistDirectory;;
 
 
 	public AmazonS3Configuration getAmazon() {
@@ -110,5 +114,11 @@ AssetsBundleConfiguration {
 	public String getSMTPMachine() {
 		return SMTPMachine;
 	}
+
+
+	public String getSessionPersistDirectory() {
+		return sessionPersistDirectory;
+	}
+
 	
 }

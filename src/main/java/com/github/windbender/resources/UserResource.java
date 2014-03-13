@@ -381,12 +381,12 @@ public class UserResource {
 	    return b.build();	    
 	}
 	
-	
+	final boolean autoLoginOnVerify = true;
 	@POST
 	@Timed
 	@Path("verify")
 	@UnitOfWork
-	public Response verify(VerifyRequest req) {
+	public Response verify(@Context HttpServletRequest request,VerifyRequest req) {
 		String code = req.getVerifyCode();
 		User p = ud.findByVerifyCode(code);
 		if(p == null) {
@@ -397,6 +397,9 @@ public class UserResource {
 			this.emailService.sendUsANotification(p);
 		} catch (MessagingException e) {
 			// do nothing here
+		}
+		if(autoLoginOnVerify) {
+			loadAssociatedAndSetSessionWith(request,p);
 		}
 		VerifyResponse vr = new VerifyResponse(p);
 		return Response.ok(vr, MediaType.APPLICATION_JSON).build();

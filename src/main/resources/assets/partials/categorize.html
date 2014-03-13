@@ -27,7 +27,7 @@
 		<div>
 			<table>
 				<tr><td><button type="button" ng-click="sendKey(32)" class="btn btn-primary btn-lg">spc</button></td><td>nothing found</td></tr>
-				<tr ng-repeat="key in keys">
+				<tr ng-repeat="key in topSpecies">
 					<td><button type="button" ng-click="sendKey(key.c)" class="btn btn-primary btn-lg">{{key.c}}</button></td><td>{{key.name}}</td>
 				</tr>
 			</table>

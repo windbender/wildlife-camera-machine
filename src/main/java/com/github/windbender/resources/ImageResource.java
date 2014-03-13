@@ -35,6 +35,7 @@ import com.github.windbender.core.IdentificationRequest;
 import com.github.windbender.core.ImageRecordTO;
 import com.github.windbender.core.ImageStore;
 import com.github.windbender.dao.ImageRecordDAO;
+import com.github.windbender.dao.SpeciesDAO;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.Species;
@@ -54,11 +55,13 @@ public class ImageResource {
 	private DataStore ds;
 	private ImageStore store;
 	ImageRecordDAO irDAO;
+	private SpeciesDAO speciesDAO;
 
-	public ImageResource(DataStore ds, ImageStore store,	ImageRecordDAO irDAO) {
+	public ImageResource(DataStore ds, ImageStore store,	ImageRecordDAO irDAO, SpeciesDAO speciesDAO) {
 		this.ds = ds;
 		this.store = store;
 		this.irDAO = irDAO;
+		this.speciesDAO = speciesDAO;
 	}
 
 	@GET
@@ -125,20 +128,54 @@ public class ImageResource {
 	@GET
 	@Timed
 	@Produces(MediaType.APPLICATION_JSON)
+	@UnitOfWork
 	@Path("species")
 	public List<Species> listSpecies(@SessionUser User user) {
-		
-		List<Species> l = new ArrayList<Species>();
-		l.add(new Species().setC('p').setName("puma").setId(1));
-		l.add(new Species().setC('d').setName("deer").setId(2));
-		l.add(new Species().setC('k').setName("buck").setId(3));
-		l.add(new Species().setC('s').setName("skunk").setId(4));
-		l.add(new Species().setC('b').setName("bobcat").setId(5));
-		l.add(new Species().setC('h').setName("human").setId(6));
-		l.add(new Species().setC('g').setName("dog").setId(7));
+		List<Species> l = this.speciesDAO.findAll();
 		return l;
 	}
+	@GET
+	@Timed
+	@Produces(MediaType.APPLICATION_JSON)
+	@UnitOfWork
+	@Path("topSpecies")
+	public List<Species> listTopSpecies(@SessionUser User user) {
+		List<Species> topTen = getTopTenForProject();
+		
+		return topTen;
+	}
 	
+	private List<Species> getTopTenForProject() {
+		List<Species> l = new ArrayList<Species>();
+		Species s = this.speciesDAO.findByNameContains("puma");
+		s.setC('p');
+		if(s != null) l.add(s);
+		
+		s = this.speciesDAO.findByNameContains("mule");
+		s.setC('d');
+		if(s != null) l.add(s);
+		
+		s = this.speciesDAO.findByNameContains("skunk");
+		if(s != null) {
+			s.setC('s');
+			l.add(s);
+		}
+		
+		s = this.speciesDAO.findByNameContains("lynx");
+		s.setC('b');
+		if(s != null) l.add(s);
+
+		s = this.speciesDAO.findByNameContains("sapiens");
+		s.setC('h');
+		if(s != null) l.add(s);
+
+		s = this.speciesDAO.findByNameContains("familiaris");
+		s.setC('g');
+		if(s != null) l.add(s);
+
+		return l;
+	}
+
 	@POST
 	@Timed
 	@UnitOfWork

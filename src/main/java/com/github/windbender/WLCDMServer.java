@@ -1,6 +1,10 @@
 package com.github.windbender;
 
 
+import java.io.File;
+import java.io.IOException;
+
+import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 
 import com.bazaarvoice.dropwizard.assets.ConfiguredAssetsBundle;
@@ -13,14 +17,19 @@ import com.github.windbender.dao.EventDAO;
 import com.github.windbender.dao.HibernateUserDAO;
 import com.github.windbender.dao.IdentificationDAO;
 import com.github.windbender.dao.ImageRecordDAO;
+import com.github.windbender.dao.ProjectDAO;
 import com.github.windbender.dao.SpeciesDAO;
 import com.github.windbender.dao.TokenDAO;
+import com.github.windbender.dao.UserProjectDAO;
 import com.github.windbender.domain.Identification;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
+import com.github.windbender.domain.Project;
 import com.github.windbender.domain.Species;
 import com.github.windbender.domain.User;
+import com.github.windbender.domain.UserProject;
 import com.github.windbender.resources.ImageResource;
+import com.github.windbender.resources.ProjectResource;
 import com.github.windbender.resources.UserResource;
 import com.github.windbender.service.AmazonMessageSender;
 import com.github.windbender.service.AsyncEmailSender;
@@ -63,7 +72,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
       
 
 	private final HibernateBundle<WLCDMServerConfiguration> hibernate = new HibernateBundle<WLCDMServerConfiguration>(
-			Identification.class,ImageRecord.class,ImageEvent.class,User.class,Species.class) {
+			Identification.class,ImageRecord.class,ImageEvent.class,User.class,Species.class,Project.class, UserProject.class) {
 	    @Override
 	    public DatabaseConfiguration getDatabaseConfiguration(WLCDMServerConfiguration configuration) {
 	        return configuration.getDatabaseConfiguration();
@@ -80,6 +89,8 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
         final HibernateUserDAO uDAO = new HibernateUserDAO(hibernate.getSessionFactory());
         final EventDAO ieDAO = new EventDAO(hibernate.getSessionFactory());
         final TokenDAO tokenDAO = new TokenDAO(hibernate.getSessionFactory());
+        final ProjectDAO projDAO = new ProjectDAO(hibernate.getSessionFactory());
+        final UserProjectDAO upDAO = new UserProjectDAO(hibernate.getSessionFactory());
         
         HibernateDataStore ds = new HibernateDataStore(idDAO,irDAO,spDAO,uDAO, ieDAO, hibernate.getSessionFactory());
     	environment.manage(ds);
@@ -106,9 +117,33 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 			emailService = new EmailService(configuration, ms);
 		}
 		environment.addResource(new UserResource(uDAO, tokenDAO, emailService));
-		environment.addResource(new ImageResource(ds, store, irDAO));
+		environment.addResource(new ImageResource(ds, store, irDAO, spDAO));
+		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO));
 		
-		environment.setSessionHandler(new SessionHandler());
+		
+		HashSessionManager hsm = new HashSessionManager();
+		
+		try {
+			File dir = new File(configuration.getSessionPersistDirectory());
+			File f = dir.getCanonicalFile();
+			if(!f.exists()) {
+				if(!f.mkdir()) {
+					throw new IllegalArgumentException("can't create session directory");
+				}
+			}
+			
+			if(!dir.isDirectory()) {
+				throw new IOException("persistence directory is not a directory");
+			}
+			
+			hsm.setStoreDirectory(dir);
+			hsm.setIdleSavePeriod(10*60); // 10 minutes
+			hsm.setSavePeriod(30);
+		} catch (IOException e) {
+			
+		}
+		
+		environment.setSessionHandler(new SessionHandler(hsm));
 		environment.addProvider(SessionUserProvider.class);
 		
 	}

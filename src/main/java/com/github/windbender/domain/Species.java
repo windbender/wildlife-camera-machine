@@ -16,8 +16,11 @@ public class Species {
 	@Column(name = "id", nullable=false)
 	private long id;
 
-	@Column(name="name", nullable=false)
+	@Column(name="common_name", nullable=false)
 	String name;
+
+	@Column(name="latin_name", nullable=true)
+	String latinName;
 	
 	@Column(name="keychar", nullable=false)
 	Character c;
@@ -29,8 +32,11 @@ public class Species {
 		return this;
 	}
 	public int getKeycode() {
-		Character upper = c.toUpperCase(c);
-		int x = (int)upper;
+		int x = 0;
+		if(c != null) {
+			Character upper = c.toUpperCase(c);
+			x = (int)upper;
+		}
 		return x;
 	}
 	public Character getC() {
@@ -46,6 +52,12 @@ public class Species {
 	public Species setId(int id) {
 		this.id = id;
 		return this;
+	}
+	public String getLatinName() {
+		return latinName;
+	}
+	public void setLatinName(String latinName) {
+		this.latinName = latinName;
 	}
 	
 //	$scope.keys.push({

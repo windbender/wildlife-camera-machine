@@ -20,8 +20,14 @@ var app = angular.module('wlcdm.controllers', [])
 		toastr.error("sorry unable to retrive list");
 	});
 
+	
+	$http.get('/api/images/topSpecies').success(function(data) {
+		$scope.topSpecies = data;
+	}).error(function(data,status,headers,config) {
+		toastr.error("sorry unable to retrive list");
+	});
 	$http.get('/api/images/species').success(function(data) {
-		$scope.keys = data;
+		$scope.species = data;
 	}).error(function(data,status,headers,config) {
 		toastr.error("sorry unable to retrive list");
 	});
@@ -48,7 +54,7 @@ var app = angular.module('wlcdm.controllers', [])
 				'speciesId':speciesid,
 				'imageid':imageid
 		}
-		$http.post('api/images/identification',idRequest).success(function(data) {
+		$http.post('/api/images/identification',idRequest).success(function(data) {
 			toastr.options.showDuration = 300;
 			toastr.options.hideDuration = 300;
 			toastr.options.timeOut = 500;
@@ -83,14 +89,13 @@ var app = angular.module('wlcdm.controllers', [])
 		
 		// other keys	
 		} else {
-    		$scope.keys.forEach(function(key) {
+    		$scope.topSpecies.forEach(function(key) {
     			if(key.keycode == keyCode) {
     				$scope.logAnimal(key.name,key.id,$scope.images[$scope.currentIndex].id);
     				$scope.next();
     			}
     		});
-    		
-		}
+    	}
 	};
 	$scope.sendKey = function(keyStr) {
 		var key = keyStr.charCodeAt(0);
@@ -175,8 +180,7 @@ var app = angular.module('wlcdm.controllers', [])
 		        //formDataAppender: function(formData, key, val){} //#40#issuecomment-28612000
 		      	}).progress(function(evt) {
 		      		$scope.update(this.file.name,parseInt(100.0 * evt.loaded / evt.total));
-		        	console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
-		      	}).success(function(data, status, headers, config) {
+		        }).success(function(data, status, headers, config) {
 		        // file is uploaded successfully
 		      		console.log(data);
 		      	});
@@ -361,17 +365,51 @@ app.controller({
 				$scope.failedverify = false;
 				$scope.username = data.username;
 				var shortWait = $timeout(function() {
-					$location.path('/dash');	
+					$location.path('/createJoin');	
 					$location.replace();
 					$location.search('verifyCode', null);
 				},4000);
-				//$rootScope.$broadcast('reloadMenus');
+				$rootScope.$broadcast('reloadMenus');
 			}).error(function(data) {
 				$scope.failedverify = true;
 				toastr.error("sorry unable to verify your account ");
 			});
 	}
 });
+app.controller({
+	CreateJoinController: function($scope, $http) {
+		$scope.selectedProject = undefined;
+		$http.get('/api/projects').success(function(data) {
+			$scope.projects = data;
+		}).error(function(data,status,headers,config) {
+			toastr.error("sorry unable to retrive list");
+		});
+
+		$scope.submitJoinRequest = function() {
+			var joinProjectRequest = {
+					'selectedProject':$scope.selectedProject
+			}
+			$http.post('/api/projects/join',joinProjectRequest).success(function(data) {
+				toastr.success("request sent");
+			}).error(function(data, status, headers, config) {
+				toastr.error("failed to post");
+			});
+
+		}
+		$scope.submitCreate = function() {
+			var createProjectRequest = {
+					'projectName':$scope.projectName,
+					'projectDescription':$scope.projectDescription
+			}
+			$http.post('/api/projects',createProjectRequest).success(function(data) {
+				toastr.success("project created");
+			}).error(function(data, status, headers, config) {
+				toastr.error("failed to post");
+			});
+		}
+	}
+});
+
 app.directive('forceLowercase', function() {
 	return {
 		require : 'ngModel',

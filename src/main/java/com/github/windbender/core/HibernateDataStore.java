@@ -135,7 +135,6 @@ public class HibernateDataStore implements DataStore, Managed, Runnable {
 			ie.addImage(addImage);
 			irDAO.save(addImage);
 		}else {
-			System.out.println("WHAT... no image to bind ?");
 			eventSearchQueue.add(ir);
 		}
 		eventDAO.save(ie);
