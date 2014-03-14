@@ -6,6 +6,15 @@
 			class="innerImg" ng-src="{{nextnext.imagesrc}}" ng-hide="true" />
 	</div>
 	<div class="controls">
+		<div id="stats">
+			<div>
+				number identified: {{numberIdentified}}
+				<p>
+				number remaining: {{remainingToIdentify}}
+				<p>
+				<progressbar type="success" max="100" value="percentIdentified"><span style="color:black; white-space:nowrap;">{{percentIdentified}} %</span></progressbar>
+			</div>
+		</div>
 		<div class="arrows">
 			<button type="button" ng-click="prevImage()" class="btn btn-primary btn-lg">&lt;</button>
 			<button type="button" ng-click="nextImage()" class="btn btn-primary btn-lg">&gt;</button>

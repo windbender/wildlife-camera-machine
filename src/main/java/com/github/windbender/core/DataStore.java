@@ -18,5 +18,6 @@ public interface DataStore {
 
 	ImageRecord getRecordFromId(String id);
 
-	ImageEvent getGoodEventToIdentify(User user);
+	NextEventRecord makeNextEventRecord(User user, Long lastEventId);
+
 }

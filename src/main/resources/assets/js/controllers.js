@@ -12,13 +12,18 @@ var app = angular.module('wlcdm.controllers', [])
 	$scope.numberOfAnimals =1;
 
 	$scope.getNextEvent = function() {
-		$http.get('/api/images/nextEvent').success(function(data) {
+		$http.get('/api/images/nextEvent?lastEvent='+$scope.eventId).success(function(data) {
 			if(data == "") return;
-			$scope.images = data.imageRecords;
-			$scope.maxindex = $scope.images.length;
-			$scope.eventId = data.id;
-			$scope.currentIndex=0;
-			$scope.setImage();
+			if(data.imageEvent != null) {
+				$scope.images = data.imageEvent.imageRecords;
+				$scope.eventId = data.imageEvent.id;
+				$scope.maxindex = $scope.images.length;
+				$scope.currentIndex=0;
+				$scope.setImage();
+			}
+			$scope.remainingToIdentify = data.remainingToIdentify;
+			$scope.numberIdentified = data.numberIdentified;
+			$scope.percentIdentified = 100.0 *$scope.numberIdentified / ($scope.remainingToIdentify + $scope.numberIdentified);
 		}).error(function(data,status,headers,config) {
 			toastr.error("sorry unable to retrive list");
 		});

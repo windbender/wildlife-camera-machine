@@ -36,6 +36,8 @@ import com.github.windbender.core.DataStore;
 import com.github.windbender.core.IdentificationRequest;
 import com.github.windbender.core.ImageRecordTO;
 import com.github.windbender.core.ImageStore;
+import com.github.windbender.core.NextEventRecord;
+import com.github.windbender.core.UserStats;
 import com.github.windbender.dao.ImageRecordDAO;
 import com.github.windbender.dao.SpeciesDAO;
 import com.github.windbender.domain.ImageEvent;
@@ -116,13 +118,22 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("nextEvent")
-	public ImageEvent getNextEvent(@SessionUser User user) {
-		ImageEvent ie = this.ds.getGoodEventToIdentify(user);
-		for(ImageRecord ir: ie.getImageRecords()) {
-			ir.getDatetime();
+	public NextEventRecord getNextEvent(@SessionUser User user, @QueryParam("lastEvent") String lastEventIdStr) {
+		Long lastEventId = null;
+		try {
+			lastEventId = Long.parseLong(lastEventIdStr);
+		} catch (NumberFormatException e) {
+			// stupid API ignore this exception
 		}
-		ImageEvent upie = initializeAndUnproxy(ie);
-		return upie;
+		NextEventRecord ner = this.ds.makeNextEventRecord(user,lastEventId);
+		if(ner.getImageEvent() != null) {
+			for(ImageRecord ir: ner.getImageEvent().getImageRecords()) {
+				ir.getDatetime();
+			}
+			ImageEvent upie = initializeAndUnproxy(ner.getImageEvent());
+			ner.setImageEvent(upie);
+		}
+		return ner;
 	}
 	
 	public static <T> T initializeAndUnproxy(T entity) {

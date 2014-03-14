@@ -1,5 +1,6 @@
 package com.github.windbender.core;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -200,7 +201,7 @@ public class HibernateDataStore implements DataStore, Managed, Runnable {
 	}
 
 	@Override
-	public ImageEvent getGoodEventToIdentify(User u) {
+	public NextEventRecord makeNextEventRecord(User u, Long lastEventId) {
 		// We want to identify events which are
 		// a) haven't been previously identifed by this user
 		List<Integer> done = this.eventDAO.findEventIdsDoneByUser(u);
@@ -213,12 +214,34 @@ public class HibernateDataStore implements DataStore, Managed, Runnable {
 		lowNumberSet.removeAll(doneSet);
 		
 		// Ok we could cache that set... or we could just pick one and go with it for now.
-		
+		if(lowNumberSet.size() == 0) {
+			NextEventRecord ner = new NextEventRecord(null);
+			ner.setNumberIdentified(doneSet.size());
+			ner.setRemainingToIdentify(0);
+			return ner;
+		}
 		Long eventId = lowNumberSet.first().longValue();
+		if(eventId.equals(lastEventId)) {
+			Iterator<Integer> nit = lowNumberSet.iterator();
+			// we know there is at least one so this first next() should always be fine
+			eventId = nit.next().longValue();
+			if(nit.hasNext()) {
+				eventId = nit.next().longValue();				
+			} 
+			if(eventId.equals(lastEventId)) {
+				// we just finished the last event, so return the "done" type record.
+				NextEventRecord ner = new NextEventRecord(null);
+				ner.setNumberIdentified(doneSet.size());
+				ner.setRemainingToIdentify(0);
+				return ner; 
+			}
+		}
 		ImageEvent ie = eventDAO.findById(eventId);
 //		ImageEvent ie = null;
-
-		return ie;
+		NextEventRecord ner = new NextEventRecord(ie);
+		ner.setNumberIdentified(doneSet.size());
+		ner.setRemainingToIdentify(lowNumberSet.size());
+		return ner;
 	}
 	private SortedSet<Long> makeSetFromId(List<ImageEvent> done) {
 		SortedSet<Long> s = new TreeSet<Long>();
