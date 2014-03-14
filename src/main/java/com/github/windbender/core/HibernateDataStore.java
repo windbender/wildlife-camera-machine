@@ -25,7 +25,7 @@ import com.github.windbender.domain.Species;
 import com.github.windbender.domain.User;
 import com.yammer.dropwizard.lifecycle.Managed;
 
-public class HibernateDataStore implements DataStore, Managed, Runnable {
+public class HibernateDataStore implements Managed, Runnable {
 
 	Logger log = LoggerFactory.getLogger(HibernateDataStore.class);
 
@@ -48,7 +48,6 @@ public class HibernateDataStore implements DataStore, Managed, Runnable {
 		eventSearchQueue = new ConcurrentLinkedQueue<ImageRecord>();
 	}
 
-	@Override
 	public void addImage(ImageRecord newImage) {
 		log.info("adding image "+newImage);
 		// store the image in DS
@@ -190,17 +189,14 @@ public class HibernateDataStore implements DataStore, Managed, Runnable {
 	}
 	
 
-	@Override
 	public List<ImageRecord> getTimeOrderedImages() {
 		return irDAO.findAll();
 	}
 
-	@Override
 	public List<ImageEvent> getImageEvents() {
 		return eventDAO.findAll();
 	}
 
-	@Override
 	public NextEventRecord makeNextEventRecord(User u, Long lastEventId) {
 		// We want to identify events which are
 		// a) haven't been previously identifed by this user
@@ -251,7 +247,6 @@ public class HibernateDataStore implements DataStore, Managed, Runnable {
 		return s;
 	}
 
-	@Override
 	public void recordIdentification(IdentificationRequest idRequest, User u) {
 		
 		ImageRecord identifiedImage = null;
@@ -288,7 +283,6 @@ public class HibernateDataStore implements DataStore, Managed, Runnable {
 		
 	}
 
-	@Override
 	public ImageRecord getRecordFromId(String id) {
 		ImageRecord identifiedImage = irDAO.findById(id);
 		return identifiedImage;

@@ -32,12 +32,11 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.github.windbender.auth.SessionUser;
-import com.github.windbender.core.DataStore;
+import com.github.windbender.core.HibernateDataStore;
 import com.github.windbender.core.IdentificationRequest;
 import com.github.windbender.core.ImageRecordTO;
 import com.github.windbender.core.ImageStore;
 import com.github.windbender.core.NextEventRecord;
-import com.github.windbender.core.UserStats;
 import com.github.windbender.dao.ImageRecordDAO;
 import com.github.windbender.dao.SpeciesDAO;
 import com.github.windbender.domain.ImageEvent;
@@ -56,12 +55,12 @@ import com.yammer.metrics.annotation.Timed;
 public class ImageResource {
 
 	Logger log = LoggerFactory.getLogger(ImageResource.class);
-	private DataStore ds;
+	private HibernateDataStore ds;
 	private ImageStore store;
 	ImageRecordDAO irDAO;
 	private SpeciesDAO speciesDAO;
 
-	public ImageResource(DataStore ds, ImageStore store,	ImageRecordDAO irDAO, SpeciesDAO speciesDAO) {
+	public ImageResource(HibernateDataStore ds, ImageStore store,	ImageRecordDAO irDAO, SpeciesDAO speciesDAO) {
 		this.ds = ds;
 		this.store = store;
 		this.irDAO = irDAO;
