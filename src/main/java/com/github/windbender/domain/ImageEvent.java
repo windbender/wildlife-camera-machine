@@ -1,5 +1,6 @@
 package com.github.windbender.domain;
 
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -17,6 +18,8 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 
 @Entity
@@ -30,6 +33,7 @@ public class ImageEvent {
 	private long id;
 	
 	
+	@JsonProperty
 	public long getId() {
 		return id;
 	}
@@ -41,6 +45,7 @@ public class ImageEvent {
 	@Column(name="camera_id", nullable=true)
 	String cameraID;
 	
+	@JsonProperty
 	public String getCameraID() {
 		return cameraID;
 	}
@@ -49,14 +54,18 @@ public class ImageEvent {
 		this.cameraID = cameraID;
 	}
 
-	public SortedSet<ImageRecord> getImageRecords() {
+	@JsonProperty
+	@OneToMany(mappedBy="event",fetch=FetchType.LAZY)
+	@Sort(type=SortType.NATURAL)
+	@ElementCollection(targetClass=ImageRecord.class)
+	SortedSet<ImageRecord> imageRecords = new TreeSet<ImageRecord>();
+	//Set<ImageRecord> imageRecords = new HashSet<ImageRecord>();
+
+	//    public SortedSet<ImageRecord> getImageRecords() {
+	 public SortedSet<ImageRecord> getImageRecords() {
 		return imageRecords;
 	}
 	
-	@OneToMany(mappedBy="event",fetch=FetchType.EAGER)
-	@Sort(type=SortType.NATURAL)
-	@ElementCollection(targetClass=ImageRecord.class)
-    SortedSet<ImageRecord> imageRecords = new TreeSet<ImageRecord>();
 
 	public void setImageRecords(SortedSet<ImageRecord> images) {
 		this.imageRecords = images;
@@ -66,6 +75,7 @@ public class ImageEvent {
 	DateTime eventStartTime;
 	
 	
+	@JsonProperty
 	public DateTime getEventStartTime() {
 		return eventStartTime;
 	}
@@ -78,6 +88,7 @@ public class ImageEvent {
 
 	public void addImage(ImageRecord newImage) {
 		imageRecords.add(newImage);
+		newImage.setEvent(this);
 		if(this.eventStartTime.isAfter(newImage.getDatetime()) ){
 			this.eventStartTime = newImage.getDatetime();
 		}

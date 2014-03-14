@@ -43,9 +43,12 @@ public class ImageRecord implements Comparable<ImageRecord>{
 	String cameraID;
 	
 	public int compareTo(ImageRecord other) {
-		  int x = this.id.compareTo(other.getId());
-		  return x;
+		int x = this.datetime.compareTo(other.datetime);  
+		if (x !=0) return x;
+		x = this.id.compareTo(other.getId());
+		return x;
 	}
+	
 	@Column(name="camera_id", nullable=true)
 	public String getCameraID() {
 		return cameraID;
@@ -138,14 +141,15 @@ public class ImageRecord implements Comparable<ImageRecord>{
 		this.id = id;
 	}
 	
-	 public ImageEvent event;
 
 	@JsonIgnore
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="event_id")
 	public ImageEvent getEvent() {
 		return event;
 	}
+
+	 public ImageEvent event;
 
 	public void setEvent(ImageEvent event) {
 		this.event = event;

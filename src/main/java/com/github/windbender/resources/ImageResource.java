@@ -21,6 +21,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,11 +121,26 @@ public class ImageResource {
 		if(max == 0) return null;
 		int index = (int) (Math.random() * max);
 		ImageEvent ie = imageEvents.get(index);
+		for(ImageRecord ir : ie.getImageRecords()) {
+		}
 		
-		
-		return ie;
+		ImageEvent upie = initializeAndUnproxy(ie);
+		return upie;
 	}
 	
+	public static <T> T initializeAndUnproxy(T entity) {
+	    if (entity == null) {
+	        throw new 
+	           NullPointerException("Entity passed for initialization is null");
+	    }
+
+	    Hibernate.initialize(entity);
+	    if (entity instanceof HibernateProxy) {
+	        entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer().getImplementation();
+	    }
+	    return entity;
+	}
+
 	
 	@GET
 	@Timed
