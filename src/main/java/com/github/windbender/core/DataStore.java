@@ -17,4 +17,6 @@ public interface DataStore {
 	void recordIdentification(IdentificationRequest idRequest, User u);
 
 	ImageRecord getRecordFromId(String id);
+
+	ImageEvent getGoodEventToIdentify(User user);
 }

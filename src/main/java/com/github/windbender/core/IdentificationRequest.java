@@ -5,13 +5,21 @@ public class IdentificationRequest {
 		Integer numberOfAnimals;
 		String speciesName;
 		long speciesId;
+		String imageid;
+		Long eventid;
+		
+		public Long getEventid() {
+			return eventid;
+		}
+		public void setEventid(Long eventid) {
+			this.eventid = eventid;
+		}
 		public long getSpeciesId() {
 			return speciesId;
 		}
 		public void setSpeciesId(long speciesId) {
 			this.speciesId = speciesId;
 		}
-		String imageid;
 		public Integer getNumberOfAnimals() {
 			return numberOfAnimals;
 		}
@@ -33,9 +41,11 @@ public class IdentificationRequest {
 		@Override
 		public String toString() {
 			return "IdentificationRequest [numberOfAnimals=" + numberOfAnimals
-					+ ", speciesName=" + speciesName + ", imageid=" + imageid
-					+ "]";
+					+ ", speciesName=" + speciesName + ", speciesId="
+					+ speciesId + ", imageid=" + imageid + ", eventid="
+					+ eventid + "]";
 		}
+		
 		
 		
 }

@@ -36,11 +36,11 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="image_id" type="varchar(255)">
-				<constraints nullable="false" />
+				<constraints nullable="true" />
 			</column>
-			<!-- <column name="image_event_id" type="int(11)"> -->
-			<!-- <constraints nullable="false"/> -->
-			<!-- </column> -->
+			<column name="image_event_id" type="int(11)">
+				<constraints nullable="true"/>
+			</column>
 
 			<column name="species_id" type="int(11)">
 				<constraints nullable="false" />
@@ -870,11 +870,14 @@
 			</column>
 		</createTable>
 	</changeSet>
-		<changeSet id="12" author="windbender" dbms="mysql">
+	<changeSet id="12" author="windbender" dbms="mysql">
 		<comment>These are species which are california specific from the CROS project</comment>
 	
 		<sql >insert into species (cros_id,common_name, latin_name) values (400, "Human", "Homo sapiens")</sql>
 		<sql >insert into species (cros_id,common_name, latin_name) values (287, "Dog", "Canis lupus familiaris")</sql>
-		</changeSet>
+	</changeSet>
+	<changeSet id="13" author="windbender" dbms="mysql">
+		<sql >insert into species (cros_id,common_name, latin_name) values (-1, "none", "none identified")</sql>
+	</changeSet>
 		
 </databaseChangeLog>

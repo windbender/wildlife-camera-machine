@@ -109,21 +109,18 @@ public class ImageResource {
 		return imageEvents;
 	}
 	
+	
+	
 	@GET
 	@Timed
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("nextEvent")
 	public ImageEvent getNextEvent(@SessionUser User user) {
-		List<ImageEvent> imageEvents = ds.getImageEvents();
-// TODO better algo here please
-		int max = imageEvents.size();
-		if(max == 0) return null;
-		int index = (int) (Math.random() * max);
-		ImageEvent ie = imageEvents.get(index);
-		for(ImageRecord ir : ie.getImageRecords()) {
+		ImageEvent ie = this.ds.getGoodEventToIdentify(user);
+		for(ImageRecord ir: ie.getImageRecords()) {
+			ir.getDatetime();
 		}
-		
 		ImageEvent upie = initializeAndUnproxy(ie);
 		return upie;
 	}
@@ -202,7 +199,7 @@ public class ImageResource {
 	public Response identify(@SessionUser User user,IdentificationRequest idRequest) {
 		log.info("GOT an ID "+idRequest);
 		// null sh ould be the user
-		this.ds.recordIdentification(idRequest, null);
+		this.ds.recordIdentification(idRequest, user);
 		return Response.ok().build();
 	}
 	

@@ -11,16 +11,19 @@ var app = angular.module('wlcdm.controllers', [])
 	$scope.nextnext = {};
 	$scope.numberOfAnimals =1;
 
-	$http.get('/api/images/nextEvent').success(function(data) {
-		if(data == "") return;
-		$scope.images = data.imageRecords;
-		$scope.maxindex = $scope.images.length;
-		$scope.currentIndex=0;
-	}).error(function(data,status,headers,config) {
-		toastr.error("sorry unable to retrive list");
-	});
-
-	
+	$scope.getNextEvent = function() {
+		$http.get('/api/images/nextEvent').success(function(data) {
+			if(data == "") return;
+			$scope.images = data.imageRecords;
+			$scope.maxindex = $scope.images.length;
+			$scope.eventId = data.id;
+			$scope.currentIndex=0;
+			$scope.setImage();
+		}).error(function(data,status,headers,config) {
+			toastr.error("sorry unable to retrive list");
+		});
+	}
+	$scope.getNextEvent();
 	$http.get('/api/images/topSpecies').success(function(data) {
 		$scope.topSpecies = data;
 	}).error(function(data,status,headers,config) {
@@ -33,10 +36,10 @@ var app = angular.module('wlcdm.controllers', [])
 	});
 
 
-	$scope.next = function() {
+	$scope.nextImage = function() {
 		$scope.currentIndex < $scope.images.length - 1 ? $scope.currentIndex++ : $scope.currentIndex = 0;
 	};
-	$scope.prev = function() {
+	$scope.prevImage = function() {
 		$scope.currentIndex > 0 ? $scope.currentIndex-- : $scope.currentIndex = $scope.images.length - 1;
 	};
 		
@@ -46,13 +49,14 @@ var app = angular.module('wlcdm.controllers', [])
 //	});
 	
 
-	$scope.logAnimal = function(speciesname,speciesid,imageid) {
+	$scope.logAnimal = function(speciesname,speciesid,imageid,eventid) {
 		console.log("found "+$scope.numberOfAnimals+" of "+speciesname+" on picture "+imageid);
 		var idRequest = {
 				'numberOfAnimals': $scope.numberOfAnimals,
 				'speciesName':speciesname,
 				'speciesId':speciesid,
-				'imageid':imageid
+				'imageid':imageid,
+				'eventid':eventid
 		}
 		$http.post('/api/images/identification',idRequest).success(function(data) {
 			toastr.options.showDuration = 300;
@@ -71,11 +75,11 @@ var app = angular.module('wlcdm.controllers', [])
 		if(keyCode > 96) keyCode = keyCode - (97-65);
 		// right arrow, return, tab
 	     	if(keyCode == 39 || keyCode ==13 || keyCode==9 ) {
-	     		$scope.next();
+	     		$scope.nextImage();
 	     	
 	     		// left arrow	
 	     	} else if(keyCode == 37 ) {
-	     		$scope.prev();
+	     		$scope.prevImage();
 	     		
 	     	// numbers	
 	     	} else if((keyCode >= 48) && (keyCode <=56)) {
@@ -84,15 +88,15 @@ var app = angular.module('wlcdm.controllers', [])
 		
 		// space	
 		} else if(keyCode == 32) {
-			$scope.logAnimal("none",-1,$scope.images[$scope.currentIndex].id);
-			$scope.next();
+			$scope.logAnimal("none",-1,$scope.images[$scope.currentIndex].id,$scope.eventId);
+			$scope.getNextEvent();
 		
 		// other keys	
 		} else {
     		$scope.topSpecies.forEach(function(key) {
     			if(key.keycode == keyCode) {
-    				$scope.logAnimal(key.name,key.id,$scope.images[$scope.currentIndex].id);
-    				$scope.next();
+    				$scope.logAnimal(key.name,key.id,$scope.images[$scope.currentIndex].id,$scope.eventId);
+    				$scope.getNextEvent();
     			}
     		});
     	}
@@ -109,9 +113,7 @@ var app = angular.module('wlcdm.controllers', [])
 	    }
 	};
 	
-	
-	
-	$scope.$watch('currentIndex', function() {
+	$scope.setImage = function() {
 		var elements = angular.element( document.querySelector( '#slide' ) );
 		var el = elements[0]
 		var w = el.clientWidth;
@@ -120,7 +122,10 @@ var app = angular.module('wlcdm.controllers', [])
 		if($scope.images.length ==0) return;
 		$scope.selected.imagesrc = '/api/images/'+$scope.images[$scope.currentIndex].id+'?sz='+size;
 		$scope.imagename = $scope.images[$scope.currentIndex].originalFileName;
-		
+	}
+	
+	$scope.$watch('currentIndex', function() {
+		$scope.setImage();
 	});
 	
     focus('focusMe');

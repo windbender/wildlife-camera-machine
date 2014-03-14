@@ -83,4 +83,10 @@ public class InMemoryDataStore implements DataStore {
 		
 	}
 
+	@Override
+	public ImageEvent getGoodEventToIdentify(User user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

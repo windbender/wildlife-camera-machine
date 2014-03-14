@@ -1,6 +1,8 @@
 package com.github.windbender.core;
 
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.hibernate.Session;
@@ -198,12 +200,60 @@ public class HibernateDataStore implements DataStore, Managed, Runnable {
 	}
 
 	@Override
-	public void recordIdentification(IdentificationRequest idRequest, User u) {
-		ImageRecord identifiedImage = irDAO.findById(idRequest.getImageid());
-		Species speciesIdentified = speciesDAO.findById(idRequest.getSpeciesId());
+	public ImageEvent getGoodEventToIdentify(User u) {
+		// We want to identify events which are
+		// a) haven't been previously identifed by this user
+		List<Integer> done = this.eventDAO.findEventIdsDoneByUser(u);
+		SortedSet<Integer> doneSet = new TreeSet<Integer>(done);
+		// b) have a number of zero or 1 previous identifications
+		int number =2;
+		List<Integer> lowNumber = this.eventDAO.findEventsIdsWithFewerThanIdentifications(number);
+		SortedSet<Integer> lowNumberSet =  new TreeSet<Integer>(lowNumber);
+		
+		lowNumberSet.removeAll(doneSet);
+		
+		// Ok we could cache that set... or we could just pick one and go with it for now.
+		
+		Long eventId = lowNumberSet.first().longValue();
+		ImageEvent ie = eventDAO.findById(eventId);
+//		ImageEvent ie = null;
 
+		return ie;
+	}
+	private SortedSet<Long> makeSetFromId(List<ImageEvent> done) {
+		SortedSet<Long> s = new TreeSet<Long>();
+		for(ImageEvent ie: done) {
+			s.add(ie.getId());
+		}
+		return s;
+	}
+
+	@Override
+	public void recordIdentification(IdentificationRequest idRequest, User u) {
+		
+		ImageRecord identifiedImage = null;
+		Species speciesIdentified = null;
+		ImageEvent identifiedEvent = null;
+		
+		if(idRequest.getImageid() != null)
+			identifiedImage = irDAO.findById(idRequest.getImageid());
+		if(idRequest.getEventid() != null)
+			identifiedEvent = eventDAO.findById(idRequest.getEventid());
+		if(idRequest.getSpeciesId() == -1) {
+			// this means no species was seen....  what do we do here ?  we should have a "none" species
+			speciesIdentified = speciesDAO.findByNameContains("none");
+			
+		} else {
+			speciesIdentified = speciesDAO.findById(idRequest.getSpeciesId());
+		}
 		Identification id = new Identification();
-		id.setIdentifiedImage(identifiedImage);
+		if(identifiedEvent != null) {
+			id.setIdentifiedEvent(identifiedEvent);
+		} else if(identifiedImage != null) {
+			id.setIdentifiedImage(identifiedImage);
+		} else {
+			throw new IllegalArgumentException("could not find either the event or the image supplied");
+		}
 		id.setIdentifier(u);
 		id.setTimeOfIdentification(new DateTime());
 		id.setSpeciesIdentified(speciesIdentified);

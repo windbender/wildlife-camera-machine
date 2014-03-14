@@ -11,8 +11,6 @@ import javax.persistence.Table;
 
 import org.joda.time.DateTime;
 
-import com.github.windbender.core.IdentificationRequest;
-
 @Entity
 @Table(name="identifications")
 public class Identification {
@@ -30,10 +28,18 @@ public class Identification {
 	@Column(name="identificationTime", nullable=false)
 	DateTime timeOfIdentification;
 	
-//	@ManyToOne
-//    @JoinColumn(name="image_event_id", nullable=true)
-//    ImageEvent identifiedEvent;
-//	
+	@ManyToOne
+    @JoinColumn(name="image_event_id", nullable=true)
+    ImageEvent identifiedEvent;
+	
+	public ImageEvent getIdentifiedEvent() {
+		return identifiedEvent;
+	}
+
+	public void setIdentifiedEvent(ImageEvent identifiedEvent) {
+		this.identifiedEvent = identifiedEvent;
+	}
+
 	@ManyToOne
     @JoinColumn(name="image_id", nullable=true)
 	ImageRecord identifiedImage;
