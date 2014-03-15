@@ -179,7 +179,7 @@ public class ImageResource {
 		s.setC('d');
 		if(s != null) l.add(s);
 		
-		s = this.speciesDAO.findByNameContains("skunk");
+		s = this.speciesDAO.findByNameContains("Striped Skunk");
 		if(s != null) {
 			s.setC('s');
 			l.add(s);

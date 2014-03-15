@@ -43,6 +43,11 @@ public class SpeciesDAO extends AbstractDAO<Species>{
 		logger.info("the criteria is " + crit.toString());
 		List<Species> findList = (List<Species>) crit.list();
 		if(findList.size() ==1) return findList.get(0);
+		if(findList.size() ==0) {
+			logger.error("done for for speces query for "+string);
+			return null;
+		}
+		logger.error("more than one species for "+string+" found");
 		return null;
 	}
 
