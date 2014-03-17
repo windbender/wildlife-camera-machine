@@ -18,6 +18,7 @@ import com.github.windbender.dao.HibernateUserDAO;
 import com.github.windbender.dao.IdentificationDAO;
 import com.github.windbender.dao.ImageRecordDAO;
 import com.github.windbender.dao.ProjectDAO;
+import com.github.windbender.dao.ReportDAO;
 import com.github.windbender.dao.SpeciesDAO;
 import com.github.windbender.dao.TokenDAO;
 import com.github.windbender.dao.UserProjectDAO;
@@ -30,6 +31,7 @@ import com.github.windbender.domain.User;
 import com.github.windbender.domain.UserProject;
 import com.github.windbender.resources.ImageResource;
 import com.github.windbender.resources.ProjectResource;
+import com.github.windbender.resources.ReportResource;
 import com.github.windbender.resources.UserResource;
 import com.github.windbender.service.AmazonMessageSender;
 import com.github.windbender.service.AsyncEmailSender;
@@ -91,6 +93,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
         final TokenDAO tokenDAO = new TokenDAO(hibernate.getSessionFactory());
         final ProjectDAO projDAO = new ProjectDAO(hibernate.getSessionFactory());
         final UserProjectDAO upDAO = new UserProjectDAO(hibernate.getSessionFactory());
+        final ReportDAO reportDAO = new ReportDAO(hibernate.getSessionFactory());
         
         HibernateDataStore ds = new HibernateDataStore(idDAO,irDAO,spDAO,uDAO, ieDAO, hibernate.getSessionFactory());
     	environment.manage(ds);
@@ -119,7 +122,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		environment.addResource(new UserResource(uDAO, tokenDAO, emailService));
 		environment.addResource(new ImageResource(ds, store, irDAO, spDAO));
 		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO));
-		
+		environment.addResource(new ReportResource(reportDAO));
 		
 		HashSessionManager hsm = new HashSessionManager();
 		

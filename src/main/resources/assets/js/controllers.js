@@ -143,16 +143,48 @@ var app = angular.module('wlcdm.controllers', [])
     	zoom: 8
     };	
     
-	})
-	.controller('MyCtrl1', [function() {
+	});
+app.controller('MyCtrl1', [function() {
 		// nuffin
-  }])
-  .controller('ReportController', [function() {
-		// nuffin
-  }])
+  }]);
+
+app.controller('ReportController', ['$scope','$http',function($scope,$http) {
+	$scope.options = {width: 500, height: 300, 'bar': 'aaa'};
+//    $scope.bySpeciesData = [1, 2, 3, 4];
+    $scope.bySpeciesData = [];
+    $scope.hovered = function(d){
+    	$scope.barValue = d;
+        $scope.$apply();
+    };
+    $scope.barValue = 'None';
+    
+    $scope.params = {};
+    $scope.params.projectId = undefined;
+    $scope.params.polyGeoRegion = [];
+    $scope.params.timeStart = undefined;
+    $scope.params.timeEnd = undefined;
+    $scope.params.tod = {}
+    $scope.params.tod.day = true;
+    $scope.params.tod.sunset = true;
+    $scope.params.tod.night = true;
+    $scope.params.tod.sunrise = true;
+    $scope.params.species = [];
+    $scope.params.species.push('all');
+    
+	$scope.onChange = function() {
+		$http.post('/api/report',$scope.params).success(function(data) {
+			$scope.bySpeciesData = data.bySpeciesData;
+			
+		}).error(function(data,status,headers,config) {
+			toastr.error("sorry unable to retrive list");
+		});
+	};
+    $scope.onChange();
+          
+  }]);
   
 //https://github.com/danialfarid/angular-file-upload  
-.controller('UploadController', ['$scope','$upload',function($scope,$upload) {
+app.controller('UploadController', ['$scope','$upload',function($scope,$upload) {
 	$scope.actualProg = 0;
 	$scope.possibleProg = 0;
 	$scope.updateBar = function() {
@@ -207,8 +239,9 @@ var app = angular.module('wlcdm.controllers', [])
 			$scope.uploads[i].abort();
 		}
 	}
-  }])
-.controller({
+  }]);
+
+app.controller({
 	LoginController : function($cookies, $scope, $rootScope, $http, authService, CurUser) {
 		$scope.curUser = CurUser;
 		

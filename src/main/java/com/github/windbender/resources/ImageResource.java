@@ -189,6 +189,10 @@ public class ImageResource {
 		s.setC('b');
 		if(s != null) l.add(s);
 
+		s = this.speciesDAO.findByNameContains("turkey");
+		s.setC('t');
+		if(s != null) l.add(s);
+		
 		s = this.speciesDAO.findByNameContains("sapiens");
 		s.setC('h');
 		if(s != null) l.add(s);

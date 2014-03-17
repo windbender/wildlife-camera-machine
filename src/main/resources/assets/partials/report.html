@@ -1,1 +1,42 @@
-<p>This is the partial for view 1.</p>
+    <style>
+        body {
+            font: 14px sans-serif;
+        }
+        .axis path, .axis line {
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+        .axis path{
+            fill: none;
+            stroke: none;
+        }
+        .bar {
+            fill: steelblue;
+        }
+    </style>
+<p>Wildlife Camera Machine Report</p>
+<div>
+	project selector<p>
+	geographic region selector<p>
+	time period selector  (start and stop )<p>
+	time of day selector (Day, Night, Sunset +/1 1hr,  SunRise +/-1hr)<p>
+	Species selector<p>
+	
+</div>
+<div>
+<div id="byDay">
+	<h3>Count By Day</h3>
+	<linechart data='byDayChartData' options='byDayChartOptions' ></linechart>
+	
+</div>
+<div id="byHour">
+	<h3>Count By Hour</h3>
+	<linechart data='byHourChartData' options='byHourChartOptions' ></linechart>
+	
+</div>
+<div id="bySpecies">
+	<h3>Count By Species</h3>
+	<bar-chart height="options.height" data="bySpeciesData" hovered="hovered(args)"></bar-chart>
+</div>
+</div>
