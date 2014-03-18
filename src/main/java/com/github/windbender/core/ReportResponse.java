@@ -2,18 +2,20 @@ package com.github.windbender.core;
 
 import java.util.List;
 
+import com.github.windbender.dao.StringSeries;
+
 public class ReportResponse {
 	
 	
-	List<NV> bySpeciesData;
+	List<StringSeries> bySpeciesData;
 	List<Series> byHourData;
 	List<Series> byDayData;
 
-	public List<NV> getBySpeciesData() {
+	public List<StringSeries> getBySpeciesData() {
 		return bySpeciesData;
 	}
 
-	public void setBySpeciesData(List<NV> bySpecies) {
+	public void setBySpeciesData(List<StringSeries> bySpecies) {
 		this.bySpeciesData = bySpecies;
 	}
 

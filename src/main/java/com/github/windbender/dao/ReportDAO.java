@@ -26,13 +26,31 @@ public class ReportDAO {
 	
 	
 	
-	public List<NV> makeBySpecies(Limiter limits) {
+	public List<StringSeries> makeBySpecies(Limiter limits) {
 		String innerSQL = limits.makeSQL();
-		String sql = "select count(*) as cnt,  common_name from (   	select species_id,event_start_time,number   	from identifications,events   	where identifications.image_event_id=events.id "+innerSQL+" group by image_event_id   ) x, species s where x.species_id = s.id group by species_id  order by cnt";		
+		String sql = "select count(*) as cnt,  common_name from (   	" +
+				"select species_id,event_start_time,number   	from identifications,events   	where identifications.image_event_id=events.id "+innerSQL+" group by image_event_id   " +
+						") x, species s where x.species_id = s.id group by species_id  order by cnt";		
 
-		return doSQL(sql);
+		return doSQLtoSeriesString(sql);
 
 	}
+
+	private List<StringSeries> doSQLtoSeriesString(String sql) {
+		SQLQuery sqlQuery = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
+        Query query = sqlQuery;
+        List<Object[]> result = query.list();
+        
+        StringSeries s = new StringSeries();
+        for(Object[] ar: result) {
+        	s.addPoint((String)ar[1], (BigInteger)ar[0]);
+        }
+        s.setSeriesName("by species");
+		List<StringSeries> l = new ArrayList<StringSeries>();
+		l.add(s);
+        return l;
+	}
+
 
 	private List<NV> doSQL(String sql) {
 		List<NV> l = new ArrayList<NV>();

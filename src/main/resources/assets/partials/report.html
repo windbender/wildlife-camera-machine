@@ -24,8 +24,8 @@
 	Species selector<p>
 	
 </div>
-<div>
-<div id="byDay">
+<div class="row">
+<div class="col-md-6" id="byDay">
 	<h3>Count By Day</h3>
 	<nvd3-discrete-bar-chart
     	data="byDayData"
@@ -33,15 +33,15 @@
         showXAxis="true"
         showYAxis="true"
         xAxisTickFormat="xAxisDateTickFormat()"
-        width="1200"
-        height="600"
+        width="550"
+        height="400"
         color="colorFunction()"
         >
         	<svg></svg>
     </nvd3-discrete-bar-chart>
 	
 </div>
-<div id="byHour">
+<div class="col-md-6" id="byHour">
 	<h3>Count By Hour</h3>
 	<nvd3-discrete-bar-chart
     	data="byHourData"
@@ -57,8 +57,22 @@
     </nvd3-discrete-bar-chart>
 	
 </div>
-<div id="bySpecies">
+</div> <!--  row -->
+<div class="row">
+<div class="col-md-6" id="bySpecies">
 	<h3>Count By Species</h3>
-	<bar-chart height="options.height" data="bySpeciesData" hovered="hovered(args)"></bar-chart>
+	<nvd3-discrete-bar-chart
+    	data="bySpeciesData"
+        id="bySpeciesChart"
+        showXAxis="true"
+        showYAxis="true"
+        xAxisTickFormat="xAxisNumberTickFormat()"
+        width="550"
+        height="400"
+        color="colorFunction()"
+        >
+        	<svg></svg>
+    </nvd3-discrete-bar-chart>
 </div>
-</div>
+</div> <!--  row -->
+
