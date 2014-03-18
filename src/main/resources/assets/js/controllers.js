@@ -148,7 +148,7 @@ app.controller('MyCtrl1', [function() {
 		// nuffin
   }]);
 
-app.controller('ReportController', ['$scope','$http',function($scope,$http) {
+app.controller('ReportController', ['$scope','$http','$timeout',function($scope,$http,$timeout) {
 	$scope.options = {width: 500, height: 300, 'bar': 'aaa'};
 	
 	$http.get('/api/images/topSpecies').success(function(data) {
@@ -232,8 +232,8 @@ app.controller('ReportController', ['$scope','$http',function($scope,$http) {
     $scope.params = {};
     $scope.params.projectId = undefined;
     $scope.params.polyGeoRegion = [];
-    $scope.params.timeStart = undefined;
-    $scope.params.timeEnd = undefined;
+    $scope.params.timeStart = 1356998400;
+    $scope.params.timeEnd = 1420070400;
     $scope.params.tod = {}
     $scope.params.tod.day = true;
     $scope.params.tod.sunset = true;
@@ -241,6 +241,21 @@ app.controller('ReportController', ['$scope','$http',function($scope,$http) {
     $scope.params.tod.sunrise = true;
     $scope.params.species = [];
     $scope.params.species.push('all');
+    
+    $scope.sliderTimeFormatting = function(value) { 
+    	var s =moment(value*1000).format("YYYY/MM/DD");
+    	return s; 
+    }
+    
+    $scope.$watch('params.timeStart', function() {
+    	if(typeof $scope.sliderTimer != 'undefined') {
+    		$timeout.cancel($scope.sliderTimer);
+    	}
+    	$scope.sliderTimer = $timeout(function() {
+        	$scope.onChange();
+        },500);
+    });
+    
     
 	$scope.onChange = function() {
 		$http.post('/api/report',$scope.params).success(function(data) {

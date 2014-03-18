@@ -30,6 +30,7 @@
     "angular-loading-bar": "0.3.0",
     "angular-google-maps":"1.0.13",
     "angular-bootstrap": "0.10.0",
+    "angularjs-slider":"0.1.2",
     "moment": "2.5.1",
     "ng-file-upload": "1.2.8",
     "toastr": "2.0.1"
