@@ -150,7 +150,53 @@ app.controller('MyCtrl1', [function() {
 
 app.controller('ReportController', ['$scope','$http',function($scope,$http) {
 	$scope.options = {width: 500, height: 300, 'bar': 'aaa'};
-
+	
+	$http.get('/api/images/topSpecies').success(function(data) {
+		$scope.topSpecies = data;
+	}).error(function(data,status,headers,config) {
+		toastr.error("sorry unable to retrive list");
+	});
+	$scope.selectAllSpecies = function() {
+		$scope.params.species = [];
+	    $scope.params.species.push('all');
+	    $scope.onChange();
+	}
+	$scope.selectNoSpecies = function() {
+		$scope.params.species = [];
+		$scope.onChange();
+	}
+	$scope.removeItem = function(array, item) {
+		for(var i = array.length - 1; i >= 0; i--) {
+		    if(array[i] === item) {
+		       array.splice(i, 1);
+		    }
+		}
+	}
+	$scope.checkClick = function(species_id) {
+		if($scope.isChecked(species_id) ) {
+			if($scope.params.species[0] == "all") {
+				$scope.removeItem($scope.params.species,"all");
+				// now add ALL the rest
+				for(var q=0; q < $scope.topSpecies.length; q++) {
+					$scope.params.species.push(""+$scope.topSpecies[q].id);
+				}
+			}
+			$scope.removeItem($scope.params.species,""+species_id)
+		} else {
+			$scope.params.species.push(""+species_id);
+		}
+		$scope.onChange();
+	}
+	$scope.isChecked = function(species_id) {
+		if($scope.params.species[0] == "all") return true;
+		for(var i=0; i < $scope.params.species.length; i++) {
+			if($scope.params.species[i] == ""+species_id) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	$scope.xAxisNumberTickFormat = function(){
 	    return function(d){
 	    	return d;

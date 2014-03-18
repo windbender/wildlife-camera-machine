@@ -15,6 +15,9 @@ public class Limiter {
 
 	public String makeSQL() {
 		boolean excludeMode = false;
+		if(reportParams.getSpecies().length ==0) {
+			return " and species_id= -77 ";
+		}
 		for(String species: reportParams.getSpecies()) {
 			if("all".equals(species)) excludeMode = true;
 			if(species.startsWith("-")) excludeMode = true;
