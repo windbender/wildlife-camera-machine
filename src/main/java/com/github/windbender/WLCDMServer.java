@@ -121,7 +121,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 			emailService = new EmailService(configuration, ms);
 		}
 		environment.addResource(new UserResource(uDAO, tokenDAO, emailService));
-		environment.addResource(new ImageResource(ds, store, irDAO, spDAO));
+		environment.addResource(new ImageResource(ds, store, irDAO, spDAO, reportDAO));
 		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO));
 		environment.addResource(new ReportResource(reportDAO));
 		

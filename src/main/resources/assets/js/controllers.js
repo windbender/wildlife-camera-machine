@@ -253,7 +253,15 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
     	}
     	$scope.sliderTimer = $timeout(function() {
         	$scope.onChange();
-        },500);
+        },200);
+    });
+    $scope.$watch('params.timeEnd', function() {
+    	if(typeof $scope.sliderTimer != 'undefined') {
+    		$timeout.cancel($scope.sliderTimer);
+    	}
+    	$scope.sliderTimer = $timeout(function() {
+        	$scope.onChange();
+        },200);
     });
     
     

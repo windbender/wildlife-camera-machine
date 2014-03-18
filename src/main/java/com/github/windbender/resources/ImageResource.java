@@ -38,6 +38,7 @@ import com.github.windbender.core.ImageRecordTO;
 import com.github.windbender.core.ImageStore;
 import com.github.windbender.core.NextEventRecord;
 import com.github.windbender.dao.ImageRecordDAO;
+import com.github.windbender.dao.ReportDAO;
 import com.github.windbender.dao.SpeciesDAO;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
@@ -59,12 +60,14 @@ public class ImageResource {
 	private ImageStore store;
 	ImageRecordDAO irDAO;
 	private SpeciesDAO speciesDAO;
+	private ReportDAO reportDAO;
 
-	public ImageResource(HibernateDataStore ds, ImageStore store,	ImageRecordDAO irDAO, SpeciesDAO speciesDAO) {
+	public ImageResource(HibernateDataStore ds, ImageStore store,	ImageRecordDAO irDAO, SpeciesDAO speciesDAO, ReportDAO reportDAO) {
 		this.ds = ds;
 		this.store = store;
 		this.irDAO = irDAO;
 		this.speciesDAO = speciesDAO;
+		this.reportDAO = reportDAO;
 	}
 
 	@GET
@@ -164,12 +167,26 @@ public class ImageResource {
 	@UnitOfWork
 	@Path("topSpecies")
 	public List<Species> listTopSpecies(@SessionUser User user) {
-		List<Species> topTen = getTopTenForProject();
-		
-		return topTen;
+		List<Long> l = reportDAO.makeTopSpeciesIdList(10);
+		if(l.size() < 3) {
+			List<Species> topTen = getTopTenForProject();
+			return topTen;
+		} else {
+			List<Species> out = new ArrayList<Species>();
+			for(Long id : l) {
+				Species s = speciesDAO.findById(id);
+				out.add(s);
+			}
+			return out;
+		}
 	}
 	
 	private List<Species> getTopTenForProject() {
+		
+		return getHardWiredSpecies();
+	}
+
+	private List<Species> getHardWiredSpecies() {
 		List<Species> l = new ArrayList<Species>();
 		Species s = this.speciesDAO.findByNameContains("puma");
 		s.setC('p');

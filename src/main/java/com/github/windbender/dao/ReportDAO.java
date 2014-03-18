@@ -16,6 +16,7 @@ import org.joda.time.Interval;
 import com.github.windbender.core.Limiter;
 import com.github.windbender.core.NV;
 import com.github.windbender.core.Series;
+import com.github.windbender.domain.Species;
 
 public class ReportDAO {
 
@@ -26,13 +27,30 @@ public class ReportDAO {
 	
 	
 	
+	public List<Long> makeTopSpeciesIdList(int limitNumber) {
+		String speciesSQL = "select count(*) as cnt,  species_id from (   	" +
+				"select species_id,event_start_time,number   	from identifications,events   	where identifications.image_event_id=events.id group by image_event_id   " +
+						") x, species s where x.species_id = s.id group by species_id  order by cnt desc";		
+		SQLQuery sqlQuery = this.sessionFactory.getCurrentSession().createSQLQuery(speciesSQL);
+        Query query = sqlQuery;
+        List<Object[]> result = query.list();
+        List<Long> l = new ArrayList<Long>();
+        int count =0;
+        for(Object[] ar: result) {
+        	Long id = ((Integer)ar[1]).longValue();
+        	l.add(id);
+        	count++;
+        	if(count > limitNumber) break;
+        }
+        return l;
+	}
 	public List<StringSeries> makeBySpecies(Limiter limits) {
 		String innerSQL = limits.makeSQL();
-		String sql = "select count(*) as cnt,  common_name from (   	" +
+		String speciesSQL = "select count(*) as cnt,  common_name from (   	" +
 				"select species_id,event_start_time,number   	from identifications,events   	where identifications.image_event_id=events.id "+innerSQL+" group by image_event_id   " +
-						") x, species s where x.species_id = s.id group by species_id  order by cnt";		
+						") x, species s where x.species_id = s.id group by species_id  order by cnt desc";		
 
-		return doSQLtoSeriesString(sql);
+		return doSQLtoSeriesString(speciesSQL);
 
 	}
 

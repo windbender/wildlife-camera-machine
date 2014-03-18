@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class Limiter {
 
@@ -14,6 +16,23 @@ public class Limiter {
 	}
 
 	public String makeSQL() {
+		String speciesSQL = makeSpeciesSQL();
+		String timeSQL = makeTimeSQL();
+		return speciesSQL + timeSQL;
+	}
+
+	DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
+	private String makeTimeSQL() {
+		DateTime en = reportParams.getDateTimeEnd();
+		DateTime st = reportParams.getDateTimeStart();
+		String stStr = dtf.print(st);
+		String enStr = dtf.print(en);
+		
+		String s = " and event_start_time > '"+stStr+"' and event_start_time < '"+enStr+"' ";
+		return s;
+	}
+
+	private String makeSpeciesSQL() {
 		boolean excludeMode = false;
 		if(reportParams.getSpecies().length ==0) {
 			return " and species_id= -77 ";
@@ -54,10 +73,6 @@ public class Limiter {
 			
 		}
 		return s.toString();
-//		return "";
-//		return " and species_id=701 ";
-//		return " and species_id=390 ";
-//		return " and species_id != 396 and species_id != 702 ";
 	}
 
 	public Interval getTimeInterval() {

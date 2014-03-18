@@ -16,8 +16,20 @@ public class ReportParams {
 //    $scope.params.tod.sunrise = true;
 //    $scope.params.species = [];
 	long projectId;
-	DateTime timeStart;
-	DateTime timeEnd;
+	long timeStart;
+	long timeEnd;
+	public long getTimeStart() {
+		return timeStart;
+	}
+	public void setTimeStart(long timeStart) {
+		this.timeStart = timeStart;
+	}
+	public long getTimeEnd() {
+		return timeEnd;
+	}
+	public void setTimeEnd(long timeEnd) {
+		this.timeEnd = timeEnd;
+	}
 	Map<String,Boolean> tod;
 	public Map<String, Boolean> getTod() {
 		return tod;
@@ -32,18 +44,13 @@ public class ReportParams {
 	public void setProjectId(long projectId) {
 		this.projectId = projectId;
 	}
-	public DateTime getTimeStart() {
-		return timeStart;
+	public DateTime getDateTimeStart() {
+		return new DateTime(timeStart*1000);
 	}
-	public void setTimeStart(DateTime timeStart) {
-		this.timeStart = timeStart;
+	public DateTime getDateTimeEnd() {
+		return new DateTime(timeEnd * 1000);
 	}
-	public DateTime getTimeEnd() {
-		return timeEnd;
-	}
-	public void setTimeEnd(DateTime timeEnd) {
-		this.timeEnd = timeEnd;
-	}
+
 	public String[] getSpecies() {
 		return species;
 	}
