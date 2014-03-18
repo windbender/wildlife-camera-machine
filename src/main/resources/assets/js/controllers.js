@@ -134,14 +134,6 @@ var app = angular.module('wlcdm.controllers', [])
 	});
 	
     focus('focusMe');
-
-    $scope.map = {
-    	    center: {
-    	        latitude: 38.5,
-    	        longitude: -122.55
-    	},
-    	zoom: 8
-    };	
     
 	});
 app.controller('MyCtrl1', [function() {
@@ -204,9 +196,9 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
 	}
 	$scope.xAxisDateTickFormat = function(){
 	    return function(d){
-	    	var x = new Date(d);
-	    	if(x.getDay() ==0) {
-		        return d3.time.format('%Y/%m/%d')(x);
+	    	var m = moment(d);
+	    	if(m.dates() ==1) {
+		        return m.format('YYYY/MM/DD');
 	    	}
 	    	return "";
 	    }
@@ -223,11 +215,34 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
     $scope.bySpeciesData = [];
     $scope.byHourData = [];
     $scope.byDayData = [];
-    $scope.hovered = function(d){
-    	$scope.barValue = d;
-        $scope.$apply();
+    $scope.reportImg = {};
+    $scope.imageEvents = [];
+    $scope.reportImgIndex = 0;
+    $scope.prevImage = function() {
+		$scope.reportImgIndex > 0 ? $scope.reportImgIndex-- : $scope.reportImgIndex = $scope.imageEvents.length-1;
     };
-    $scope.barValue = 'None';
+    $scope.nextImage = function() {
+		$scope.reportImgIndex < $scope.imageEvents.length - 1 ? $scope.reportImgIndex++ : $scope.reportImgIndex = 0;
+    };
+    $scope.map = {
+    	    center: {
+    	        latitude: 38.5,
+    	        longitude: -122.55
+    	},
+    	zoom: 8
+    };	
+    $scope.loadImage = function() {
+    	var elements = angular.element( document.querySelector( '#pics' ) );
+		var el = elements[0]
+		var w = el.clientWidth;
+		var size = ''+w;
+		if(typeof $scope.imageEvents === 'undefined') return;
+		if($scope.imageEvents.length ==0) return;
+		$scope.reportImg.imagesrc = '/api/images/'+$scope.imageEvents[$scope.reportImgIndex].imageRecords[0].id+'?sz='+size;
+    }
+    $scope.$watch('reportImgIndex', function() {
+    	$scope.loadImage();
+    });
     
     $scope.params = {};
     $scope.params.projectId = undefined;
@@ -274,6 +289,9 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
 			$scope.byHourData = data.byHourData;
 			$scope.byDayData = data.byDayData;
 			
+			$scope.imageEvents = data.imageEvents;
+			$scope.reportImgIndex = 0;
+			$scope.loadImage();
 		}).error(function(data,status,headers,config) {
 			toastr.error("sorry unable to retrive list");
 		});

@@ -16,6 +16,7 @@ import org.joda.time.Interval;
 import com.github.windbender.core.Limiter;
 import com.github.windbender.core.NV;
 import com.github.windbender.core.Series;
+import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.Species;
 
 public class ReportDAO {
@@ -139,6 +140,23 @@ public class ReportDAO {
 		l.add(s);
 		return l;
 		
+	}
+
+
+
+	public List<Long> makeImageEvents(Limiter limits) {
+		String innerSQL = limits.makeSQL();
+		String sql = "select imageTime, e.id from identifications ids, events e,images i where ids.image_event_id=e.id and e.id=i.event_id "+innerSQL+"group by e.id order by imageTime;";
+		
+		SQLQuery sqlQuery = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
+        Query query = sqlQuery;
+        List<Object[]> result = query.list();
+        List<Long> l = new ArrayList<Long>();
+		for(Object[] ar: result) {
+        	Long event_id = ((Integer)ar[1]).longValue();
+        	l.add(event_id);
+        }
+        return l;
 	}
 
 }

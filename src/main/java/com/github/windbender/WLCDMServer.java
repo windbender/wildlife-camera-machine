@@ -123,7 +123,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		environment.addResource(new UserResource(uDAO, tokenDAO, emailService));
 		environment.addResource(new ImageResource(ds, store, irDAO, spDAO, reportDAO));
 		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO));
-		environment.addResource(new ReportResource(reportDAO));
+		environment.addResource(new ReportResource(reportDAO, ieDAO));
 		
 		HashSessionManager hsm = new HashSessionManager();
 		

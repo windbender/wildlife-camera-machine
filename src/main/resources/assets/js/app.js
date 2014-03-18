@@ -13,8 +13,8 @@ angular.module('wlcdm', [
   'nvd3ChartDirectives',
   'wlcdm.services',
   'wlcdm.directives',
-  'wlcdm.controllers'
-//  'google-maps'
+  'wlcdm.controllers',
+  'google-maps'
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/setup', {templateUrl: '/partials/partial1.html', controller: 'MyCtrl1'});

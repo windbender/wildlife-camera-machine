@@ -1,8 +1,7 @@
     <style>
         
         .chartBlob {
-        	width: 550px;
-        	height: 450px;
+        	height: 300px;
         }
     </style>
 <p><h1>Wildlife Camera Machine Report</h1></p>
@@ -42,7 +41,7 @@
 	
 </div>
 <div class="row">
-<div class="col-md-6" id="byDay">
+<div class="col-md-6 chartBlob" id="byDay">
 	<h3>Count By Day</h3>
 	<nvd3-discrete-bar-chart
     	data="byDayData"
@@ -50,8 +49,6 @@
         showXAxis="true"
         showYAxis="true"
         xAxisTickFormat="xAxisDateTickFormat()"
-        width="550"
-        height="400"
         color="colorFunction()"
         >
         	<svg></svg>
@@ -66,8 +63,6 @@
         showXAxis="true"
         showYAxis="true"
         xAxisTickFormat="xAxisNumberTickFormat()"
-        width="550"
-        height="400"
         color="colorFunction()"
         >
         	<svg></svg>
@@ -76,7 +71,7 @@
 </div>
 </div> <!--  row -->
 <div class="row">
-<div class="col-md-6" id="bySpecies">
+<div class="col-md-4 chartBlob" id="bySpecies">
 	<h3>Count By Species</h3>
 	<nvd3-discrete-bar-chart
     	data="bySpeciesData"
@@ -84,12 +79,27 @@
         showXAxis="true"
         showYAxis="true"
         xAxisTickFormat="xAxisNumberTickFormat()"
-        width="550"
-        height="400"
         color="colorFunction()"
         >
         	<svg></svg>
     </nvd3-discrete-bar-chart>
 </div>
+<div class="col-md-4" id="pics">
+	<h3>Images</h3>
+	<div class="arrows">
+			<button type="button" ng-click="prevImage()" class="btn btn-primary btn-sm">&lt;</button>
+			<button type="button" ng-click="nextImage()" class="btn btn-primary btn-sm">&gt;</button>
+		</div>
+<div><img class="reportImg" ng-src="{{reportImg.imagesrc}}" /></div>
+</div>
+<div class="col-md-4" id="maps">
+	<h3>Locations</h3>
+			<div id="map">
+			<google-map center="map.center" zoom="map.zoom">
+				<marker coords='map.center' ></marker>
+			</google-map>
+		</div>
+</div>
+
 </div> <!--  row -->
 
