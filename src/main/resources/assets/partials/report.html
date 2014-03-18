@@ -5,13 +5,14 @@
         	height: 450px;
         }
     </style>
-<p>Wildlife Camera Machine Report</p>
+<p><h1>Wildlife Camera Machine Report</h1></p>
 <div>
 <!-- 	project selector<p> -->
 <!-- 	geographic region selector<p> -->
-	time period selector  (start and stop )<p>
+	
 	<div style="width:450px;">
-		<rzslider
+	Select a date range to view:
+	<rzslider
     rz-slider-floor="1356998400"
     rz-slider-ceil="1420070400"
     rz-slider-precision="0"
@@ -21,10 +22,16 @@
     rz-slider-translate="sliderTimeFormatting"
     ></rzslider>
 	</div>
-	
-	time of day selector (Day, Night, Sunset +/1 1hr,  SunRise +/-1hr)<p>
-	Species selector<p>
 	<div>
+		Select time of day to view:
+		<input type="checkbox" ng-model="params.tod.day" >Day&nbsp;&nbsp;&nbsp;
+		<input type="checkbox" ng-model="params.tod.sunset" >Evening&nbsp;&nbsp;&nbsp;
+		<input type="checkbox" ng-model="params.tod.night" >Night&nbsp;&nbsp;&nbsp;
+		<input type="checkbox" ng-model="params.tod.sunrise" >Dawn&nbsp;&nbsp;&nbsp;
+		
+	</div>
+	<div>
+		Select species to view:<p>
 		<button type="button" ng-click="selectAllSpecies()" class="btn btn-primary btn-sm">Select ALL Species</button>
 		<button type="button" ng-click="selectNoSpecies()" class="btn btn-primary btn-sm">Select No Species</button>
 		<span ng-repeat="spec in topSpecies" >

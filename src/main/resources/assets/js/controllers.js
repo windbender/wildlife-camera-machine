@@ -242,6 +242,9 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
     $scope.params.species = [];
     $scope.params.species.push('all');
     
+    $scope.$watchCollection('params.tod', function() {
+    	$scope.onChange();
+    });
     $scope.sliderTimeFormatting = function(value) { 
     	var s =moment(value*1000).format("YYYY/MM/DD");
     	return s; 
