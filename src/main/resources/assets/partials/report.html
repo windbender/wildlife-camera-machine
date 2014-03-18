@@ -1,18 +1,8 @@
     <style>
-        body {
-            font: 14px sans-serif;
-        }
-        .axis path, .axis line {
-            fill: none;
-            stroke: black;
-            shape-rendering: crispEdges;
-        }
-        .axis path{
-            fill: none;
-            stroke: none;
-        }
-        .bar {
-            fill: steelblue;
+        
+        .chartBlob {
+        	width: 550px;
+        	height: 450px;
         }
     </style>
 <p>Wildlife Camera Machine Report</p>
@@ -22,6 +12,7 @@
 	time period selector  (start and stop )<p>
 	time of day selector (Day, Night, Sunset +/1 1hr,  SunRise +/-1hr)<p>
 	Species selector<p>
+	
 	
 </div>
 <div class="row">
@@ -41,7 +32,7 @@
     </nvd3-discrete-bar-chart>
 	
 </div>
-<div class="col-md-6" id="byHour">
+<div class="col-md-6 chartBlob" id="byHour">
 	<h3>Count By Hour</h3>
 	<nvd3-discrete-bar-chart
     	data="byHourData"

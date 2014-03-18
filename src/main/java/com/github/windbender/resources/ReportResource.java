@@ -38,7 +38,7 @@ public class ReportResource {
 	@POST
 	@Timed
 	@UnitOfWork
-	public ReportResponse logout(@SessionUser User user, ReportParams reportParams) {
+	public ReportResponse makeReport(@SessionUser User user, ReportParams reportParams) {
 
 		Limiter limits = new Limiter(reportParams);
 		List<StringSeries> bySpecies = rd.makeBySpecies(limits);
