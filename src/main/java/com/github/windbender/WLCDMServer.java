@@ -36,6 +36,7 @@ import com.github.windbender.resources.UserResource;
 import com.github.windbender.service.AmazonMessageSender;
 import com.github.windbender.service.AsyncEmailSender;
 import com.github.windbender.service.EmailService;
+import com.github.windbender.service.MakeDatesService;
 import com.github.windbender.service.MessageSender;
 import com.github.windbender.service.SMTPMessageSender;
 import com.yammer.dropwizard.Service;
@@ -149,5 +150,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		environment.setSessionHandler(new SessionHandler(hsm));
 		environment.addProvider(SessionUserProvider.class);
 		
+		MakeDatesService mds = new MakeDatesService(hibernate.getSessionFactory());
+		mds.makeDates();
 	}
 }

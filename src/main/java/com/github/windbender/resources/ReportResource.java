@@ -12,9 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.windbender.auth.SessionUser;
+import com.github.windbender.core.Limiter;
 import com.github.windbender.core.NV;
 import com.github.windbender.core.ReportParams;
 import com.github.windbender.core.ReportResponse;
+import com.github.windbender.core.Series;
 import com.github.windbender.dao.ReportDAO;
 import com.github.windbender.domain.User;
 import com.yammer.dropwizard.hibernate.UnitOfWork;
@@ -38,10 +40,15 @@ public class ReportResource {
 	@UnitOfWork
 	public ReportResponse logout(@SessionUser User user, ReportParams reportParams) {
 
-		List<NV> bySpecies = rd.makeBySpecies();
+		Limiter limits = new Limiter(reportParams);
+		List<NV> bySpecies = rd.makeBySpecies(limits);
+		List<Series> byHour = rd.makeByHour(limits);
+		List<Series> byDay = rd.makeByDay(limits);
 		
 		ReportResponse rr = new ReportResponse();
 		rr.setBySpeciesData(bySpecies);
+		rr.setByHourData(byHour);
+		rr.setByDayData(byDay);
 		return rr;
 	}
 

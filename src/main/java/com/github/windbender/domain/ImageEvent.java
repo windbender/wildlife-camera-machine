@@ -19,6 +19,7 @@ import org.hibernate.annotations.SortType;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.windbender.core.TypeOfDay;
 
 
 
@@ -134,6 +135,20 @@ public class ImageEvent {
 		} else if (!imageRecords.equals(other.imageRecords))
 			return false;
 		return true;
+	}
+
+
+	@Column(name="time_of_day", nullable=true)
+	String todStr;
+
+	@JsonProperty
+	public String getTodStr() {
+		return todStr;
+	}
+
+	public void setTypeOfDay(TypeOfDay tod) {
+		todStr = tod.toString();
+		
 	}
 
 	

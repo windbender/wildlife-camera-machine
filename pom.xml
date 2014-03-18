@@ -85,6 +85,11 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.8</version>
 		</dependency>
+		<dependency>
+			<groupId>com.luckycatlabs.sotoo</groupId>
+			<artifactId>SunriseSunsetCalculator</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>wlcdmsrv</finalName>

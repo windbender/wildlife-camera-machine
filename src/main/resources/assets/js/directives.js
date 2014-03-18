@@ -67,6 +67,9 @@ app.directive('barChart', function(){
             chart.on('customHover', function(d, i){
                 scope.hovered({args:d});
             });
+//            chart.on('myclick', function(d, i){
+//                log.console("got a click");
+//            });
 
             scope.$watch('data', function (newVal, oldVal) {
                 chartEl.datum(newVal).call(chart);

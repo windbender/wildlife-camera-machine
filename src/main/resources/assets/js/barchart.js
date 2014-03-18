@@ -8,9 +8,10 @@ d3.custom.barChart = function module() {
         ease = 'cubic-in-out';
     var svg, duration = 500;
 
-    var dispatch = d3.dispatch('customHover');
+    var dispatch = d3.dispatch('customHover','click');
     function exports(_selection) {
         _selection.each(function(_data) {
+        	if(typeof _data == 'undefined') return;
             var chartW = width - margin.left - margin.right,
                 chartH = height - margin.top - margin.bottom;
 
@@ -92,7 +93,8 @@ d3.custom.barChart = function module() {
                     	return chartH - y1(d.val); 
                     }
                 })
-                .on('mouseover', dispatch.customHover);
+                .on('mouseover', dispatch.customHover)
+                .on('click',dispatch.myclick);
             bars.transition()
                 .duration(duration)
                 .ease(ease)

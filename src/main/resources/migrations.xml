@@ -879,5 +879,27 @@
 	<changeSet id="13" author="windbender" dbms="mysql">
 		<sql >insert into species (cros_id,common_name, latin_name) values (-1, "none", "none identified")</sql>
 	</changeSet>
+	<changeSet id="14" author="windbender">
+		<createTable tableName="hours">
+			<column name="hours" type="int(11)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="dates">
+			<column name="dates" type="date">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
 		
+		
+	</changeSet>
+	<changeSet id="15" author="windbender">
+		<sql >insert into hours (hours) values (0),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20),(21),(22),(23)</sql>
+	</changeSet>
+	
+	<changeSet id="16" author="windbender">
+		<addColumn tableName="events">
+			<column name="time_of_day" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

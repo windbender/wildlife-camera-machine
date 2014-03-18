@@ -1,7 +1,9 @@
 package com.github.windbender.core;
 
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -10,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.context.internal.ManagedSessionContext;
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +26,8 @@ import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.Species;
 import com.github.windbender.domain.User;
+import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
+import com.luckycatlabs.sunrisesunset.dto.Location;
 import com.yammer.dropwizard.lifecycle.Managed;
 
 public class HibernateDataStore implements Managed, Runnable {
@@ -100,7 +105,11 @@ public class HibernateDataStore implements Managed, Runnable {
 						ImageEvent ie = new ImageEvent();
 						ie.setCameraID(ir.getCameraID());
 						ie.setEventStartTime(ir.getDatetime());
+						
 						ImageRecord addImage = irDAO.findById(ir.getId());
+						
+						TypeOfDay tod = dayNightTwilight(ie, addImage);
+						ie.setTypeOfDay(tod);
 						if(addImage != null) {
 							ie.addImage(addImage);
 							irDAO.save(addImage);
@@ -128,6 +137,23 @@ public class HibernateDataStore implements Managed, Runnable {
 	        	
 	        }
 		}
+	}
+
+	private TypeOfDay dayNightTwilight(ImageEvent ie, ImageRecord addImage) {
+		DateTime whenDT = ie.getEventStartTime();
+		Calendar when = whenDT.toCalendar(Locale.US);
+		Location location = new Location(addImage.getLat(), addImage.getLon());
+		SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "America/New_York");
+		Calendar rise = calculator.getNauticalSunriseCalendarForDate(when);
+		Calendar set = calculator.getNauticalSunsetCalendarForDate(when);
+		DateTime risedt = new DateTime(rise.getTime());
+		DateTime setdt = new DateTime(set.getTime());
+		Interval morning = new Interval(risedt.minusHours(1),risedt.plusMinutes(30));
+		Interval evening = new Interval(setdt.minusMinutes(30),setdt.plusHours(1));
+		if(morning.contains(whenDT)) return TypeOfDay.MORNING;
+		if(evening.contains(whenDT)) return TypeOfDay.EVENING;
+		if(whenDT.isAfter(morning.getEnd()) && whenDT.isBefore(evening.getStart()) ) return TypeOfDay.DAYTIME;
+		return TypeOfDay.NIGHTTIME;
 	}
 
 	private void checkAndAddToFirst(ImageRecord ir, List<ImageEvent> l) {

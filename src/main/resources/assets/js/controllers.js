@@ -150,8 +150,33 @@ app.controller('MyCtrl1', [function() {
 
 app.controller('ReportController', ['$scope','$http',function($scope,$http) {
 	$scope.options = {width: 500, height: 300, 'bar': 'aaa'};
-//    $scope.bySpeciesData = [1, 2, 3, 4];
+
+	$scope.xAxisNumberTickFormat = function(){
+	    return function(d){
+	    	return d;
+	    }
+	}
+	$scope.xAxisDateTickFormat = function(){
+	    return function(d){
+	    	var x = new Date(d);
+	    	if(x.getDay() ==0) {
+		        return d3.time.format('%Y/%m/%d')(x);
+	    	}
+	    	return "";
+	    }
+	}
+	var colorCategory = d3.scale.category20b()
+	$scope.colorFunction = function() {
+	    return function(d, i) {
+	    	if(d[1] == 0) return "#000000";
+	    	return "#0088DD";
+//	        var q= colorCategory(i);
+//	        return q;
+	    };
+	}
     $scope.bySpeciesData = [];
+    $scope.byHourData = [];
+    $scope.byDayData = [];
     $scope.hovered = function(d){
     	$scope.barValue = d;
         $scope.$apply();
@@ -174,6 +199,8 @@ app.controller('ReportController', ['$scope','$http',function($scope,$http) {
 	$scope.onChange = function() {
 		$http.post('/api/report',$scope.params).success(function(data) {
 			$scope.bySpeciesData = data.bySpeciesData;
+			$scope.byHourData = data.byHourData;
+			$scope.byDayData = data.byDayData;
 			
 		}).error(function(data,status,headers,config) {
 			toastr.error("sorry unable to retrive list");

@@ -9,6 +9,7 @@ angular.module('wlcdm', [
   'chieffancypants.loadingBar',
   'angularFileUpload',
   'wlcdm.filters',
+  'nvd3ChartDirectives',
   'wlcdm.services',
   'wlcdm.directives',
   'wlcdm.controllers'

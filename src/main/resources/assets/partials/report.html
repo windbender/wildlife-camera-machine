@@ -27,12 +27,34 @@
 <div>
 <div id="byDay">
 	<h3>Count By Day</h3>
-	<linechart data='byDayChartData' options='byDayChartOptions' ></linechart>
+	<nvd3-discrete-bar-chart
+    	data="byDayData"
+        id="byDayChart"
+        showXAxis="true"
+        showYAxis="true"
+        xAxisTickFormat="xAxisDateTickFormat()"
+        width="1200"
+        height="600"
+        color="colorFunction()"
+        >
+        	<svg></svg>
+    </nvd3-discrete-bar-chart>
 	
 </div>
 <div id="byHour">
 	<h3>Count By Hour</h3>
-	<linechart data='byHourChartData' options='byHourChartOptions' ></linechart>
+	<nvd3-discrete-bar-chart
+    	data="byHourData"
+        id="byHourChart"
+        showXAxis="true"
+        showYAxis="true"
+        xAxisTickFormat="xAxisNumberTickFormat()"
+        width="550"
+        height="400"
+        color="colorFunction()"
+        >
+        	<svg></svg>
+    </nvd3-discrete-bar-chart>
 	
 </div>
 <div id="bySpecies">
