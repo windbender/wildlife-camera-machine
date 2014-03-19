@@ -71,7 +71,7 @@
 </div>
 </div> <!--  row -->
 <div class="row">
-<div class="col-md-4 chartBlob" id="bySpecies">
+<div class="col-md-6 chartBlob" id="bySpecies">
 	<h3>Count By Species</h3>
 	<nvd3-discrete-bar-chart
     	data="bySpeciesData"
@@ -84,7 +84,7 @@
         	<svg></svg>
     </nvd3-discrete-bar-chart>
 </div>
-<div class="col-md-4" id="pics">
+<div class="col-md-6" id="pics">
 	<h3>Images</h3>
 	<div id="arrowBar" class="arrowBar">
 		<div class="arrows arrows-left" style="width:250px">
@@ -100,16 +100,18 @@
 			{{reportImgIndex+1}} of {{imageLength}}
 		</div>
 	</div>	
-<div><img class="reportImg" ng-src="{{reportImg.imagesrc}}" /></div>
+	<div>
+		<img class="reportImg" ng-src="{{reportImg.imagesrc}}" />
+	</div>
 </div>
-<div class="col-md-4" id="maps">
-	<h3>Locations</h3>
-			<div id="map">
-<!-- 			<google-map center="map.center" zoom="map.zoom"> -->
-<!-- 				<marker coords='map.center' ></marker> -->
-<!-- 			</google-map> -->
-		</div>
-</div>
+<!-- <div class="col-md-4" id="maps"> -->
+<!-- 	<h3>Locations</h3> -->
+<!-- 			<div id="map"> -->
+<!-- <!-- 			<google-map center="map.center" zoom="map.zoom"> --> -->
+<!-- <!-- 				<marker coords='map.center' ></marker> --> -->
+<!-- <!-- 			</google-map> --> -->
+<!-- 		</div> -->
+<!-- </div> -->
 
 </div> <!--  row -->
 
