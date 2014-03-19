@@ -77,6 +77,11 @@ public class HibernateDataStore implements Managed, Runnable {
 		            ManagedSessionContext.bind(session);
 					ImageRecord ir = eventSearchQueue.poll();
 					if(ir == null) break;
+					ImageRecord addImage = irDAO.findById(ir.getId());
+					if(addImage == null) {
+						eventSearchQueue.add(ir);
+						break;
+					}
 					// search in DB for one that might work
 					DateTime before = ir.getDatetime().minusSeconds(secondsDelta);
 					DateTime after = ir.getDatetime().plusSeconds(secondsDelta);
@@ -84,7 +89,7 @@ public class HibernateDataStore implements Managed, Runnable {
 					if(l.size() >0) {
 						// ensure only one.
 						if(l.size() ==1) {
-							checkAndAddToFirst(ir, l);
+							checkAndAddToFirst(addImage,ir, l);
 						} else {
 							// wow.. this could be good or bad.
 							boolean bad = false;
@@ -97,7 +102,7 @@ public class HibernateDataStore implements Managed, Runnable {
 							if(bad) {
 								System.out.println("OH NO MR BILL");
 							} else {
-								checkAndAddToFirst(ir, l);
+								checkAndAddToFirst(addImage,ir, l);
 							}
 						}
 					} else {
@@ -106,8 +111,7 @@ public class HibernateDataStore implements Managed, Runnable {
 						ie.setCameraID(ir.getCameraID());
 						ie.setEventStartTime(ir.getDatetime());
 						
-						ImageRecord addImage = irDAO.findById(ir.getId());
-						
+						if(addImage == null ) log.error("could not look up image, addImage is null is was "+ir.getId());
 						TypeOfDay tod = dayNightTwilight(ie, addImage);
 						ie.setTypeOfDay(tod);
 						if(addImage != null) {
@@ -128,7 +132,10 @@ public class HibernateDataStore implements Managed, Runnable {
 					Thread.sleep(250);
 				} catch (InterruptedException e) {
 				}
+	        } catch(Exception e) {
+	        	log.error("Caught an exception processing events ",e);
 	        } finally {
+	        
 	        	if(session != null) {
 	        		session.flush();
 	        		session.close();
@@ -156,16 +163,13 @@ public class HibernateDataStore implements Managed, Runnable {
 		return TypeOfDay.NIGHTTIME;
 	}
 
-	private void checkAndAddToFirst(ImageRecord ir, List<ImageEvent> l) {
+	private void checkAndAddToFirst(ImageRecord ir, ImageRecord ir2, List<ImageEvent> l) {
 		ImageEvent ie = l.get(0);
 		ImageRecord addImage = irDAO.findById(ir.getId());
-		if(addImage != null) {
-			ie.addImage(addImage);
-			irDAO.save(addImage);
-		}else {
-			eventSearchQueue.add(ir);
-		}
+		ie.addImage(addImage);
+		irDAO.save(addImage);
 		eventDAO.save(ie);
+		
 	}
 		
 

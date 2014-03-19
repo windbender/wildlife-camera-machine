@@ -1,6 +1,6 @@
 <div >
-<div class="slider" ng-keypress="rOnKeyup($event)">
-	<div id="slide" class="slide" focus-on="focusMe" tabindex="1">
+<div class="slider" >
+	<div id="slide" class="slide" focus-on="focusMe" tabindex="1" ng-keypress="rOnKeyup($event)">
 		<img class="innerImg" ng-src="{{selected.imagesrc}}" /> <img
 			class="innerImg" ng-src="{{next.imagesrc}}" ng-hide="true" /> <img
 			class="innerImg" ng-src="{{nextnext.imagesrc}}" ng-hide="true" />
@@ -41,11 +41,14 @@
 				</tr>
 			</table>
 		</div>
-<!-- 		<div id="map"> -->
-<!-- 			<google-map center="map.center" zoom="map.zoom"> -->
-<!-- 				<marker coords='map.center' ></marker> -->
-<!-- 			</google-map> -->
-<!-- 		</div> -->
+		<div>
+		<hr>
+			<div ng-show="typeSpecies">common name: {{typeSpecies.name}}<p>latin name:{{typeSpecies.latinName}}</div>
+			 <input type="text" ng-model="typeSpecies" typeahead="spc as spc.name for spc in species | filter:$viewValue | limitTo:8" class="form-control">
+				<button type="button" ng-disable="typeSpecies" ng-click="submitTyped(spc)" class="btn btn-primary ">submit typed name</button>
+		
+		</div>
+
 	</div>
 </div>
 <!-- 	<slider images="images" map="map" keys="keys" tabindex="1" onkey="rOnKeyup($event)" focus-on="focusMe" /> -->

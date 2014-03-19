@@ -206,7 +206,7 @@ public class ImageResource {
 		s.setC('b');
 		if(s != null) l.add(s);
 
-		s = this.speciesDAO.findByNameContains("turkey");
+		s = this.speciesDAO.findByNameContains("Wild Turkey");
 		if(s != null) {
 			s.setC('t');
 			l.add(s);

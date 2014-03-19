@@ -52,7 +52,11 @@ var app = angular.module('wlcdm.controllers', [])
 //	elem.bind("keyup", function() {
 //		scope.$apply(attrs.onkey);
 //	});
-	
+	$scope.submitTyped = function() {
+		if(typeof $scope.typeSpecies == 'undefined') return;
+		$scope.logAnimal($scope.typeSpecies.name,$scope.typeSpecies.id,$scope.images[$scope.currentIndex].id,$scope.eventId)
+		$scope.getNextEvent();
+	}
 
 	$scope.logAnimal = function(speciesname,speciesid,imageid,eventid) {
 		console.log("found "+$scope.numberOfAnimals+" of "+speciesname+" on picture "+imageid);
