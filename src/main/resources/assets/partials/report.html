@@ -23,10 +23,10 @@
 	</div>
 	<div>
 		Select time of day to view:
-		<input type="checkbox" ng-model="params.tod.day" >Day&nbsp;&nbsp;&nbsp;
-		<input type="checkbox" ng-model="params.tod.sunset" >Evening&nbsp;&nbsp;&nbsp;
-		<input type="checkbox" ng-model="params.tod.night" >Night&nbsp;&nbsp;&nbsp;
-		<input type="checkbox" ng-model="params.tod.sunrise" >Dawn&nbsp;&nbsp;&nbsp;
+		<input type="checkbox" ng-model="params.tod.DAYTIME" >Day&nbsp;&nbsp;&nbsp;
+		<input type="checkbox" ng-model="params.tod.EVENING" >Evening&nbsp;&nbsp;&nbsp;
+		<input type="checkbox" ng-model="params.tod.NIGHTTIME" >Night&nbsp;&nbsp;&nbsp;
+		<input type="checkbox" ng-model="params.tod.MORNING" >Dawn&nbsp;&nbsp;&nbsp;
 		
 	</div>
 	<div>
@@ -86,18 +86,28 @@
 </div>
 <div class="col-md-4" id="pics">
 	<h3>Images</h3>
-	<div class="arrows">
+	<div id="arrowBar" class="arrowBar">
+		<div class="arrows arrows-left" style="width:250px">
+			events:
+			<button type="button" ng-click="prevEvent()" class="btn btn-primary btn-sm">&lt;</button>
+			<button type="button" ng-click="nextEvent()" class="btn btn-primary btn-sm">&gt;</button>
+			{{reportEventIndex+1}} of {{imageEvents.length}}
+		</div>
+		<div class="arrows arrows-right" ng-show="showImageControls()">
+			images:
 			<button type="button" ng-click="prevImage()" class="btn btn-primary btn-sm">&lt;</button>
 			<button type="button" ng-click="nextImage()" class="btn btn-primary btn-sm">&gt;</button>
+			{{reportImgIndex+1}} of {{imageLength}}
 		</div>
+	</div>	
 <div><img class="reportImg" ng-src="{{reportImg.imagesrc}}" /></div>
 </div>
 <div class="col-md-4" id="maps">
 	<h3>Locations</h3>
 			<div id="map">
-			<google-map center="map.center" zoom="map.zoom">
-				<marker coords='map.center' ></marker>
-			</google-map>
+<!-- 			<google-map center="map.center" zoom="map.zoom"> -->
+<!-- 				<marker coords='map.center' ></marker> -->
+<!-- 			</google-map> -->
 		</div>
 </div>
 

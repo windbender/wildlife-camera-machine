@@ -221,13 +221,24 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
     $scope.byDayData = [];
     $scope.reportImg = {};
     $scope.imageEvents = [];
+    $scope.reportEventIndex = 0;
     $scope.reportImgIndex = 0;
+    $scope.prevEvent = function() {
+		$scope.reportEventIndex > 0 ? $scope.reportEventIndex-- : $scope.reportEventIndex = $scope.imageEvents.length-1;
+    };
+    $scope.nextEvent = function() {
+		$scope.reportEventIndex < $scope.imageEvents.length - 1 ? $scope.reportEventIndex++ : $scope.reportEventIndex = 0;
+    };
+    
     $scope.prevImage = function() {
-		$scope.reportImgIndex > 0 ? $scope.reportImgIndex-- : $scope.reportImgIndex = $scope.imageEvents.length-1;
+    	var ar = $scope.imageEvents[$scope.reportEventIndex].imageRecords;
+		$scope.reportImgIndex > 0 ? $scope.reportImgIndex-- : $scope.reportImgIndex = ar.length-1;
     };
     $scope.nextImage = function() {
-		$scope.reportImgIndex < $scope.imageEvents.length - 1 ? $scope.reportImgIndex++ : $scope.reportImgIndex = 0;
+    	var ar = $scope.imageEvents[$scope.reportEventIndex].imageRecords;
+		$scope.reportImgIndex < ar.length - 1 ? $scope.reportImgIndex++ : $scope.reportImgIndex = 0;
     };
+    
     $scope.map = {
     	    center: {
     	        latitude: 38.5,
@@ -235,6 +246,13 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
     	},
     	zoom: 8
     };	
+    
+    $scope.showImageControls = function() {
+    	if(typeof $scope.imageEvents[$scope.reportEventIndex] == 'undefined') return true;
+    	var x = $scope.imageEvents[$scope.reportEventIndex].imageRecords;
+    	if(x.length > 1) return true;
+    	return false;
+    }
     $scope.loadImage = function() {
     	var elements = angular.element( document.querySelector( '#pics' ) );
 		var el = elements[0]
@@ -242,22 +260,27 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
 		var size = ''+w;
 		if(typeof $scope.imageEvents === 'undefined') return;
 		if($scope.imageEvents.length ==0) return;
-		$scope.reportImg.imagesrc = '/api/images/'+$scope.imageEvents[$scope.reportImgIndex].imageRecords[0].id+'?sz='+size;
+		$scope.reportImg.imagesrc = '/api/images/'+$scope.imageEvents[$scope.reportEventIndex].imageRecords[$scope.reportImgIndex].id+'?sz='+size;
     }
+    $scope.$watch('reportEventIndex', function() {
+    	$scope.reportImgIndex = 0;
+    	$scope.imageLength = $scope.imageEvents[$scope.reportEventIndex].imageRecords.length;
+    	$scope.loadImage();
+    });
     $scope.$watch('reportImgIndex', function() {
     	$scope.loadImage();
     });
-    
+
     $scope.params = {};
     $scope.params.projectId = undefined;
     $scope.params.polyGeoRegion = [];
     $scope.params.timeStart = 1356998400;
     $scope.params.timeEnd = 1420070400;
     $scope.params.tod = {}
-    $scope.params.tod.day = true;
-    $scope.params.tod.sunset = true;
-    $scope.params.tod.night = true;
-    $scope.params.tod.sunrise = true;
+    $scope.params.tod.DAYTIME = true;
+    $scope.params.tod.EVENING = true;
+    $scope.params.tod.NIGHTTIME = true;
+    $scope.params.tod.MORNING = true;
     $scope.params.species = [];
     $scope.params.species.push('all');
     
@@ -294,7 +317,9 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
 			$scope.byDayData = data.byDayData;
 			
 			$scope.imageEvents = data.imageEvents;
-			$scope.reportImgIndex = 0;
+			$scope.reportEventIndex = 0;
+		    $scope.reportImgIndex = 0;
+
 			$scope.loadImage();
 		}).error(function(data,status,headers,config) {
 			toastr.error("sorry unable to retrive list");

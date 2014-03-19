@@ -1,12 +1,15 @@
 package com.github.windbender.core;
 
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import com.google.common.base.Joiner;
 
 public class Limiter {
 
@@ -18,7 +21,22 @@ public class Limiter {
 	public String makeSQL() {
 		String speciesSQL = makeSpeciesSQL();
 		String timeSQL = makeTimeSQL();
-		return speciesSQL + timeSQL;
+		String todSQL = makeTODSQL();
+		return speciesSQL + timeSQL + todSQL;
+	}
+
+	private String makeTODSQL() {
+		Set<String> s = new HashSet<String>();
+		for(Entry<String, Boolean> e: reportParams.getTod().entrySet()) {
+			if(e.getValue()) {
+				s.add(e.getKey());
+			}
+		}
+		if(s.size() == 4) return "";
+		String[] sar = s.toArray(new String[0]);
+		String out = Joiner.on("\",\"").join(sar);
+		String sql = " and time_of_day in (\""+out+"\") ";
+		return sql;
 	}
 
 	DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");

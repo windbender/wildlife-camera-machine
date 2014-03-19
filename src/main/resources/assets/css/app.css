@@ -36,12 +36,15 @@
 	width: 100%;
 }
 
-.arrows {
-/* 	position: absolute; */
-/* 	top: 10px; */
-/* 	right: 20px; */
+.arrows-right {
+	float: right;
 }
-
+.arrows-left {
+	float:left;
+}
+.arrowBar {
+	display:block;	
+}
 .arrows  img {
 	height: 32px;
 }
