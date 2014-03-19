@@ -277,7 +277,7 @@ public class HibernateDataStore implements Managed, Runnable {
 		return s;
 	}
 
-	public void recordIdentification(IdentificationRequest idRequest, User u) {
+	public long recordIdentification(IdentificationRequest idRequest, User u) {
 		
 		ImageRecord identifiedImage = null;
 		Species speciesIdentified = null;
@@ -310,6 +310,11 @@ public class HibernateDataStore implements Managed, Runnable {
 			
 		
 		long idid = idDAO.create(id);
+		return idid;
+	}
+
+	public void removeId(long idToClear) {
+		idDAO.delete(idToClear);
 		
 	}
 
@@ -336,5 +341,6 @@ public class HibernateDataStore implements Managed, Runnable {
 		threadShouldRun = false;
 		t.join();
 	}
+
 
 }

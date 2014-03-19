@@ -11,13 +11,19 @@ public class IdentificationDAO extends AbstractDAO<Identification> {
 		super(sessionFactory);
 	}
 	
-	public Identification findById(Long id) {
+	public Identification findById(Integer id) {
         return get(id);
     }
 
     public long create(Identification ir) {
         return persist(ir).getId();
     }
+
+	public void delete(long idToClear) {
+		Integer i = new Integer((int)idToClear);
+		Identification id = findById(i);
+		this.currentSession().delete(id);
+	}
 	
 
 }

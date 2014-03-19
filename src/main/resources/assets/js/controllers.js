@@ -56,6 +56,10 @@ var app = angular.module('wlcdm.controllers', [])
 		if(typeof $scope.typeSpecies == 'undefined') return;
 		$scope.logAnimal($scope.typeSpecies.name,$scope.typeSpecies.id,$scope.images[$scope.currentIndex].id,$scope.eventId)
 		$scope.getNextEvent();
+		
+		var elements = angular.element( document.querySelector( '#slide' ) );
+		var el = elements[0]
+		el.focus();
 	}
 
 	$scope.logAnimal = function(speciesname,speciesid,imageid,eventid) {
@@ -68,6 +72,7 @@ var app = angular.module('wlcdm.controllers', [])
 				'eventid':eventid
 		}
 		$http.post('/api/images/identification',idRequest).success(function(data) {
+			$scope.lastIdentification = data;
 			toastr.options.showDuration = 300;
 			toastr.options.hideDuration = 300;
 			toastr.options.timeOut = 500;
@@ -81,17 +86,30 @@ var app = angular.module('wlcdm.controllers', [])
 	};
 	
 	$scope.handleKey = function(keyCode) {
+		if(keyCode == 8) {
+			if(typeof $scope.lastIdentification == 'undefined') return;
+			// this is backspace... we need this for "oops"
+			console.log("oops we need to undo"+$scope.lastIdentification);
+			$http.post('/api/images/clearid',$scope.lastIdentification).success(function(data) {
+				toastr.success("we successfully cleared your ID ");
+				$scope.getNextEvent();
+			}).error(function(data, status, headers, config) {
+				toastr.error("failed to clear post");
+			});
+			return false;
+		}
+		// force upper case
 		if(keyCode > 96) keyCode = keyCode - (97-65);
 		// right arrow, return, tab
-	     	if(keyCode == 39 || keyCode ==13 || keyCode==9 ) {
-	     		$scope.nextImage();
+	    if(keyCode == 39  ) {
+	       $scope.nextImage();
 	     	
 	     		// left arrow	
-	     	} else if(keyCode == 37 ) {
-	     		$scope.prevImage();
+	    } else if(keyCode == 37 ) {
+	        $scope.prevImage();
 	     		
 	     	// numbers	
-	     	} else if((keyCode >= 48) && (keyCode <=56)) {
+	    } else if((keyCode >= 48) && (keyCode <=56)) {
 			// numbers
 			$scope.numberOfAnimals = keyCode - 48;
 		
@@ -112,14 +130,21 @@ var app = angular.module('wlcdm.controllers', [])
 	};
 	$scope.sendKey = function(keyStr) {
 		var key = keyStr.charCodeAt(0);
-		$scope.handleKey(key);
+		return $scope.handleKey(key);
 	}
 	$scope.rOnKeyup = function() {
 		var e = window.event;
 		if(e.type == "keypress") {
 			var kc = e.keyCode;
-			$scope.handleKey(kc);
-	    }
+			return $scope.handleKey(kc);
+	    } else if(e.type == "keydown") {
+			var kc = e.keyCode;
+			if( !$scope.handleKey(kc)) {
+				e.preventDefault();
+			} else {
+				console.log("propagate");
+			}
+	    }  
 	};
 	
 	$scope.setImage = function() {

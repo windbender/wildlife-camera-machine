@@ -232,7 +232,21 @@ public class ImageResource {
 	public Response identify(@SessionUser User user,IdentificationRequest idRequest) {
 		log.info("GOT an ID "+idRequest);
 		// null sh ould be the user
-		this.ds.recordIdentification(idRequest, user);
+		long id = this.ds.recordIdentification(idRequest, user);
+		return Response.ok(id).build();
+	}
+	
+	@POST
+	@Timed
+	@UnitOfWork
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("clearid")
+	public Response unid(@SessionUser User user,long idToClear) {
+		log.info("we should clear "+idToClear);
+		this.ds.removeId(idToClear);
+		// null sh ould be the user
+		//long id = this.ds.recordIdentification(idRequest, user);
 		return Response.ok().build();
 	}
 	
