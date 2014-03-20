@@ -289,6 +289,8 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
     }
     $scope.$watch('reportEventIndex', function() {
     	$scope.reportImgIndex = 0;
+    	if(typeof $scope.imageEvents === 'undefined' ) return;
+    	if(typeof $scope.imageEvents[$scope.reportEventIndex].imageRecords === 'undefined' ) return;
     	$scope.imageLength = $scope.imageEvents[$scope.reportEventIndex].imageRecords.length;
     	$scope.loadImage();
     });
