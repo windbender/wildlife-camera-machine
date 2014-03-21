@@ -35,7 +35,8 @@ public class ImageRecord implements Comparable<ImageRecord>{
 
 	String id;
 	DateTime datetime;
-
+	DateTime uploadTime;
+	
 	double lat;
 	double lon;
 	String originalFileName;
@@ -153,6 +154,15 @@ public class ImageRecord implements Comparable<ImageRecord>{
 
 	public void setEvent(ImageEvent event) {
 		this.event = event;
+	}
+
+	@Column(name="upload_time", nullable=false)
+	public DateTime getUploadTime() {
+		return uploadTime;
+	}
+
+	public void setUploadTime(DateTime uploadTime) {
+		this.uploadTime = uploadTime;
 	}
 
 	@Override
