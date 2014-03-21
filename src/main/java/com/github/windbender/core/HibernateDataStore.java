@@ -157,6 +157,7 @@ public class HibernateDataStore implements Managed, Runnable {
 		DateTime setdt = new DateTime(set.getTime());
 		Interval morning = new Interval(risedt.minusHours(1),risedt.plusMinutes(30));
 		Interval evening = new Interval(setdt.minusMinutes(30),setdt.plusHours(1));
+		log.info("TOD we have "+whenDT+" somewhere in morning: "+morning+"  and evening: "+evening);
 		if(morning.contains(whenDT)) return TypeOfDay.MORNING;
 		if(evening.contains(whenDT)) return TypeOfDay.EVENING;
 		if(whenDT.isAfter(morning.getEnd()) && whenDT.isBefore(evening.getStart()) ) return TypeOfDay.DAYTIME;
