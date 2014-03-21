@@ -31,6 +31,28 @@ public class Project {
 	@JoinColumn(name="primary_admin_id")
 	User primaryAdmin;
 
+	@Column(name="publicReport", nullable=false)
+	private Boolean publicReport = false;
+	
+	@Column(name="publicCategorize", nullable=false)
+	private Boolean publicCategorize = false;
+	
+	public Boolean getPublicReport() {
+		return publicReport;
+	}
+
+	public void setPublicReport(Boolean publicReport) {
+		this.publicReport = publicReport;
+	}
+
+	public Boolean getPublicCategorize() {
+		return publicCategorize;
+	}
+
+	public void setPublicCategorize(Boolean publicCategorize) {
+		this.publicCategorize = publicCategorize;
+	}
+
 	public Project(String string, String string2) {
 		this.id = (long)string.hashCode();
 		this.name=string;

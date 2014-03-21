@@ -902,4 +902,25 @@
 			<column name="time_of_day" type="varchar(255)"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="17" author="windbender">
+		<addColumn tableName="user_project">
+			<column name="canReport" type="Boolean" defaultValue="1"/>
+		</addColumn>
+		<addColumn tableName="user_project">
+			<column name="canCategorize" type="Boolean" defaultValue="1"/>
+		</addColumn>
+		<addColumn tableName="user_project">
+			<column name="canUpload" type="Boolean" defaultValue="1"/>
+		</addColumn>
+		<addColumn tableName="user_project">
+			<column name="canAdmin" type="Boolean" defaultValue="0"/>
+		</addColumn>
+		<addColumn tableName="projects">
+			<column name="publicReport" type="Boolean" defaultValue="0"/>
+		</addColumn>
+		<addColumn tableName="projects">
+			<column name="publicCategorize" type="Boolean" defaultValue="0"/>
+		</addColumn>
+		
+	</changeSet>
 </databaseChangeLog>
