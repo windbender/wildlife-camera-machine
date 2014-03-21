@@ -49,19 +49,30 @@
 		</div>
 </div> <!--  login-holder -->
 
-<div id="all">
+<div id="content">
 
-<div class="navbar navbar-inverse navbar-fixed-top hidden-print navbar-default" >
+<div class="navbar navbar-inverse navbar-fixed-top hidden-print navbar-default" ng-controller="MenuController" >
     <div class="navbar-header"><a class="navbar-brand menutext hidden-xs"  href="">WLCDM</a>
-    
+    	<button ng-show="isLoggedIn()" type="button" class="navbar-toggle" ng-init="isCollapsed=true" ng-click="doToggle()">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+        </button>
+                
     	<div class="menutext navbar-text pull-left visible-xs" id="logout" ng:controller="LogoutController">
         	<span id="loggedinGreeting" ng-show="isLoggedIn()"><a href="/#/account">user: {{curUser.getCurUser().username}}</a> &nbsp; &nbsp; <a id="logoutLink" href="" ng-click="logout()">logout</a></span>
             <span id="loginlink" ng-hide="isLoggedIn()"><a href="" ng-click="gotoLogin()">login</a>&nbsp; &nbsp;<a class="menutext" id="signuplink" href="/signup.htm">signup</a>&nbsp; &nbsp;<a class="menutext" id="lostpwlink" href="/#/lostpw">lost pw</a></span>
         </div>
     	
     </div>
-    
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <div class="container">
+    <div class="menutext navbar-text pull-right hidden-xs" id="logout" ng:controller="LogoutController">                
+    	<span id="loggedinGreeting" ng-show="isLoggedIn()"><a href="/#/account">user: {{curUser.getCurUser().username}}</a> &nbsp; &nbsp; <a id="logoutLink" href="" ng-click="logout(
+)">logout</a></span>
+        <span id="loginlink" ng-hide="isLoggedIn()"><a href="" ng-click="gotoLogin()">login</a>&nbsp; &nbsp;<a class="menutext" id="signuplink" href="/signup.htm">signup</a>&nbsp; &nbsp;
+<a class="menutext" id="lostpwlink" href="/#/lostpw">lost pw</a></span>
+    </div>    
+    <div class=" navbar-collapse" id="bs-example-navbar-collapse-1" collapse="isCollapsed">
       <ul class="nav navbar-nav">
     		<li><a class="menutext" href="#/setup">setup</a></li>
     		<li><a class="menutext" href="#/upload">upload</a></li>
@@ -69,6 +80,7 @@
     		<li><a class="menutext" href="#/report">report</a></li>
       </ul>
       </div>
+      </div> <!--  .container -->
 </div> <!--/.navbar -->
 <!-- <div class="container" ng-view> -->
 <div  ng-view>

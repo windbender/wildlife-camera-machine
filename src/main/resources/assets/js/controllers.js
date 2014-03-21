@@ -445,6 +445,23 @@ app.controller({
 });
 
 app.controller({
+	MenuController: function($scope, $location, CurUser) {
+		$scope.doCollapse = function() {
+            $scope.isCollapsed=true;
+		};
+		$scope.doToggle = function() {
+            $scope.isCollapsed = !$scope.isCollapsed;
+		};
+		$scope.isLoggedIn = function() {
+            if(CurUser.getCurUser().username == "(none)") return false;
+            if(CurUser.getCurUser().username === null) return false;
+            if(CurUser.getCurUser().username === undefined) return false;
+            return true;
+		};
+
+	}
+});
+app.controller({
 	LogoutController : function($rootScope, $scope,$http, $window, CurUser) {
 		$scope.logout = function() {
 			$http.post('/api/users/logout','please log me out').success(function() {
