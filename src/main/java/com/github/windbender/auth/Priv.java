@@ -1,6 +1,6 @@
 package com.github.windbender.auth;
 
-public enum Role {
+public enum Priv {
 	UPLOAD,
 	CATEGORIZE,
 	REPORT,

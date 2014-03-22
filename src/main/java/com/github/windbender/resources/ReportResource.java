@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.windbender.auth.Role;
+import com.github.windbender.auth.Priv;
 import com.github.windbender.auth.SessionAuth;
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.Limiter;
@@ -48,7 +48,7 @@ public class ReportResource {
 	@POST
 	@Timed
 	@UnitOfWork
-	public ReportResponse makeReport(@SessionAuth(required={Role.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, ReportParams reportParams) {
+	public ReportResponse makeReport(@SessionAuth(required={Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, ReportParams reportParams) {
 
 		Limiter limits = new Limiter(reportParams);
 		List<StringSeries> bySpecies = rd.makeBySpecies(limits);

@@ -33,7 +33,7 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
-import com.github.windbender.auth.Role;
+import com.github.windbender.auth.Priv;
 import com.github.windbender.auth.SessionAuth;
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.HibernateDataStore;
@@ -79,7 +79,7 @@ public class ImageResource {
 	@Timed
 	@Path("{id}")
 	@UnitOfWork
-	public Response fetch(@SessionAuth(required={Role.CATEGORIZE,Role.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @PathParam("id") String id, @QueryParam("sz") int displayWidth) {
+	public Response fetch(@SessionAuth(required={Priv.CATEGORIZE,Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @PathParam("id") String id, @QueryParam("sz") int displayWidth) {
 		log.info("attempting to fetch image id = " + id+" with width "+displayWidth);
 		try {
 			ImageRecord ir = this.ds.getRecordFromId(id);
@@ -125,7 +125,7 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("nextEvent")
-	public NextEventRecord getNextEvent(@SessionAuth(required={Role.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user, @QueryParam("lastEvent") String lastEventIdStr) {
+	public NextEventRecord getNextEvent(@SessionAuth(required={Priv.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user, @QueryParam("lastEvent") String lastEventIdStr) {
 		Long lastEventId = null;
 		try {
 			lastEventId = Long.parseLong(lastEventIdStr);
@@ -162,7 +162,7 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("species")
-	public List<Species> listSpecies(@SessionAuth(required={Role.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user) {
+	public List<Species> listSpecies(@SessionAuth(required={Priv.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user) {
 		List<Species> l = this.speciesDAO.findAll();
 		return l;
 	}
@@ -171,7 +171,7 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("topSpecies")
-	public List<Species> listTopSpecies(@SessionAuth(required={Role.CATEGORIZE,Role.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user) {
+	public List<Species> listTopSpecies(@SessionAuth(required={Priv.CATEGORIZE,Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user) {
 		List<Long> l = reportDAO.makeTopSpeciesIdList(10);
 		if(l.size() < 3) {
 			List<Species> topTen = getTopTenForProject();
@@ -234,7 +234,7 @@ public class ImageResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("identification")
-	public Response identify(@SessionAuth(required={Role.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user,IdentificationRequest idRequest) {
+	public Response identify(@SessionAuth(required={Priv.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user,IdentificationRequest idRequest) {
 		log.info("GOT an ID "+idRequest);
 		// null sh ould be the user
 		long id = this.ds.recordIdentification(idRequest, user);
@@ -247,7 +247,7 @@ public class ImageResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("clearid")
-	public Response unid(@SessionAuth(required={Role.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user,long idToClear) {
+	public Response unid(@SessionAuth(required={Priv.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user,long idToClear) {
 		log.info("we should clear "+idToClear);
 		this.ds.removeId(idToClear);
 		// null should be the user
@@ -259,7 +259,7 @@ public class ImageResource {
 	@Timed
 	@UnitOfWork
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response add(@SessionAuth(required={Role.UPLOAD}) SessionFilteredAuthorization auths,@SessionUser User user, @Context HttpServletRequest request, FormDataMultiPart formData) {
+	public Response add(@SessionAuth(required={Priv.UPLOAD}) SessionFilteredAuthorization auths,@SessionUser User user, @Context HttpServletRequest request, FormDataMultiPart formData) {
 
 		ImageRecord newImage = null;
 		try {

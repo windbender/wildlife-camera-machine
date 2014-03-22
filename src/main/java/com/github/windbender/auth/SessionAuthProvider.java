@@ -24,10 +24,10 @@ import com.sun.jersey.spi.inject.InjectableProvider;
 public class SessionAuthProvider implements InjectableProvider<SessionAuth, Type> {
 	private static class SessionPrivInjectable extends AbstractHttpContextInjectable<SessionFilteredAuthorization> {
 
-		private Role[] required;
+		private Priv[] required;
 		HttpServletRequest request;
 
-		private SessionPrivInjectable(HttpServletRequest request, Role[] required2) {
+		private SessionPrivInjectable(HttpServletRequest request, Priv[] required2) {
 			this.required = required2;
 			this.request = request;
 		}
@@ -48,19 +48,19 @@ public class SessionAuthProvider implements InjectableProvider<SessionAuth, Type
 				}
 			}
 			
-			Set<Role> requiredSetOR= new HashSet<Role>(Arrays.asList(required));
+			Set<Priv> requiredSetOR= new HashSet<Priv>(Arrays.asList(required));
 			// the user must have at least ONE of the required roles listed here.
 			boolean foundEnoughPriv = false;
-			for(Role reqRole: requiredSetOR) {
+			for(Priv reqRole: requiredSetOR) {
 				if(curProject != null) {
-					if(reqRole.equals(Role.CATEGORIZE) && curProject.getPublicCategorize()) foundEnoughPriv = true;
-					if(reqRole.equals(Role.REPORT) && curProject.getPublicReport()) foundEnoughPriv = true;
+					if(reqRole.equals(Priv.CATEGORIZE) && curProject.getPublicCategorize()) foundEnoughPriv = true;
+					if(reqRole.equals(Priv.REPORT) && curProject.getPublicReport()) foundEnoughPriv = true;
 				}
 				if(curUP != null) {
-					if(reqRole.equals(Role.CATEGORIZE) && curUP.getCanCategorize()) foundEnoughPriv = true;
-					if(reqRole.equals(Role.REPORT) && curUP.getCanReport()) foundEnoughPriv = true;
-					if(reqRole.equals(Role.UPLOAD) && curUP.getCanUpload()) foundEnoughPriv = true;
-					if(reqRole.equals(Role.ADMIN) && curUP.getCanAdmin()) foundEnoughPriv = true;
+					if(reqRole.equals(Priv.CATEGORIZE) && curUP.getCanCategorize()) foundEnoughPriv = true;
+					if(reqRole.equals(Priv.REPORT) && curUP.getCanReport()) foundEnoughPriv = true;
+					if(reqRole.equals(Priv.UPLOAD) && curUP.getCanUpload()) foundEnoughPriv = true;
+					if(reqRole.equals(Priv.ADMIN) && curUP.getCanAdmin()) foundEnoughPriv = true;
 				}
 			}
 			if(!foundEnoughPriv) throw new WebApplicationException(Response.Status.FORBIDDEN);
@@ -74,7 +74,7 @@ public class SessionAuthProvider implements InjectableProvider<SessionAuth, Type
 	}
 	
 	private final HttpServletRequest request;
-	private Role[] required;
+	private Priv[] required;
 
 	public SessionAuthProvider(@Context HttpServletRequest request) {
 		this.request = request;
