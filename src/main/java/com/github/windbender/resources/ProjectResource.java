@@ -2,6 +2,7 @@ package com.github.windbender.resources;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -20,6 +21,7 @@ import com.github.windbender.core.JoinProjectRequest;
 import com.github.windbender.dao.ProjectDAO;
 import com.github.windbender.dao.UserDAO;
 import com.github.windbender.dao.UserProjectDAO;
+import com.github.windbender.domain.Camera;
 import com.github.windbender.domain.Project;
 import com.github.windbender.domain.User;
 import com.github.windbender.domain.UserProject;
@@ -49,7 +51,6 @@ public class ProjectResource {
 	@GET
 	@Timed
 	@UnitOfWork
-	@Produces(MediaType.APPLICATION_JSON)
 	public List<String> list(@SessionUser User user) {
 		List<Project> list = projectDAO.findAll();
 		List<String> listNames = new ArrayList<String>();
@@ -58,6 +59,28 @@ public class ProjectResource {
 			listNames.add(n);
 		}
 		return listNames;
+	}
+	
+	@GET
+	@Timed
+	@UnitOfWork
+	@Path("cameras")
+	public List<Camera> listCameras(@SessionUser User user) {
+		List<Camera> listNames = new ArrayList<Camera>();
+		Project p = projectDAO.findById(1);
+		Set<Camera> s = p.getCameras();
+		List<Camera> l = new ArrayList<Camera>(s);
+		return l;
+	}
+	
+	@POST
+	@Timed
+	@UnitOfWork
+	@Path("cameras")
+	public Response addCamera(@SessionUser User user, Camera newC)  {
+
+		return Response.ok().build();
+
 	}
 	
 	@POST

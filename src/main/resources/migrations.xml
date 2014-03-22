@@ -947,4 +947,10 @@
 		</addColumn>
 		
 	</changeSet>
+		
+	<changeSet id="20" author="windbender">
+		<modifyDataType tableName="images" columnName="camera_id" newDataType="int(11)"/>
+		<modifyDataType tableName="events" columnName="camera_id" newDataType="int(11)"/>
+	</changeSet>
+	
 </databaseChangeLog>

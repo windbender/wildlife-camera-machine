@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -17,6 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -254,53 +256,70 @@ public class ImageResource {
 	@Timed
 	@UnitOfWork
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response add(@SessionUser User user,FormDataMultiPart formData) {
+	public Response add(@SessionUser User user, @Context HttpServletRequest request, FormDataMultiPart formData) {
 
 		ImageRecord newImage = null;
 		try {
 			for(BodyPart bp : formData.getBodyParts()) {
-				MediaType mt = bp.getMediaType();
-				if(!"image/jpeg".equals(mt.toString())) {
-					continue;
-				}
-				InputStream is = bp.getEntityAs(InputStream.class);
-				long size = bp.getContentDisposition().getSize();
-				int sz = (int)size;
-				String filename = bp.getContentDisposition().getFileName();
-
-				BufferedInputStream bis = new BufferedInputStream(is);
-				if( bis.markSupported()) {
-				
-					if(sz > 0) {
-						bis.mark(sz);
-					} else {
-						// hard 5MB limit on size of images from wildlife camera ?
-						bis.mark(1024*1024*5);
+				try {
+					MediaType mt = bp.getMediaType();
+					if(!"image/jpeg".equals(mt.toString())) {
+						continue;
 					}
-				}
-				{
-					Metadata md = JpegMetadataReader.readMetadata(bis);
-					ExifSubIFDDirectory directory = md.getDirectory(ExifSubIFDDirectory.class);
-					GpsDirectory gpsDirectory = md.getDirectory(GpsDirectory.class);
-					String cameraID = null; // perhaps part of the form upload ?
-					newImage = ImageRecord.makeImageFromExif(directory,gpsDirectory,filename,cameraID);
-				}
-				ImageRecord exist = irDAO.findById(newImage.getId());
-				if(exist == null) {
-					bis.reset();
-					BufferedImage bi = ImageIO.read(bis);
+					InputStream is = bp.getEntityAs(InputStream.class);
+					long size = bp.getContentDisposition().getSize();
+					int sz = (int)size;
+					String filename = bp.getContentDisposition().getFileName();
 	
-					store.saveImages(bi,newImage);
-					bis.close();
-					ds.addImage(newImage);
-					URI uri = UriBuilder.fromResource(ImageResource.class).build(newImage.getId());
-					log.info("the response uri will be " + uri);
-					return Response.created(uri).build();
-				} else {
-					bis.close();
-					throw new ConflictException("that image already exists");
+					BufferedInputStream bis = new BufferedInputStream(is);
+					if( bis.markSupported()) {
+					
+						if(sz > 0) {
+							bis.mark(sz);
+						} else {
+							// hard 5MB limit on size of images from wildlife camera ?
+							bis.mark(1024*1024*5);
+						}
+					}
+					{
+						Metadata md = JpegMetadataReader.readMetadata(bis);
+						ExifSubIFDDirectory directory = md.getDirectory(ExifSubIFDDirectory.class);
+						GpsDirectory gpsDirectory = md.getDirectory(GpsDirectory.class);
+						//String cameraID = null; // perhaps part of the form upload ?
+						String cameraIDStr = request.getHeader("camera_id");
+						Long cameraId = null;
+						if(cameraIDStr != null) {
+							try {
+								cameraId = Long.parseLong(cameraIDStr);
+							} catch (NumberFormatException e) {
+								throw new ConflictException("must have camera_id in header");
+							}
+						}
+						String latStr = request.getHeader("pos_lat");
+						String lonStr = request.getHeader("pos_lon");
+						
+						newImage = ImageRecord.makeImageFromExif(directory,gpsDirectory,filename,cameraId,latStr,lonStr);
+					}
+					ImageRecord exist = irDAO.findById(newImage.getId());
+					if(exist == null) {
+						bis.reset();
+						BufferedImage bi = ImageIO.read(bis);
+		
+						store.saveImages(bi,newImage);
+						bis.close();
+						ds.addImage(newImage);
+						URI uri = UriBuilder.fromResource(ImageResource.class).build(newImage.getId());
+						log.info("the response uri will be " + uri);
+						return Response.created(uri).build();
+					} else {
+						bis.close();
+						throw new ConflictException("that image already exists");
+					}
+//				} catch(Exception e) {
+//					log.info("could not upload one because ",e);
+				} finally {
+					log.info("and we uploaded one, for better or worse");
 				}
-
 			}
 		} catch ( ImageProcessingException | IOException e) {
 			throw new WebApplicationException(e);

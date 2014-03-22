@@ -22,6 +22,7 @@ import com.github.windbender.dao.ReportDAO;
 import com.github.windbender.dao.SpeciesDAO;
 import com.github.windbender.dao.TokenDAO;
 import com.github.windbender.dao.UserProjectDAO;
+import com.github.windbender.domain.Camera;
 import com.github.windbender.domain.Identification;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
@@ -75,7 +76,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
       
 
 	private final HibernateBundle<WLCDMServerConfiguration> hibernate = new HibernateBundle<WLCDMServerConfiguration>(
-			Identification.class,ImageRecord.class,ImageEvent.class,User.class,Species.class,Project.class, UserProject.class) {
+			Identification.class,ImageRecord.class,ImageEvent.class,User.class,Species.class,Project.class, UserProject.class, Camera.class) {
 	    @Override
 	    public DatabaseConfiguration getDatabaseConfiguration(WLCDMServerConfiguration configuration) {
 	        return configuration.getDatabaseConfiguration();

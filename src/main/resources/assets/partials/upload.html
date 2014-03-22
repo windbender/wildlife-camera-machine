@@ -1,13 +1,33 @@
 <div class="well">
-  <span class="btn btn-default btn-file">Select Files To Upload<input type="file" ng-file-select="onFileSelect($files)" multiple></span>
-  <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class" ng-show="dropSupported">drop files here</div>
-  <div ng-file-drop-available="dropSupported=true" ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
-  <button class="btn btn-warning" ng-click="doAbort()">Cancel Upload</button>
   <div class="row">
-  <div class="col-md-2"></div>
-  <div class="col-md-8">
-  <progressbar type="success" max="100" value="actualPercent"><span style="color:black; white-space:nowrap;">{{actualProg/100}} / {{possibleProg/100 }}</span></progressbar>
+	  Select the Camera from which these images came:<select ng-model="camera_id" ng-options="u.id as u.cameraName for u in cameras" required></select>	  
+<!-- 	  <button  class="btn btn-info" ng-click="doNewCameraModal()">New Camera Location</button> -->
   </div>
-  <div class="col-md-2"></div>
+  <div>
+  	<hr>
+  	Some cameras will have the latitude longitude of the camera location in the camera and therefore put that data into the image files as EXIF data.  If the camera producing the images you are uploading.
+  	does NOT have lat/lon in the EXIF data, then you MUST enter them here before uploading.<p>
+  	lat:<input type=number name="lat" ng-model="lat" min="-90" max="90" /><p>
+  	lon:<input type=number name="lon" ng-model="lon" min="-180" max="180" /><p>
+  	
+  	
+  </div>
+  <div class="row">
+  	<hr>
+  	<span class="btn btn-default btn-file">Select Files To Upload<input ng-disabled="shouldDisableSelect()" type="file" ng-file-select="onFileSelect($files)" multiple></span>
+	<!--   <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class" ng-show="dropSupported">drop files here</div> -->
+<!--   	<div ng-file-drop-available="dropSupported=true" ng-show="!dropSupported">HTML5 Drop File is not supported!</div> -->
+  </div>
+  <div class="row">
+  	<hr>
+  
+  	<button ng-show="shouldShowCancel()" class="btn btn-warning" ng-click="doAbort()">Cancel Upload</button>
+  </div>
+  <div class="row">
+	  <div class="col-md-2"></div>
+	  <div class="col-md-8">
+	  <progressbar type="success" max="100" value="actualPercent"><span style="color:black; white-space:nowrap;">{{actualProg/100}} / {{possibleProg/100 }}</span></progressbar>
+	  </div>
+	  <div class="col-md-2"></div>
   </div>
 </div>

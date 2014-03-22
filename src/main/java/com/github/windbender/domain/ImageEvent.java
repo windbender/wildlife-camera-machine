@@ -44,15 +44,15 @@ public class ImageEvent {
 	}
 
 	@Column(name="camera_id", nullable=true)
-	String cameraID;
+	Long cameraID;
 	
 	@JsonProperty
-	public String getCameraID() {
+	public Long getCameraID() {
 		return cameraID;
 	}
 
-	public void setCameraID(String cameraID) {
-		this.cameraID = cameraID;
+	public void setCameraID(long l) {
+		this.cameraID = l;
 	}
 
 	@JsonProperty

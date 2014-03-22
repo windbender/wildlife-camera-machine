@@ -41,7 +41,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 	double lon;
 	String originalFileName;
 	
-	String cameraID;
+	Long cameraID;
 	
 	public int compareTo(ImageRecord other) {
 		int x = this.datetime.compareTo(other.datetime);  
@@ -51,11 +51,11 @@ public class ImageRecord implements Comparable<ImageRecord>{
 	}
 	
 	@Column(name="camera_id", nullable=true)
-	public String getCameraID() {
+	public long getCameraID() {
 		return cameraID;
 	}
 
-	public void setCameraID(String cameraID) {
+	public void setCameraID(long cameraID) {
 		this.cameraID = cameraID;
 	}
 
@@ -67,21 +67,50 @@ public class ImageRecord implements Comparable<ImageRecord>{
 
 	
 	public static ImageRecord makeImageFromExif(ExifSubIFDDirectory directory,
-			GpsDirectory gpsDirectory, String filename, String cameraId) {
-		Date date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
-		GeoLocation location = gpsDirectory.getGeoLocation();
-		ImageRecord ir = new ImageRecord();
-		ir.setLat(location.getLatitude());
-		ir.setLon(location.getLongitude());
-		ir.setOriginalFileName(filename);
-		if(cameraId == null) {
-			// use latlongsomehow
-			cameraId = "loc"+ir.getLat()+"x"+ir.getLon();
+			GpsDirectory gpsDirectory, String filename, long cameraId, String latStr, String lonStr) {
+		Double lat = null;
+		if(latStr != null) {
+			try {
+				lat = Double.parseDouble(latStr);
+			} catch (NumberFormatException e) {
+			}
 		}
+		Double lon = null;
+		if(lonStr != null) {
+			try {
+				lon = Double.parseDouble(lonStr);
+			} catch (NumberFormatException e) {
+			}
+		}
+		
+		Date date = new Date();
+		if(directory != null) {
+			date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+		}
+		GeoLocation location = null;
+		if(gpsDirectory != null) {
+			location = gpsDirectory.getGeoLocation();
+		}
+		ImageRecord ir = new ImageRecord();
+		if(location != null) {
+			ir.setLat( location.getLatitude());
+			ir.setLon(location.getLongitude());
+		} else {
+			if(lat != null) 
+				ir.setLat( lat );
+			if(lon != null)
+				ir.setLon( lon );
+		}
+		ir.setOriginalFileName(filename);
+
 		ir.setCameraID(cameraId);
 		
 		String stripped = filename.toUpperCase().replaceAll("[A-Z]", "").replaceAll("[^0-9]","");
-		Long seq = Long.parseLong(stripped);
+		Long seq = 0l;
+		try {
+			seq =Long.parseLong(stripped);
+		} catch (NumberFormatException e) {
+		}
 		
 		long millis = date.getTime() + seq;
 		ir.setDateTimeViaMillis(millis);
@@ -93,7 +122,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 		long m = ir.getDatetime().getMillis();
 		String id = "id"+hash+":"+m+":"+stripped;
 		ir.setId(id);
-		
+		ir.setUploadTime(new DateTime());
 		return ir;
 	}
 

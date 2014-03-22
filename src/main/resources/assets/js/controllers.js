@@ -357,9 +357,17 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
   }]);
   
 //https://github.com/danialfarid/angular-file-upload  
-app.controller('UploadController', ['$scope','$upload',function($scope,$upload) {
+app.controller('UploadController', ['$scope','$upload','$http',function($scope,$upload,$http) {
 	$scope.actualProg = 0;
 	$scope.possibleProg = 0;
+	
+	$http.get('/api/projects/cameras').success(function(data) {
+		$scope.cameras = data;
+	}).error(function(data,status,headers,config) {
+		toastr.error("sorry unable to retrive list");
+	});
+
+	
 	$scope.updateBar = function() {
 		var actualTotal = 0;
 		for(var prog in $scope.progress) {
@@ -372,8 +380,16 @@ app.controller('UploadController', ['$scope','$upload',function($scope,$upload) 
 	$scope.update = function(which, percent) {
 		$scope.progress[which] = percent;
 		$scope.updateBar();
-	}
-	
+	};
+	$scope.shouldShowCancel = function() {
+		return 0;
+	};
+	$scope.shouldDisableSelect = function() {
+		if( typeof $scope.camera_id == 'undefined') {
+			return true;
+		}
+		return false;
+	};
 	$scope.onFileSelect = function($files) {
 		//$files: an array of files selected, each file has name, size, and type.
 		
@@ -384,7 +400,7 @@ app.controller('UploadController', ['$scope','$upload',function($scope,$upload) 
 			var upload = $upload.upload({
 				url: '/api/images', //upload.php script, node.js route, or servlet url
 		        method: 'POST',
-		        // headers: {'headerKey': 'headerValue'},
+		        headers: {'camera_id': $scope.camera_id,'pos_lat': $scope.lat,'pos_lon': $scope.lon},
 		        // withCredentials: true,
 //		        data: {myObj: $scope.myModelObj},
 		        file: file,
@@ -398,6 +414,7 @@ app.controller('UploadController', ['$scope','$upload',function($scope,$upload) 
 		        }).success(function(data, status, headers, config) {
 		        // file is uploaded successfully
 		      		console.log(data);
+		      		// so pull it from the 
 		      	});
 		      	//.error(...)
 		      	//.then(success, error, progress); 
