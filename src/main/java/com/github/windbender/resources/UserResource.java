@@ -3,6 +3,7 @@ package com.github.windbender.resources;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,9 +42,13 @@ import com.github.windbender.core.UserUpdate;
 import com.github.windbender.core.VerifyRequest;
 import com.github.windbender.core.VerifyResponse;
 import com.github.windbender.dao.HibernateUserDAO;
+import com.github.windbender.dao.ProjectDAO;
 import com.github.windbender.dao.TokenDAO;
 import com.github.windbender.dao.UserDAO;
+import com.github.windbender.dao.UserProjectDAO;
+import com.github.windbender.domain.Project;
 import com.github.windbender.domain.User;
+import com.github.windbender.domain.UserProject;
 import com.github.windbender.service.EmailService;
 import com.sun.jersey.api.ConflictException;
 import com.sun.jersey.api.NotFoundException;
@@ -59,16 +64,19 @@ public class UserResource {
 	private UserDAO ud;
 	private TokenDAO tokendao;
 	private EmailService emailService;
-
+	private ProjectDAO projectDAO;
+	private UserProjectDAO upDAO;
 	
 	
 
-	public UserResource(UserDAO ud, TokenDAO tokendao,
+	public UserResource(UserDAO ud, TokenDAO tokendao,ProjectDAO projectDAO,UserProjectDAO upDAO,
 			EmailService emailService) {
 		super();
 		this.ud = ud;
 		this.tokendao = tokendao;
 		this.emailService = emailService;
+		this.projectDAO = projectDAO;
+		this.upDAO = upDAO;
 	}
 
 
@@ -78,7 +86,7 @@ public class UserResource {
 	@Consumes(MediaType.APPLICATION_XML)
 	public Response logout(@SessionUser User user, @Context HttpServletRequest request) {
 		log.info("attempting logout for user "+user.toString());
-		request.getSession().setAttribute("user", null);
+		clearSession(request);
 
 		return Response.status(Response.Status.OK).build();
 	}
@@ -125,8 +133,10 @@ public class UserResource {
 		
 		
 		this.ud.save(editUser);
-		// OK, we should probalby also blast the session value
+
+		clearSession(request);
 		loadAssociatedAndSetSessionWith(request, editUser);
+		loadStartingProject(request,editUser);
 
 		
 		// there is an implicit SAVE on editUser
@@ -158,8 +168,7 @@ public class UserResource {
 			User p = ud.findByUsername(login.getUsername());
 			if(p == null) {
 				log.info("fail");
-				request.getSession().setAttribute("user", null);
-				request.getSession().setAttribute("UserAccounts", null);
+				clearSession(request);
 				
 				return Response.status(Response.Status.FORBIDDEN).build();
 			}
@@ -169,20 +178,19 @@ public class UserResource {
 			}
 			if(ver) {
 				loadAssociatedAndSetSessionWith(request, p);
+				loadStartingProject(request,p);
 
 				return Response.status(Response.Status.OK).build();
 			} else {
 				log.info("fail not verified");
-				request.getSession().setAttribute("user", null);
-				request.getSession().setAttribute("UserAccounts", null);
+				clearSession(request);
 				//throw new ForbiddenException("sorry that user is not yet verified");
 				return Response.status(Response.Status.FORBIDDEN).build();
 			}
 		    
 		} else {
 			log.info("fail");
-			request.getSession().setAttribute("user", null);
-			request.getSession().setAttribute("UserAccounts", null);
+			clearSession(request);
 			
 			return Response.status(Response.Status.FORBIDDEN).build();
 
@@ -190,9 +198,43 @@ public class UserResource {
 
 	}
 
+
+	private void clearSession(HttpServletRequest request) {
+		request.getSession().setAttribute("user", null);
+		request.getSession().setAttribute("current_project", null);
+		request.getSession().setAttribute("user_projects", null);
+		request.getSession().setAttribute("primary_admins", null);
+		
+	}
+
+	private void loadStartingProject(HttpServletRequest request, User p) {
+		List<Project> primaryAdminProjects = (List<Project>) request.getSession().getAttribute("primary_admins");
+		Project currentProject = null;
+		if((primaryAdminProjects != null) && (primaryAdminProjects.size() > 0) ){
+			currentProject = primaryAdminProjects.get(0);
+		} 
+		if(currentProject == null) {
+			List<UserProject> upl = (List<UserProject>) request.getSession().getAttribute("user_projects");
+			if((upl != null) && (upl.size() > 0) ) {
+				UserProject up = upl.get(0);
+				currentProject = this.projectDAO.findById(up.getProject().getId().intValue());
+			}
+		}
+		request.getSession().setAttribute("current_project", currentProject);
+		
+	}
+
 	private void loadAssociatedAndSetSessionWith(HttpServletRequest request,
 			User p) {
 		request.getSession().setAttribute("user", p);
+		
+		User u = this.ud.findById(p.getId());
+		List<Project> primaryAdminProjects = this.projectDAO.findByPrimaryAdmin(u);
+		request.getSession().setAttribute("primary_admins", primaryAdminProjects);
+		
+		List<UserProject> upl = this.upDAO.findAllByUser(u);
+		request.getSession().setAttribute("user_projects", upl);
+		
 	}
 	
 	@POST
@@ -201,8 +243,7 @@ public class UserResource {
 	@UnitOfWork
 	public Response logout(@SessionUser User User, @Context HttpServletRequest request, String req) {
 		log.info("attempting logout for user "+User.toString());
-		request.getSession().setAttribute("UserAccounts", null);
-		request.getSession().setAttribute("user", null);
+		clearSession(request);
 		
 		request.getSession().invalidate();
 		return Response.status(Response.Status.OK).build();
@@ -400,11 +441,13 @@ public class UserResource {
 		}
 		if(autoLoginOnVerify) {
 			loadAssociatedAndSetSessionWith(request,p);
+			loadStartingProject(request,p);
 		}
 		VerifyResponse vr = new VerifyResponse(p);
 		return Response.ok(vr, MediaType.APPLICATION_JSON).build();
 	}
 	
+
 	final static int CODE_LENGTH = 25;
 	public static String makeVerifyCode() throws NoSuchAlgorithmException {
 		int saltLen = 35;

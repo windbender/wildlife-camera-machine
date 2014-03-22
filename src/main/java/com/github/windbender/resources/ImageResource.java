@@ -33,12 +33,15 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.github.windbender.auth.Role;
+import com.github.windbender.auth.SessionAuth;
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.HibernateDataStore;
 import com.github.windbender.core.IdentificationRequest;
 import com.github.windbender.core.ImageRecordTO;
 import com.github.windbender.core.ImageStore;
 import com.github.windbender.core.NextEventRecord;
+import com.github.windbender.core.SessionFilteredAuthorization;
 import com.github.windbender.dao.ImageRecordDAO;
 import com.github.windbender.dao.ReportDAO;
 import com.github.windbender.dao.SpeciesDAO;
@@ -76,7 +79,7 @@ public class ImageResource {
 	@Timed
 	@Path("{id}")
 	@UnitOfWork
-	public Response fetch(@SessionUser User user, @PathParam("id") String id, @QueryParam("sz") int displayWidth) {
+	public Response fetch(@SessionAuth(required={Role.CATEGORIZE,Role.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @PathParam("id") String id, @QueryParam("sz") int displayWidth) {
 		log.info("attempting to fetch image id = " + id+" with width "+displayWidth);
 		try {
 			ImageRecord ir = this.ds.getRecordFromId(id);
@@ -89,31 +92,31 @@ public class ImageResource {
 		}
 	}
 
-	@GET
-	@Timed
-	@UnitOfWork
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<ImageRecordTO> list(@SessionUser User user) {
-		List<ImageRecord> list = ds.getTimeOrderedImages();
-		
-		List<ImageRecordTO> outList = new ArrayList<ImageRecordTO>();
-		
-		for(ImageRecord ir : list) {
-			ImageRecordTO irto = new ImageRecordTO(ir);
-			outList.add(irto);
-		}
-		return outList;
-	}
+//	@GET
+//	@Timed
+//	@UnitOfWork
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public List<ImageRecordTO> list(@SessionUser User user) {
+//		List<ImageRecord> list = ds.getTimeOrderedImages();
+//		
+//		List<ImageRecordTO> outList = new ArrayList<ImageRecordTO>();
+//		
+//		for(ImageRecord ir : list) {
+//			ImageRecordTO irto = new ImageRecordTO(ir);
+//			outList.add(irto);
+//		}
+//		return outList;
+//	}
 	
-	@GET
-	@Timed
-	@Produces(MediaType.APPLICATION_JSON)
-	@UnitOfWork
-	@Path("events")
-	public List<ImageEvent> listEvents(@SessionUser User user) {
-		List<ImageEvent> imageEvents = ds.getImageEvents();
-		return imageEvents;
-	}
+//	@GET
+//	@Timed
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@UnitOfWork
+//	@Path("events")
+//	public List<ImageEvent> listEvents(@SessionUser User user) {
+//		List<ImageEvent> imageEvents = ds.getImageEvents();
+//		return imageEvents;
+//	}
 	
 	
 	
@@ -122,7 +125,7 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("nextEvent")
-	public NextEventRecord getNextEvent(@SessionUser User user, @QueryParam("lastEvent") String lastEventIdStr) {
+	public NextEventRecord getNextEvent(@SessionAuth(required={Role.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user, @QueryParam("lastEvent") String lastEventIdStr) {
 		Long lastEventId = null;
 		try {
 			lastEventId = Long.parseLong(lastEventIdStr);
@@ -159,7 +162,7 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("species")
-	public List<Species> listSpecies(@SessionUser User user) {
+	public List<Species> listSpecies(@SessionAuth(required={Role.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user) {
 		List<Species> l = this.speciesDAO.findAll();
 		return l;
 	}
@@ -168,7 +171,7 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("topSpecies")
-	public List<Species> listTopSpecies(@SessionUser User user) {
+	public List<Species> listTopSpecies(@SessionAuth(required={Role.CATEGORIZE,Role.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user) {
 		List<Long> l = reportDAO.makeTopSpeciesIdList(10);
 		if(l.size() < 3) {
 			List<Species> topTen = getTopTenForProject();
@@ -231,7 +234,7 @@ public class ImageResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("identification")
-	public Response identify(@SessionUser User user,IdentificationRequest idRequest) {
+	public Response identify(@SessionAuth(required={Role.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user,IdentificationRequest idRequest) {
 		log.info("GOT an ID "+idRequest);
 		// null sh ould be the user
 		long id = this.ds.recordIdentification(idRequest, user);
@@ -244,10 +247,10 @@ public class ImageResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("clearid")
-	public Response unid(@SessionUser User user,long idToClear) {
+	public Response unid(@SessionAuth(required={Role.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user,long idToClear) {
 		log.info("we should clear "+idToClear);
 		this.ds.removeId(idToClear);
-		// null sh ould be the user
+		// null should be the user
 		//long id = this.ds.recordIdentification(idRequest, user);
 		return Response.ok().build();
 	}
@@ -256,7 +259,7 @@ public class ImageResource {
 	@Timed
 	@UnitOfWork
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response add(@SessionUser User user, @Context HttpServletRequest request, FormDataMultiPart formData) {
+	public Response add(@SessionAuth(required={Role.UPLOAD}) SessionFilteredAuthorization auths,@SessionUser User user, @Context HttpServletRequest request, FormDataMultiPart formData) {
 
 		ImageRecord newImage = null;
 		try {

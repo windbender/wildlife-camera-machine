@@ -8,6 +8,7 @@ import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 
 import com.bazaarvoice.dropwizard.assets.ConfiguredAssetsBundle;
+import com.github.windbender.auth.SessionAuthProvider;
 import com.github.windbender.auth.SessionUserProvider;
 import com.github.windbender.core.FileImageStore;
 import com.github.windbender.core.HibernateDataStore;
@@ -121,7 +122,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		} else {
 			emailService = new EmailService(configuration, ms);
 		}
-		environment.addResource(new UserResource(uDAO, tokenDAO, emailService));
+		environment.addResource(new UserResource(uDAO, tokenDAO, projDAO, upDAO, emailService));
 		environment.addResource(new ImageResource(ds, store, irDAO, spDAO, reportDAO));
 		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO));
 		environment.addResource(new ReportResource(reportDAO, ieDAO));
@@ -150,7 +151,8 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		
 		environment.setSessionHandler(new SessionHandler(hsm));
 		environment.addProvider(SessionUserProvider.class);
-		
+		environment.addProvider(SessionAuthProvider.class);
+
 		MakeDatesService mds = new MakeDatesService(hibernate.getSessionFactory());
 		mds.makeDates();
 	}
