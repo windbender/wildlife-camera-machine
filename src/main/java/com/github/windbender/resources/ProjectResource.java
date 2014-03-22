@@ -15,9 +15,12 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.windbender.auth.Role;
+import com.github.windbender.auth.SessionAuth;
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.CreateProjectRequest;
 import com.github.windbender.core.JoinProjectRequest;
+import com.github.windbender.core.SessionFilteredAuthorization;
 import com.github.windbender.dao.ProjectDAO;
 import com.github.windbender.dao.UserDAO;
 import com.github.windbender.dao.UserProjectDAO;
@@ -51,7 +54,7 @@ public class ProjectResource {
 	@GET
 	@Timed
 	@UnitOfWork
-	public List<String> list(@SessionUser User user) {
+	public List<String> list(@SessionAuth(required={Role.UPLOAD,Role.ADMIN}) SessionFilteredAuthorization auths,@SessionUser User user) {
 		List<Project> list = projectDAO.findAll();
 		List<String> listNames = new ArrayList<String>();
 		for(Project p :list) {
@@ -65,7 +68,7 @@ public class ProjectResource {
 	@Timed
 	@UnitOfWork
 	@Path("cameras")
-	public List<Camera> listCameras(@SessionUser User user) {
+	public List<Camera> listCameras(@SessionAuth(required={Role.UPLOAD}) SessionFilteredAuthorization auths,@SessionUser User user) {
 		List<Camera> listNames = new ArrayList<Camera>();
 		Project p = projectDAO.findById(1);
 		Set<Camera> s = p.getCameras();
@@ -77,7 +80,7 @@ public class ProjectResource {
 	@Timed
 	@UnitOfWork
 	@Path("cameras")
-	public Response addCamera(@SessionUser User user, Camera newC)  {
+	public Response addCamera(@SessionAuth(required={Role.UPLOAD,Role.ADMIN}) SessionFilteredAuthorization auths,@SessionUser User user, Camera newC)  {
 
 		return Response.ok().build();
 
