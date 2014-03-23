@@ -487,6 +487,10 @@ app.controller({
 				$rootScope.$broadcast('reloadMenus');
 			});
 		};
+		$scope.projects = [];
+		$http.get('/api/users/projects').success(function(data) {
+			$scope.projects = data;
+		});
 		$scope.gotoLogin = function() {
 			$rootScope.$broadcast('event:auth-loginRequired');
 		};

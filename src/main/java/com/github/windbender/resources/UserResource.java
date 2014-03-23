@@ -3,7 +3,10 @@ package com.github.windbender.resources;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -104,6 +107,28 @@ public class UserResource {
 			throw new NotFoundException("user does not exist");
 		}
 		return Response.ok( MediaType.APPLICATION_JSON).build();
+	}
+	
+	@GET
+	@Timed
+	@Path("projects")
+	@UnitOfWork
+	public List<Project> projects(@SessionUser User user) {
+		User u = this.ud.findById(user.getId());
+		if(u==null) throw new WebApplicationException();
+		List<Project> lp = this.projectDAO.findByPrimaryAdmin(u);
+		Set<Project> sp = new TreeSet<Project>();
+		if(lp!=null) sp.addAll(lp);
+		List<UserProject> lup = this.upDAO.findAllByUser(u);
+		if(lup != null) {
+			for(UserProject up: lup) {
+				Project p = up.getProject();
+				sp.add(p);
+			}
+		}
+		
+		List<Project> outList = new ArrayList<Project>(sp);
+		return outList;
 	}
 	
 	
