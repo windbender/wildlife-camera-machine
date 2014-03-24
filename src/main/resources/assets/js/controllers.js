@@ -165,9 +165,59 @@ var app = angular.module('wlcdm.controllers', [])
     focus('focusMe');
     
 	});
-app.controller('MyCtrl1', [function() {
+app.controller('SetupController', ['$scope','$http',function($scope,$http) {
+	$http.get('/api/users/currentProject').success(function(data) {
+		$scope.current_project = data;
+	});
+
+	$http.get('/api/cameras').success(function(data) {
+		$scope.cameras = data;
+	});
+	
 		// nuffin
   }]);
+
+app.factory('Camera', function ($resource) {
+    var Camera = $resource('/api/cameras/:cameraId', {cameraId: '@id'},{update: {method: 'PUT'}});
+    Camera.prototype.isNew = function(){
+            return (typeof(this.id) === 'undefined');
+    };
+    return Camera;
+}
+);
+
+app.controller({
+     CameraDetailController: function($scope, $routeParams, $location, Camera) {
+            var cameraId = $routeParams.id;
+
+            if (cameraId === 'new') {
+                    $scope.camera = new Camera();
+                    $scope.showSave = true;
+            } else {
+                    $scope.camera = Camera.get({cameraId: cameraId});
+                    $scope.showSave = false;
+            }
+
+            $scope.cancel = function() {
+                    $location.path('/setup');
+            };
+
+            $scope.save = function () {
+                    if ($scope.camera.isNew()) {
+                            $scope.camera.$save(function (camera, headers) {
+                                    toastr.success("Created");
+                                    $location.path('/setup');
+                            });
+                    } else {
+                            $scope.camera.$update(function() {
+                                    toastr.success("Updated");
+                                    $location.path('/setup');
+                            });
+                    }
+            };
+    }
+
+});
 
 app.controller('ReportController', ['$scope','$http','$timeout',function($scope,$http,$timeout) {
 	$scope.options = {width: 500, height: 300, 'bar': 'aaa'};
@@ -491,7 +541,7 @@ app.controller({
 		$scope.projects = [];
 		$scope.project_id = 1;
 		$http.get('/api/users/currentProject').success(function(data) {
-			$scope.project_id = parseInt(data,10);
+			$scope.project_id = parseInt(data.id,10);
 		});
 		$http.get('/api/users/projects').success(function(data) {
 			$scope.projects = data;

@@ -1,0 +1,21 @@
+<h1>Setup screen for '{{current_project.name}}' project</h1>
+<div>
+	<h3>Cameras {{project.name}}</h3>
+	Search: <input ng-model="searchText"  ng-my-focus="shouldFocus()">&nbsp;&nbsp;<a class="btn btn-primary pull-right" href="#/cameras/new"><i class="icon-plus-sign icon-white"></i> Add New</a>
+	<table>
+		<tr><th>camera name</th><th>camera location</th>
+		<tr ng-repeat="camera in cameras | filter:searchText" ><td>{{camera.cameraName}}</td><td>{{camera.location.lat}} x {{camera.location.lon}}</td>
+			<td>
+				<div class="pull-left">
+                <a class="btn  btn-sm btn-info" href="#/cameras/{{camera.id}}">
+                    <i class="icon-pencil icon-white"></i> Edit
+                </a>
+<!--                 <button class="btn  btn-sm btn-danger" ng-confirm-click="are you sure you want to delete location: {{camera.cameraName}} ?"ng-click="deleteLocation(camera)"> -->
+<!--                     <i class="icon-trash icon-white"></i> Delete -->
+<!--                 </button> -->
+            </div>
+				
+			</td>
+		</tr>
+	</table>
+</div>

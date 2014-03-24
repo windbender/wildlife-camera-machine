@@ -4,6 +4,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('wlcdm', [
   'ngRoute','ngCookies',
+  'ngResource',
   'http-auth-interceptor',
   'ui.bootstrap',
   'chieffancypants.loadingBar',
@@ -17,7 +18,8 @@ angular.module('wlcdm', [
   'google-maps'
 ]).
 config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/setup', {templateUrl: '/partials/partial1.html', controller: 'MyCtrl1'});
+  $routeProvider.when('/setup', {templateUrl: '/partials/setup.html', controller: 'SetupController'});
+  $routeProvider.when('/cameras/:id', {templateUrl: '/partials/cameraDetail.html', controller: 'CameraDetailController'});
   $routeProvider.when('/upload', {templateUrl: '/partials/upload.html', controller: 'UploadController'});
   $routeProvider.when('/categorize', {templateUrl: '/partials/categorize.html', controller: 'CategorizeController'});
   $routeProvider.when('/categorize/:gridId', {templateUrl: '/partials/categorize.html', controller: 'CategorizeController'});
