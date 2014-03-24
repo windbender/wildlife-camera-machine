@@ -151,9 +151,10 @@ public class UserResource {
 	@Timed
 	@Path("currentProject")
 	@UnitOfWork
-	public Long currentProjectGet(@SessionUser User user, @SessionCurProj Project currentProject) {
+	public Project currentProjectGet(@SessionUser User user, @SessionCurProj Project currentProject) {
+		Project cp = this.projectDAO.findById(currentProject.getId());
 		
-		return currentProject.getId();
+		return cp;
 	}
 	
 	

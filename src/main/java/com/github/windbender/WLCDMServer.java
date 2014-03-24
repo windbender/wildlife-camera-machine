@@ -15,6 +15,7 @@ import com.github.windbender.core.FileImageStore;
 import com.github.windbender.core.HibernateDataStore;
 import com.github.windbender.core.ImageStore;
 import com.github.windbender.core.S3ImageStore;
+import com.github.windbender.dao.CameraDAO;
 import com.github.windbender.dao.EventDAO;
 import com.github.windbender.dao.HibernateUserDAO;
 import com.github.windbender.dao.IdentificationDAO;
@@ -32,6 +33,7 @@ import com.github.windbender.domain.Project;
 import com.github.windbender.domain.Species;
 import com.github.windbender.domain.User;
 import com.github.windbender.domain.UserProject;
+import com.github.windbender.resources.CameraResource;
 import com.github.windbender.resources.ImageResource;
 import com.github.windbender.resources.ProjectResource;
 import com.github.windbender.resources.ReportResource;
@@ -98,6 +100,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
         final ProjectDAO projDAO = new ProjectDAO(hibernate.getSessionFactory());
         final UserProjectDAO upDAO = new UserProjectDAO(hibernate.getSessionFactory());
         final ReportDAO reportDAO = new ReportDAO(hibernate.getSessionFactory());
+        final CameraDAO cameraDAO = new CameraDAO(hibernate.getSessionFactory());
         
         HibernateDataStore ds = new HibernateDataStore(idDAO,irDAO,spDAO,uDAO, ieDAO, hibernate.getSessionFactory());
     	environment.manage(ds);
@@ -127,6 +130,9 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		environment.addResource(new ImageResource(ds, store, irDAO, spDAO, reportDAO));
 		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO));
 		environment.addResource(new ReportResource(reportDAO, ieDAO));
+		
+		environment.addResource(new CameraResource(cameraDAO, projDAO));
+		
 		
 		HashSessionManager hsm = new HashSessionManager();
 		
