@@ -9,13 +9,16 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.github.windbender.domain.Project;
 import com.google.common.base.Joiner;
 
 public class Limiter {
 
 	ReportParams reportParams;
-	public Limiter(ReportParams reportParams) {
+	Project currentProject;
+	public Limiter(ReportParams reportParams, Project curProject) {
 		this.reportParams = reportParams;
+		this.currentProject = curProject;
 	}
 
 	public String makeSQL() {
@@ -98,6 +101,10 @@ public class Limiter {
 		DateTime e = new DateTime(2014,4,1,0,0);
 		Interval i = new Interval(st,e);
 		return i;
+	}
+
+	public Long getProjectId() {
+		return this.currentProject.getId();
 	}
 
 }

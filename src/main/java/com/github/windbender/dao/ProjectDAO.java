@@ -67,10 +67,12 @@ public class ProjectDAO extends AbstractDAO<Project>{
 		
 	}
 
-	public Project findById(int i) {
+	public Project findById(long i) {
 		Session currentSession = this.currentSession();
 		Criteria crit = currentSession.createCriteria(Project.class);
 		logger.info("the criteria is " + crit.toString());
+		crit.add(Restrictions.eq("id", i));
+
 		List findList = (List<Project>) crit.list();
 		if(findList.size() ==1) {
 			return (Project)findList.get(0);

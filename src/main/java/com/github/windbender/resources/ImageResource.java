@@ -47,6 +47,7 @@ import com.github.windbender.dao.ReportDAO;
 import com.github.windbender.dao.SpeciesDAO;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
+import com.github.windbender.domain.Project;
 import com.github.windbender.domain.Species;
 import com.github.windbender.domain.User;
 import com.sun.jersey.api.ConflictException;
@@ -171,8 +172,9 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("topSpecies")
-	public List<Species> listTopSpecies(@SessionAuth(required={Priv.CATEGORIZE,Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user) {
-		List<Long> l = reportDAO.makeTopSpeciesIdList(10);
+	public List<Species> listTopSpecies(@SessionAuth(required={Priv.CATEGORIZE,Priv.REPORT}) SessionFilteredAuthorization auths,@Context HttpServletRequest request, @SessionUser User user) {
+		Project curProject = (Project) request.getSession().getAttribute("current_project");
+		List<Long> l = reportDAO.makeTopSpeciesIdList(10,curProject.getId());
 		if(l.size() < 3) {
 			List<Species> topTen = getTopTenForProject();
 			return topTen;

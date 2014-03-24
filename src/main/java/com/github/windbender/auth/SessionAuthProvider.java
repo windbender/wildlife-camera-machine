@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 import com.github.windbender.core.SessionFilteredAuthorization;
 import com.github.windbender.domain.Project;
+import com.github.windbender.domain.User;
 import com.github.windbender.domain.UserProject;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.core.spi.component.ComponentContext;
@@ -35,36 +36,39 @@ public class SessionAuthProvider implements InjectableProvider<SessionAuth, Type
 		@Override
 		public SessionFilteredAuthorization getValue(HttpContext c) {
 			Project curProject = (Project) request.getSession().getAttribute("current_project");
-			
-			//find the current projects user_project record
-			@SuppressWarnings("unchecked")
-			List<UserProject> upls = (List<UserProject>) request.getSession().getAttribute("user_projects");
-			UserProject curUP = null;
-			if ((curProject != null) && (upls != null)) {
-				for (UserProject up : upls) {
-					if (up.getProject().getId().equals(curProject.getId())) {
-						curUP = up;
+			User user = (User) request.getSession().getAttribute("user");
+			if(curProject.getPrimaryAdmin().equals(user)) {
+				// this means the user is the primary admin, so don't test the rest of stuff
+			} else {
+				//find the current projects user_project record
+				@SuppressWarnings("unchecked")
+				List<UserProject> upls = (List<UserProject>) request.getSession().getAttribute("user_projects");
+				UserProject curUP = null;
+				if ((curProject != null) && (upls != null)) {
+					for (UserProject up : upls) {
+						if (up.getProject().getId().equals(curProject.getId())) {
+							curUP = up;
+						}
 					}
 				}
-			}
-			
-			Set<Priv> requiredSetOR= new HashSet<Priv>(Arrays.asList(required));
-			// the user must have at least ONE of the required roles listed here.
-			boolean foundEnoughPriv = false;
-			for(Priv reqRole: requiredSetOR) {
-				if(curProject != null) {
-					if(reqRole.equals(Priv.CATEGORIZE) && curProject.getPublicCategorize()) foundEnoughPriv = true;
-					if(reqRole.equals(Priv.REPORT) && curProject.getPublicReport()) foundEnoughPriv = true;
+				
+				Set<Priv> requiredSetOR= new HashSet<Priv>(Arrays.asList(required));
+				// the user must have at least ONE of the required roles listed here.
+				boolean foundEnoughPriv = false;
+				for(Priv reqRole: requiredSetOR) {
+					if(curProject != null) {
+						if(reqRole.equals(Priv.CATEGORIZE) && curProject.getPublicCategorize()) foundEnoughPriv = true;
+						if(reqRole.equals(Priv.REPORT) && curProject.getPublicReport()) foundEnoughPriv = true;
+					}
+					if(curUP != null) {
+						if(reqRole.equals(Priv.CATEGORIZE) && curUP.getCanCategorize()) foundEnoughPriv = true;
+						if(reqRole.equals(Priv.REPORT) && curUP.getCanReport()) foundEnoughPriv = true;
+						if(reqRole.equals(Priv.UPLOAD) && curUP.getCanUpload()) foundEnoughPriv = true;
+						if(reqRole.equals(Priv.ADMIN) && curUP.getCanAdmin()) foundEnoughPriv = true;
+					}
 				}
-				if(curUP != null) {
-					if(reqRole.equals(Priv.CATEGORIZE) && curUP.getCanCategorize()) foundEnoughPriv = true;
-					if(reqRole.equals(Priv.REPORT) && curUP.getCanReport()) foundEnoughPriv = true;
-					if(reqRole.equals(Priv.UPLOAD) && curUP.getCanUpload()) foundEnoughPriv = true;
-					if(reqRole.equals(Priv.ADMIN) && curUP.getCanAdmin()) foundEnoughPriv = true;
-				}
+				if(!foundEnoughPriv) throw new WebApplicationException(Response.Status.FORBIDDEN);
 			}
-			if(!foundEnoughPriv) throw new WebApplicationException(Response.Status.FORBIDDEN);
-			
 
 			SessionFilteredAuthorization out = new SessionFilteredAuthorization();
 			out.setProject(curProject);

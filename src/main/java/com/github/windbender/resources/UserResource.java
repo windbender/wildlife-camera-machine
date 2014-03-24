@@ -87,6 +87,7 @@ public class UserResource {
 	@Timed
 	@Path("logout")
 	@Consumes(MediaType.APPLICATION_XML)
+	@UnitOfWork
 	public Response logout(@SessionUser User user, @Context HttpServletRequest request) {
 		log.info("attempting logout for user "+user.toString());
 		clearSession(request);
@@ -130,10 +131,30 @@ public class UserResource {
 		List<Project> outList = new ArrayList<Project>(sp);
 		return outList;
 	}
+	@POST
+	@Timed
+	@Path("currentProject")
+	@UnitOfWork
+	public Response currentProject(@SessionUser User user, @Context HttpServletRequest request, int project_id) {
+		log.info("attempting to set current project to "+project_id);
+		Project p = this.projectDAO.findById(project_id);
+		if(!userHasPrivsOn(user,p)) throw new WebApplicationException();
+		
+		if(p != null)
+			request.getSession().setAttribute("current_project", p);
+
+		return Response.status(Response.Status.OK).build();
+	}
 	
 	
 
 	
+	private boolean userHasPrivsOn(User user, Project p) {
+// TODO Auto-generated method stub
+		return true;
+	}
+
+
 	@GET
 	@Timed
 	@Path("getLoggedIn")

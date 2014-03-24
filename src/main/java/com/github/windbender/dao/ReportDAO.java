@@ -28,9 +28,9 @@ public class ReportDAO {
 	
 	
 	
-	public List<Long> makeTopSpeciesIdList(int limitNumber) {
+	public List<Long> makeTopSpeciesIdList(int limitNumber,long project_id) {
 		String speciesSQL = "select count(*) as cnt,  species_id from (   	" +
-				"select species_id,event_start_time,number   	from identifications,events   	where identifications.image_event_id=events.id group by image_event_id   " +
+				"select species_id,event_start_time,number   	from identifications,events, cameras where cameras.id=events.camera_id and cameras.project_id = "+project_id+" and identifications.image_event_id=events.id group by image_event_id   " +
 						") x, species s where x.species_id = s.id group by species_id  order by cnt desc";		
 		SQLQuery sqlQuery = this.sessionFactory.getCurrentSession().createSQLQuery(speciesSQL);
         Query query = sqlQuery;
@@ -48,7 +48,7 @@ public class ReportDAO {
 	public List<StringSeries> makeBySpecies(Limiter limits) {
 		String innerSQL = limits.makeSQL();
 		String speciesSQL = "select count(*) as cnt,  common_name from (   	" +
-				"select species_id,event_start_time,number   	from identifications,events   	where identifications.image_event_id=events.id "+innerSQL+" group by image_event_id   " +
+				"select species_id,event_start_time,number from identifications,events, cameras where cameras.id=events.camera_id and cameras.project_id = "+limits.getProjectId()+" and identifications.image_event_id=events.id "+innerSQL+" group by image_event_id   " +
 						") x, species s where x.species_id = s.id group by species_id  order by cnt desc";		
 
 		return doSQLtoSeriesString(speciesSQL);
@@ -118,7 +118,7 @@ public class ReportDAO {
 		String innerSQL = limits.makeSQL();
 //		String sql = "select count(*) as cnt, hour(event_start_time) as hour from (  select species_id,event_start_time    from identifications,events   where identifications.image_event_id=events.id "+innerSQL+" group by image_event_id  ) x group by hour(event_start_time)";
 		String sql = "select sum(num), hours from (select h.hours, ifnull(number,0) as num from hours h left join (       " +
-				"select number,species_id,CONVERT_TZ(event_start_time,'+00:00','-08:00') as sttime    from identifications,events   where identifications.image_event_id=events.id "+innerSQL+" group by image_event_id     " +
+				"select number,species_id,CONVERT_TZ(event_start_time,'+00:00','-08:00') as sttime    from identifications,events, cameras where cameras.id=events.camera_id and cameras.project_id = "+limits.getProjectId()+" and identifications.image_event_id=events.id "+innerSQL+" group by image_event_id     " +
 						") x on h.hours = hour(sttime)) y group by hours";
 		Series s = doSQLtoSeries(sql);
 		s.setSeriesName("by day");
@@ -130,7 +130,7 @@ public class ReportDAO {
 	public List<Series> makeByDay(Limiter limits) {
 		String innerSQL = limits.makeSQL();
 		String sql = "select sum(num),dates from (   select dates,ifnull(sttime,0) as strt,ifnull(number,0) as num from dates d left join ( " +
-						"select species_id,CONVERT_TZ(event_start_time,'+00:00','-08:00') as sttime, number from identifications, events where identifications.image_event_id=events.id "+innerSQL+" group by image_event_id      " +
+						"select species_id,CONVERT_TZ(event_start_time,'+00:00','-08:00') as sttime, number from identifications, events, cameras where cameras.id=events.camera_id and cameras.project_id = "+limits.getProjectId()+" and identifications.image_event_id=events.id "+innerSQL+" group by image_event_id      " +
 					  ") x on date(d.dates) = date(x.sttime) where d.dates < ? and d.dates > ? ) y group by dates";
 		
 //		String sql = "select count(*) as cnt, date(event_start_time) from (  select species_id,event_start_time    from identifications,events   where identifications.image_event_id=events.id   "+innerSQL+" group by image_event_id  ) x group by date(event_start_time)";
@@ -146,7 +146,7 @@ public class ReportDAO {
 
 	public List<Long> makeImageEvents(Limiter limits) {
 		String innerSQL = limits.makeSQL();
-		String sql = "select imageTime, e.id from identifications ids, events e,images i where ids.image_event_id=e.id and e.id=i.event_id "+innerSQL+"group by e.id order by imageTime;";
+		String sql = "select imageTime, e.id from identifications ids, events e,images i, cameras c where e.camera_id=c.id and c.project_id="+limits.getProjectId()+" and ids.image_event_id=e.id and e.id=i.event_id "+innerSQL+"group by e.id order by imageTime;";
 		
 		SQLQuery sqlQuery = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
         Query query = sqlQuery;

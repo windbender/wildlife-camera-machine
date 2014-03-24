@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -68,9 +70,10 @@ public class ProjectResource {
 	@Timed
 	@UnitOfWork
 	@Path("cameras")
-	public List<Camera> listCameras(@SessionAuth(required={Priv.UPLOAD}) SessionFilteredAuthorization auths,@SessionUser User user) {
+	public List<Camera> listCameras(@SessionAuth(required={Priv.UPLOAD}) SessionFilteredAuthorization auths,@Context HttpServletRequest request,@SessionUser User user) {
 		List<Camera> listNames = new ArrayList<Camera>();
-		Project p = projectDAO.findById(1);
+		Project cp = (Project) request.getSession().getAttribute("current_project");
+		Project p = projectDAO.findById(cp.getId());
 		Set<Camera> s = p.getCameras();
 		List<Camera> l = new ArrayList<Camera>(s);
 		return l;
@@ -80,7 +83,7 @@ public class ProjectResource {
 	@Timed
 	@UnitOfWork
 	@Path("cameras")
-	public Response addCamera(@SessionAuth(required={Priv.UPLOAD,Priv.ADMIN}) SessionFilteredAuthorization auths,@SessionUser User user, Camera newC)  {
+	public Response addCamera(@SessionAuth(required={Priv.UPLOAD,Priv.ADMIN}) SessionFilteredAuthorization auths,@SessionUser User user, @Context HttpServletRequest request,Camera newC)  {
 
 		return Response.ok().build();
 

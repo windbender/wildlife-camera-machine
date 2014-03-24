@@ -479,7 +479,7 @@ app.controller({
 	}
 });
 app.controller({
-	LogoutController : function($rootScope, $scope,$http, $window, CurUser) {
+	LogoutController : function($rootScope, $scope,$http, $window, $route, CurUser) {
 		$scope.logout = function() {
 			$http.post('/api/users/logout','please log me out').success(function() {
 				CurUser.setUsername(undefined);
@@ -491,6 +491,11 @@ app.controller({
 		$http.get('/api/users/projects').success(function(data) {
 			$scope.projects = data;
 		});
+		$scope.projectChanged = function() {
+			$http.post('/api/users/currentProject',$scope.project_id).success(function() {
+				$route.reload();
+			});
+		}
 		$scope.gotoLogin = function() {
 			$rootScope.$broadcast('event:auth-loginRequired');
 		};

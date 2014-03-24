@@ -142,11 +142,7 @@ public class Project implements Serializable,Comparable<Project> {
 		if (getClass() != obj.getClass())
 			return false;
 		Project other = (Project) obj;
-		if (cameras == null) {
-			if (other.cameras != null)
-				return false;
-		} else if (!cameras.equals(other.cameras))
-			return false;
+		
 		if (description == null) {
 			if (other.description != null)
 				return false;
