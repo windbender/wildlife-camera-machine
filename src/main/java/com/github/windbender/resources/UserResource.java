@@ -34,6 +34,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.windbender.auth.SessionCurProj;
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.CurUser;
 import com.github.windbender.core.LoginObject;
@@ -150,10 +151,9 @@ public class UserResource {
 	@Timed
 	@Path("currentProject")
 	@UnitOfWork
-	public Long currentProjectGet(@SessionUser User user, @Context HttpServletRequest request) {
-		Project p = (Project) request.getSession().getAttribute("current_project");
-
-		return p.getId();
+	public Long currentProjectGet(@SessionUser User user, @SessionCurProj Project currentProject) {
+		
+		return currentProject.getId();
 	}
 	
 	
