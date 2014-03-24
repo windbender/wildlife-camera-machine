@@ -18,6 +18,7 @@ import com.drew.lang.GeoLocation;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.jersey.api.ConflictException;
 
 
 @NamedNativeQueries({
@@ -96,6 +97,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 			ir.setLat( location.getLatitude());
 			ir.setLon(location.getLongitude());
 		} else {
+			if((lat == null) || (lon == null) ) throw new ConflictException("sorry either image must have EXIF based GPS info, or you must supply it on the upload form");
 			if(lat != null) 
 				ir.setLat( lat );
 			if(lon != null)
@@ -108,19 +110,21 @@ public class ImageRecord implements Comparable<ImageRecord>{
 		String stripped = filename.toUpperCase().replaceAll("[A-Z]", "").replaceAll("[^0-9]","");
 		Long seq = 0l;
 		try {
-			seq =Long.parseLong(stripped);
+			int endIndex = stripped.length();
+			String lastPart = stripped.substring(endIndex-3, endIndex);
+			seq =Long.parseLong(lastPart);
 		} catch (NumberFormatException e) {
 		}
 		
 		long millis = date.getTime() + seq;
 		ir.setDateTimeViaMillis(millis);
 		long temp = ir.getLat() != +0.0d ? Double.doubleToLongBits(ir.getLat()) : 0L;
-		int hash = (int) (temp ^ (temp >>> 32));
+		int locationHash = (int) (temp ^ (temp >>> 32));
 		temp = ir.getLon() != +0.0d ? Double.doubleToLongBits(ir.getLon()) : 0L;
-		hash = 31 * hash + (int) (temp ^ (temp >>> 32));
+		locationHash = 31 * locationHash + (int) (temp ^ (temp >>> 32));
 		
-		long m = ir.getDatetime().getMillis();
-		String id = "id"+hash+":"+m+":"+stripped;
+		long timeMillis = ir.getDatetime().getMillis();
+		String id = "id"+locationHash+":"+timeMillis+":"+seq;
 		ir.setId(id);
 		ir.setUploadTime(new DateTime());
 		return ir;

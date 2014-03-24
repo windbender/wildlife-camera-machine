@@ -415,8 +415,9 @@ app.controller('UploadController', ['$scope','$upload','$http',function($scope,$
 		        // file is uploaded successfully
 		      		console.log(data);
 		      		// so pull it from the 
+		      	}).error(function(data,status,headers,config) {
+		      		toastr.error("sorry can't upload the image because "+data);
 		      	});
-		      	//.error(...)
 		      	//.then(success, error, progress); 
 			$scope.uploads.push(upload);
 
