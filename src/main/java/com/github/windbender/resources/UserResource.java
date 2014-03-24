@@ -146,6 +146,16 @@ public class UserResource {
 		return Response.status(Response.Status.OK).build();
 	}
 	
+	@GET
+	@Timed
+	@Path("currentProject")
+	@UnitOfWork
+	public Long currentProjectGet(@SessionUser User user, @Context HttpServletRequest request) {
+		Project p = (Project) request.getSession().getAttribute("current_project");
+
+		return p.getId();
+	}
+	
 	
 
 	

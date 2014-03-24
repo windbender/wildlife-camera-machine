@@ -488,6 +488,10 @@ app.controller({
 			});
 		};
 		$scope.projects = [];
+		$scope.project_id = 1;
+		$http.get('/api/users/currentProject').success(function(data) {
+			$scope.project_id = parseInt(data,10);
+		});
 		$http.get('/api/users/projects').success(function(data) {
 			$scope.projects = data;
 		});
