@@ -35,6 +35,7 @@ import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.github.windbender.auth.Priv;
 import com.github.windbender.auth.SessionAuth;
+import com.github.windbender.auth.SessionCurProj;
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.HibernateDataStore;
 import com.github.windbender.core.IdentificationRequest;
@@ -126,14 +127,14 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("nextEvent")
-	public NextEventRecord getNextEvent(@SessionAuth(required={Priv.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user, @QueryParam("lastEvent") String lastEventIdStr) {
+	public NextEventRecord getNextEvent(@SessionAuth(required={Priv.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionCurProj Project currentProject,@SessionUser User user, @QueryParam("lastEvent") String lastEventIdStr) {
 		Long lastEventId = null;
 		try {
 			lastEventId = Long.parseLong(lastEventIdStr);
 		} catch (NumberFormatException e) {
 			// stupid API ignore this exception
 		}
-		NextEventRecord ner = this.ds.makeNextEventRecord(user,lastEventId);
+		NextEventRecord ner = this.ds.makeNextEventRecord(user,currentProject,lastEventId);
 		if(ner.getImageEvent() != null) {
 			for(ImageRecord ir: ner.getImageEvent().getImageRecords()) {
 				ir.getDatetime();
@@ -172,9 +173,8 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("topSpecies")
-	public List<Species> listTopSpecies(@SessionAuth(required={Priv.CATEGORIZE,Priv.REPORT}) SessionFilteredAuthorization auths,@Context HttpServletRequest request, @SessionUser User user) {
-		Project curProject = (Project) request.getSession().getAttribute("current_project");
-		List<Long> l = reportDAO.makeTopSpeciesIdList(10,curProject.getId());
+	public List<Species> listTopSpecies(@SessionAuth(required={Priv.CATEGORIZE,Priv.REPORT}) SessionFilteredAuthorization auths,@SessionCurProj Project currentProject, @SessionUser User user) {
+		List<Long> l = reportDAO.makeTopSpeciesIdList(10,currentProject.getId());
 		if(l.size() < 3) {
 			List<Species> topTen = getTopTenForProject();
 			return topTen;
@@ -236,10 +236,11 @@ public class ImageResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("identification")
-	public Response identify(@SessionAuth(required={Priv.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user,IdentificationRequest idRequest) {
+	public Response identify(@SessionAuth(required={Priv.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionCurProj Project currentProject,@SessionUser User user,IdentificationRequest idRequest) {
 		log.info("GOT an ID "+idRequest);
+
 		// null sh ould be the user
-		long id = this.ds.recordIdentification(idRequest, user);
+		long id = this.ds.recordIdentification(idRequest, user,currentProject);
 		return Response.ok(id).build();
 	}
 	
@@ -249,9 +250,9 @@ public class ImageResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("clearid")
-	public Response unid(@SessionAuth(required={Priv.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionUser User user,long idToClear) {
+	public Response unid(@SessionAuth(required={Priv.CATEGORIZE}) SessionFilteredAuthorization auths,@SessionCurProj Project currentProject,@SessionUser User user,long idToClear) {
 		log.info("we should clear "+idToClear);
-		this.ds.removeId(idToClear);
+		this.ds.removeId(idToClear,currentProject);
 		// null should be the user
 		//long id = this.ds.recordIdentification(idRequest, user);
 		return Response.ok().build();
@@ -261,7 +262,7 @@ public class ImageResource {
 	@Timed
 	@UnitOfWork
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response add(@SessionAuth(required={Priv.UPLOAD}) SessionFilteredAuthorization auths,@SessionUser User user, @Context HttpServletRequest request, FormDataMultiPart formData) {
+	public Response add(@SessionAuth(required={Priv.UPLOAD}) SessionFilteredAuthorization auths,@SessionCurProj Project currentProject,@SessionUser User user, @Context HttpServletRequest request, FormDataMultiPart formData) {
 
 		ImageRecord newImage = null;
 		try {
@@ -312,7 +313,7 @@ public class ImageResource {
 		
 						store.saveImages(bi,newImage);
 						bis.close();
-						ds.addImage(newImage);
+						ds.addImage(newImage,currentProject);
 						URI uri = UriBuilder.fromResource(ImageResource.class).build(newImage.getId());
 						log.info("the response uri will be " + uri);
 						return Response.created(uri).build();

@@ -24,6 +24,7 @@ import com.github.windbender.dao.SpeciesDAO;
 import com.github.windbender.domain.Identification;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
+import com.github.windbender.domain.Project;
 import com.github.windbender.domain.Species;
 import com.github.windbender.domain.User;
 import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
@@ -53,8 +54,9 @@ public class HibernateDataStore implements Managed, Runnable {
 		eventSearchQueue = new ConcurrentLinkedQueue<ImageRecord>();
 	}
 
-	public void addImage(ImageRecord newImage) {
+	public void addImage(ImageRecord newImage, Project currentProject) {
 		log.info("adding image "+newImage);
+//TODO Do something here around current project and saving the image
 		// store the image in DS
 		String id =irDAO.create(newImage);
 		// find or make corresponding event
@@ -228,14 +230,14 @@ public class HibernateDataStore implements Managed, Runnable {
 		return eventDAO.findAll();
 	}
 
-	public NextEventRecord makeNextEventRecord(User u, Long lastEventId) {
+	public NextEventRecord makeNextEventRecord(User u, Project currentProject, Long lastEventId) {
 		// We want to identify events which are
 		// a) haven't been previously identifed by this user
-		List<Integer> done = this.eventDAO.findEventIdsDoneByUser(u);
+		List<Integer> done = this.eventDAO.findEventIdsDoneByUser(currentProject.getId(),u);
 		SortedSet<Integer> doneSet = new TreeSet<Integer>(done);
 		// b) have a number of zero or 1 previous identifications
 		int number =2;
-		List<Integer> lowNumber = this.eventDAO.findEventsIdsWithFewerThanIdentifications(number);
+		List<Integer> lowNumber = this.eventDAO.findEventsIdsWithFewerThanIdentifications(currentProject.getId(),number);
 		SortedSet<Integer> lowNumberSet =  new TreeSet<Integer>(lowNumber);
 		
 		lowNumberSet.removeAll(doneSet);
@@ -278,7 +280,7 @@ public class HibernateDataStore implements Managed, Runnable {
 		return s;
 	}
 
-	public long recordIdentification(IdentificationRequest idRequest, User u) {
+	public long recordIdentification(IdentificationRequest idRequest, User u, Project currentProject) {
 		
 		ImageRecord identifiedImage = null;
 		Species speciesIdentified = null;
@@ -295,6 +297,9 @@ public class HibernateDataStore implements Managed, Runnable {
 		} else {
 			speciesIdentified = speciesDAO.findById(idRequest.getSpeciesId());
 		}
+		
+//TODO WE NEED SOMETHING HERE TO PREVENT CROSS PROJECT IDs from "storing"
+		
 		Identification id = new Identification();
 		if(identifiedEvent != null) {
 			id.setIdentifiedEvent(identifiedEvent);
@@ -314,7 +319,8 @@ public class HibernateDataStore implements Managed, Runnable {
 		return idid;
 	}
 
-	public void removeId(long idToClear) {
+	public void removeId(long idToClear, Project currentProject) {
+//TODO confim the id is in the current project
 		idDAO.delete(idToClear);
 		
 	}

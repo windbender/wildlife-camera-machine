@@ -9,6 +9,7 @@ import org.eclipse.jetty.server.session.SessionHandler;
 
 import com.bazaarvoice.dropwizard.assets.ConfiguredAssetsBundle;
 import com.github.windbender.auth.SessionAuthProvider;
+import com.github.windbender.auth.SessionCurProjProvider;
 import com.github.windbender.auth.SessionUserProvider;
 import com.github.windbender.core.FileImageStore;
 import com.github.windbender.core.HibernateDataStore;
@@ -152,6 +153,8 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		environment.setSessionHandler(new SessionHandler(hsm));
 		environment.addProvider(SessionUserProvider.class);
 		environment.addProvider(SessionAuthProvider.class);
+		environment.addProvider(SessionCurProjProvider.class);
+		
 
 		MakeDatesService mds = new MakeDatesService(hibernate.getSessionFactory());
 		mds.makeDates();
