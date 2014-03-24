@@ -3,12 +3,10 @@ package com.github.windbender.resources;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
@@ -16,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.windbender.auth.Priv;
 import com.github.windbender.auth.SessionAuth;
+import com.github.windbender.auth.SessionCurProj;
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.Limiter;
 import com.github.windbender.core.ReportParams;
@@ -51,10 +50,9 @@ public class ReportResource {
 	@POST
 	@Timed
 	@UnitOfWork
-	public ReportResponse makeReport(@SessionAuth(required={Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @Context HttpServletRequest request, ReportParams reportParams) {
-		Project curProject = (Project) request.getSession().getAttribute("current_project");
+	public ReportResponse makeReport(@SessionAuth(required={Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @SessionCurProj Project currentProject, ReportParams reportParams) {
 
-		Limiter limits = new Limiter(reportParams,curProject);
+		Limiter limits = new Limiter(reportParams,currentProject);
 		List<StringSeries> bySpecies = rd.makeBySpecies(limits);
 		List<Series> byHour = rd.makeByHour(limits);
 		List<Series> byDay = rd.makeByDay(limits);
