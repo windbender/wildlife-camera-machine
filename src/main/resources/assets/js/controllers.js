@@ -464,7 +464,7 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
     }
     $scope.$watch('reportEventIndex', function() {
     	$scope.reportImgIndex = 0;
-    	if(typeof $scope.$scope.reportEventIndex === 'undefined') return;
+    	if(typeof $scope.reportEventIndex === 'undefined') return;
     	if(typeof $scope.imageEvents === 'undefined' ) return;
     	if(typeof $scope.imageEvents[$scope.reportEventIndex] === 'undefined' ) return;
     	if(typeof $scope.imageEvents[$scope.reportEventIndex].imageRecords === 'undefined' ) return;
