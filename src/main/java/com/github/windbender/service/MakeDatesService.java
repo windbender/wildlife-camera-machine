@@ -42,7 +42,7 @@ public class MakeDatesService {
 						if(maxDate == null) {
 							maxDate = minDate;
 						}
-						while(maxDate.isBefore(biggestDate.minusDays(1))) {
+						while(maxDate.isBefore(biggestDate.minusDays(2))) {
 							String sql = "insert into dates (dates) values (?)";
 							PreparedStatement pstmt = connection.prepareStatement(sql);
 							pstmt.setDate(1, new Date(maxDate.getMillis()));
