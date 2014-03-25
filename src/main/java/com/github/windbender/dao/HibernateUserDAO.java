@@ -17,6 +17,7 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.windbender.domain.Project;
 import com.github.windbender.domain.User;
 import com.yammer.dropwizard.hibernate.AbstractDAO;
 
@@ -179,6 +180,16 @@ public class HibernateUserDAO extends AbstractDAO<User> implements UserDAO {
 		logger.info("hashing took "+delta+" milli seconds");
 		return id;
 	}
+
+	@Override
+	public User findByPortionOfEmailUsername(String snippet) {
+		
+		Criteria crit = this.currentSession().createCriteria(User.class);
+		crit.add(Restrictions.or(Restrictions.like("username", snippet),Restrictions.like("email", snippet)));
+		User u = (User) crit.uniqueResult();
+		return u;
+	}
+
 	
 
 }

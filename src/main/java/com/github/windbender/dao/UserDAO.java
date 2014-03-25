@@ -3,6 +3,7 @@ package com.github.windbender.dao;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+import com.github.windbender.domain.Project;
 import com.github.windbender.domain.User;
 
 public interface UserDAO {
@@ -20,5 +21,8 @@ public interface UserDAO {
 	User findByVerifyCode(String code);
 
 	long create(User u) throws NoSuchAlgorithmException, InvalidKeySpecException;
+
+	User findByPortionOfEmailUsername(String snippet);
+
 
 }

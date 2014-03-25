@@ -42,6 +42,7 @@ import com.github.windbender.core.ResetPWRequest;
 import com.github.windbender.core.SetPWRequest;
 import com.github.windbender.core.SignUpResponse;
 import com.github.windbender.core.SignupRequest;
+import com.github.windbender.core.UserTO;
 import com.github.windbender.core.UserUpdate;
 import com.github.windbender.core.VerifyRequest;
 import com.github.windbender.core.VerifyResponse;
@@ -97,6 +98,29 @@ public class UserResource {
 	}
 	
 
+	@GET
+	@Timed
+	@Path("lookup")
+	@UnitOfWork
+	public List<UserTO> lookupToo(@SessionUser User user, @QueryParam("text") String snippet,@QueryParam("p") String projectIdStr) {
+		if(snippet == null) throw new NotFoundException();
+		if(snippet.length() < 3) throw new NotFoundException();
+		Project project = null;
+		try {
+			Long projectId = null;
+			projectId = Long.parseLong(projectIdStr);
+			project = this.projectDAO.findById(projectId);
+		} catch(NumberFormatException nfe) {}
+		User u = this.ud.findByPortionOfEmailUsername(snippet);
+		if(u == null) return null;
+		// now remove it, if it's already in existence.
+		List<UserProject> current= this.upDAO.findByUserIdProjectId(u, project);
+		if(current.size() > 0) throw new NotFoundException();
+		ArrayList<UserTO> l = new ArrayList<UserTO>();
+		l.add(new UserTO(u));
+		return l;
+	}
+	
 	@GET
 	@Timed
 	@Path("check")

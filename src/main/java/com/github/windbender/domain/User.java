@@ -91,7 +91,7 @@ public class User implements Serializable {
 			return false;
 		return true;
 	}
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	public void setId(int id) {

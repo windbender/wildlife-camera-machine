@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name="user_project")
@@ -27,6 +28,44 @@ public class UserProject implements Serializable{
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="user_id")
 	User user;
+	
+	
+	transient Integer idForUser;
+	transient Integer idForProject;
+	
+	@JsonProperty
+	public Integer getIdForProject() {
+		return idForProject;
+	}
+
+	@JsonProperty
+	public void setIdForProject(Integer idForProject) {
+		this.idForProject = idForProject;
+	}
+
+	@JsonProperty
+	public void setIdForUser(Integer i) {
+		this.idForUser = i;
+	}
+	
+	@JsonProperty
+	public Integer getIdForUser() {
+		return idForUser;
+	}
+
+	@JsonProperty
+	public Integer getUserId() {
+		return user.getId();
+	}
+	@JsonProperty
+	public String getUsername() {
+		return user.getUsername();
+	}
+	@JsonProperty
+	public String getUserEmail() {
+		return user.getEmail();
+	}
+	
 	
 	@JsonIgnore
 	@ManyToOne(fetch=FetchType.EAGER)

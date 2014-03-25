@@ -37,6 +37,7 @@ import com.github.windbender.resources.CameraResource;
 import com.github.windbender.resources.ImageResource;
 import com.github.windbender.resources.ProjectResource;
 import com.github.windbender.resources.ReportResource;
+import com.github.windbender.resources.UserProjectResource;
 import com.github.windbender.resources.UserResource;
 import com.github.windbender.service.AmazonMessageSender;
 import com.github.windbender.service.AsyncEmailSender;
@@ -132,6 +133,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		environment.addResource(new ReportResource(reportDAO, ieDAO));
 		
 		environment.addResource(new CameraResource(cameraDAO, projDAO));
+		environment.addResource(new UserProjectResource(upDAO, projDAO, uDAO));
 		
 		
 		HashSessionManager hsm = new HashSessionManager();

@@ -81,6 +81,11 @@ public class ProjectDAO extends AbstractDAO<Project>{
 		return null;
 	}
 
+	public void delete(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 
 }

@@ -2,6 +2,8 @@ package com.github.windbender.dao;
 
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -35,6 +37,43 @@ public class UserProjectDAO extends AbstractDAO<UserProject> {
 	public List<UserProject> findAllByUser(User u) {
 		Session currentSession = this.currentSession();
 		Criteria crit = currentSession.createCriteria(UserProject.class);
+		crit.add(Restrictions.eq("user", u));
+		logger.info("the criteria is " + crit.toString());
+		List<UserProject> findList = (List<UserProject>) crit.list();
+		return findList;
+	}
+	public List<UserProject> findAllInProject(Project p) {
+		Session currentSession = this.currentSession();
+		Criteria crit = currentSession.createCriteria(UserProject.class);
+		crit.add(Restrictions.eq("project", p));
+		logger.info("the criteria is " + crit.toString());
+		List<UserProject> findList = (List<UserProject>) crit.list();
+		return findList;
+	}
+	public UserProject findById(Long userProjectId) {
+		Session currentSession = this.currentSession();
+		Criteria crit = currentSession.createCriteria(UserProject.class);
+		crit.add(Restrictions.eq("id", userProjectId));
+		logger.info("the criteria is " + crit.toString());
+		UserProject up = (UserProject) crit.uniqueResult();
+		
+		return up;
+	}
+	public void delete(Long id) {
+        if (id != null) {
+                // this is an update
+                UserProject up = this.get(id);
+                this.currentSession().delete(up);
+        } else {
+                // trying to delete with no id...
+                throw new WebApplicationException();
+        }
+		
+	}
+	public List<UserProject> findByUserIdProjectId(User u, Project p) {
+		Session currentSession = this.currentSession();
+		Criteria crit = currentSession.createCriteria(UserProject.class);
+		crit.add(Restrictions.eq("project", p));
 		crit.add(Restrictions.eq("user", u));
 		logger.info("the criteria is " + crit.toString());
 		List<UserProject> findList = (List<UserProject>) crit.list();
