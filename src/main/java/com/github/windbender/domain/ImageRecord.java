@@ -38,7 +38,9 @@ public class ImageRecord implements Comparable<ImageRecord>{
 	DateTime datetime;
 	DateTime uploadTime;
 	
+	@JsonIgnore
 	double lat;
+	@JsonIgnore
 	double lon;
 	String originalFileName;
 	
@@ -135,6 +137,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 		
 	}
 
+	@JsonIgnore
 	@Column(name="lat", nullable=true)
 	public double getLat() {
 		return lat;
@@ -144,6 +147,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 		this.lat = lat;
 	}
 
+	@JsonIgnore
 	@Column(name="lon", nullable=true)
 	public double getLon() {
 		return lon;
