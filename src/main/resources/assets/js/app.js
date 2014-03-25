@@ -19,6 +19,9 @@ angular.module('wlcdm', [
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/setup', {templateUrl: '/partials/setup.html', controller: 'SetupController'});
+  $routeProvider.when('/userproject/:id', {templateUrl: '/partials/userprojectDetail.html', controller: 'UserProjectDetailController'});
+  $routeProvider.when('/account', {templateUrl: '/partials/account.html', controller: 'AccountController'});
+  $routeProvider.when('/project/:id', {templateUrl: '/partials/projectDetail.html', controller: 'ProjectDetailController'});
   $routeProvider.when('/cameras/:id', {templateUrl: '/partials/cameraDetail.html', controller: 'CameraDetailController'});
   $routeProvider.when('/upload', {templateUrl: '/partials/upload.html', controller: 'UploadController'});
   $routeProvider.when('/categorize', {templateUrl: '/partials/categorize.html', controller: 'CategorizeController'});
@@ -27,5 +30,5 @@ config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/signup', {templateUrl: '/partials/signup.html', controller: 'SignupController'});
   $routeProvider.when('/verify', {templateUrl: '/partials/verify.html', controller: 'VerifyController'})
   $routeProvider.when('/createJoin', {templateUrl: '/partials/createOrJoin.html', controller: 'CreateJoinController'})
-  $routeProvider.otherwise({redirectTo: '/categorize'});
+  $routeProvider.otherwise({redirectTo: '/report'});
 }]);

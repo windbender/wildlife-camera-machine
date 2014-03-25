@@ -165,16 +165,141 @@ var app = angular.module('wlcdm.controllers', [])
     focus('focusMe');
     
 	});
-app.controller('SetupController', ['$scope','$http',function($scope,$http) {
+
+
+app.controller('AccountController', ['$scope','$http',function($scope,$http,CurUser) {
+	$scope.curUser = CurUser;
+
+	$http.get('/api/users/projects').success(function(data) {
+		$scope.projects = data;
+	});
+
+}]);
+
+app.factory('Project', function ($resource) {
+    var Project = $resource('/api/projects/:projectId', {projectId: '@id'},{update: {method: 'PUT'}});
+    Project.prototype.isNew = function(){
+            return (typeof(this.id) === 'undefined');
+    };
+    return Project;
+});
+
+app.factory('UserProject', function ($resource) {
+    var UserProject = $resource('/api/userproject/:userprojectId', {userprojectId: '@id'},{update: {method: 'PUT'}});
+    UserProject.prototype.isNew = function(){
+            return (typeof(this.id) === 'undefined');
+    };
+    return UserProject;
+});
+
+app.controller({
+	UserProjectDetailController : function($q, $resource, $scope, $http, $routeParams, $location, UserProject) {
+		var upId = $routeParams.id;
+		
+		$http.get('/api/users/currentProject').success(function(data) {
+			$scope.current_project = data;
+			$scope.userproject.project = data;
+		});
+		
+		$scope.userOther = function(val) {
+			return $http.get('/api/users/lookup/?text='+val+'&p='+$scope.current_project.id).then(function(res){
+				//return res.data;
+				return res.data;
+			});
+		}
+		
+		$scope.formatInput=function(user) {
+			if(typeof user === 'undefined' ) return "";
+			return user.username+" : "+user.email; 
+		}
+		
+		if (upId === 'new') {
+	            $scope.userproject = new UserProject();
+	            $scope.showSave = true;
+	    } else {
+	            $scope.userproject = UserProject.get({userprojectId: upId});
+	            $scope.showSave = false;
+	    }
+	
+	    $scope.cancel = function() {
+	            $location.path('/setup');
+	    };
+	
+	    $scope.save = function () {
+	    		$scope.userproject.idForUser = $scope.userproject.user.id;
+	    		$scope.userproject.idForProject = $scope.userproject.project.id;
+	            if ($scope.userproject.isNew()) {
+	                    $scope.userproject.$save(function (userproject, headers) {
+	                            toastr.success("Created");
+	                            $location.path('/setup');
+	                    });
+	            } else {
+	                    $scope.userproject.$update(function() {
+	                            toastr.success("Updated");
+	                            $location.path('/setup');
+	                    });
+	            }
+	    };
+	}
+});
+app.controller({
+	ProjectDetailController: function($scope, $routeParams, $location, Project) {
+		var projectId = $routeParams.id;
+		
+	    if (projectId === 'new') {
+	            $scope.project = new Project();
+	            $scope.showSave = true;
+	    } else {
+	            $scope.project = Project.get({projectId: projectId});
+	            $scope.showSave = false;
+	    }
+	
+	    $scope.cancel = function() {
+	            $location.path('/account');
+	    };
+	
+	    $scope.save = function () {
+	            if ($scope.project.isNew()) {
+	                    $scope.project.$save(function (project, headers) {
+	                            toastr.success("Created");
+	                            $location.path('/account');
+	                    });
+	            } else {
+	                    $scope.project.$update(function() {
+	                            toastr.success("Updated");
+	                            $location.path('/account');
+	                    });
+	            }
+	    };
+	
+	}
+});
+
+
+app.controller('SetupController', ['$scope','$http','$route',function($scope,$http,$route) {
 	$http.get('/api/users/currentProject').success(function(data) {
 		$scope.current_project = data;
 	});
 
+    $scope.deleteUserproject = function(userproject) {
+//    	userproject.$delete(function() {
+//    		$scope.vineyards.splice($scope.vineyards.indexOf(vineyard),1);
+//    		toastr.success("Deleted");
+//    	});
+    	alert("deleting "+userproject.id);
+    	$http.delete('/api/userproject/'+userproject.id).success(function(data) {
+    		$scope.userprojects = data;
+    	});
+		$route.reload();
+    }
+
 	$http.get('/api/cameras').success(function(data) {
 		$scope.cameras = data;
 	});
-	
-		// nuffin
+	$http.get('/api/userproject').success(function(data) {
+		$scope.userprojects = data;
+	});
+
   }]);
 
 app.factory('Camera', function ($resource) {
@@ -339,7 +464,9 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
     }
     $scope.$watch('reportEventIndex', function() {
     	$scope.reportImgIndex = 0;
+    	if(typeof $scope.$scope.reportEventIndex === 'undefined') return;
     	if(typeof $scope.imageEvents === 'undefined' ) return;
+    	if(typeof $scope.imageEvents[$scope.reportEventIndex] === 'undefined' ) return;
     	if(typeof $scope.imageEvents[$scope.reportEventIndex].imageRecords === 'undefined' ) return;
     	$scope.imageLength = $scope.imageEvents[$scope.reportEventIndex].imageRecords.length;
     	$scope.loadImage();
@@ -667,7 +794,7 @@ app.controller({
 });
 
 app.controller({
-	VerifyController: function($scope,$timeout, $location, $http) {
+	VerifyController: function($scope,$timeout, $rootScope,$location, $http) {
 		$scope.code = $location.search()['verifyCode'];
 		
 		$scope.verified = false;
@@ -679,7 +806,7 @@ app.controller({
 				$scope.failedverify = false;
 				$scope.username = data.username;
 				var shortWait = $timeout(function() {
-					$location.path('/createJoin');	
+					$location.path('/account');	
 					$location.replace();
 					$location.search('verifyCode', null);
 				},4000);
