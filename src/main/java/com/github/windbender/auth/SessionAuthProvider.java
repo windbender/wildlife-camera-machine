@@ -37,6 +37,12 @@ public class SessionAuthProvider implements InjectableProvider<SessionAuth, Type
 		public SessionFilteredAuthorization getValue(HttpContext c) {
 			Project curProject = (Project) request.getSession().getAttribute("current_project");
 			User user = (User) request.getSession().getAttribute("user");
+			if(curProject == null) {
+				throw new WebApplicationException(Response.Status.FORBIDDEN); 
+			}
+			if(user == null) {
+				throw new WebApplicationException(Response.Status.FORBIDDEN); 
+			}
 			if(curProject.getPrimaryAdmin().equals(user)) {
 				// this means the user is the primary admin, so don't test the rest of stuff
 			} else {
