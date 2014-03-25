@@ -152,6 +152,7 @@ public class UserResource {
 	@Path("currentProject")
 	@UnitOfWork
 	public Project currentProjectGet(@SessionUser User user, @SessionCurProj Project currentProject) {
+		if(currentProject == null) return null;
 		Project cp = this.projectDAO.findById(currentProject.getId());
 		
 		return cp;
