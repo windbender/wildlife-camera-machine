@@ -56,7 +56,7 @@ public class ProjectResource {
 	@GET
 	@Timed
 	@UnitOfWork
-	public List<String> list(@SessionAuth(required={Priv.UPLOAD,Priv.ADMIN}) SessionFilteredAuthorization auths,@SessionUser User user) {
+	public List<String> list(@SessionUser User user) {
 		List<Project> list = projectDAO.findAll();
 		List<String> listNames = new ArrayList<String>();
 		for(Project p :list) {
