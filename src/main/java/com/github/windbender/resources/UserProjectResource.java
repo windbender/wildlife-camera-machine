@@ -32,6 +32,7 @@ import com.github.windbender.domain.Project;
 import com.github.windbender.domain.User;
 import com.github.windbender.domain.UserProject;
 import com.sun.jersey.api.ConflictException;
+import com.sun.jersey.api.NotFoundException;
 import com.yammer.dropwizard.hibernate.UnitOfWork;
 import com.yammer.metrics.annotation.Timed;
 
@@ -72,6 +73,7 @@ public class UserProjectResource {
 			@SessionUser User user, @SessionCurProj Project currentProject,
 			@PathParam("id") Long userProjectId) {
 		UserProject c = upd.findById(userProjectId);
+		if(c == null) throw new NotFoundException();
 		if (!c.getProject().getId().equals(currentProject.getId()))
 			throw new WebApplicationException(Response.Status.FORBIDDEN);
 		return c;
@@ -105,20 +107,20 @@ public class UserProjectResource {
 	}
 
 	@PUT
-	@Timed
-	@Path("{id}")
+	@Timed	@Path("{id}")
 	@UnitOfWork
 	public Response update(
 			@SessionAuth(required = { Priv.ADMIN }) SessionFilteredAuthorization auths,
 			@SessionUser User user, @SessionCurProj Project currentProject,
-			@PathParam("id") Long id, @Valid UserProject UserProject) {
+			@PathParam("id") Long id, @Valid UserProject userProject) {
 		Project p = pd.findById(currentProject.getId());
 		if (p == null)
 			throw new WebApplicationException(Response.Status.FORBIDDEN);
-		if (!p.getId().equals(UserProject.getProject().getId()))
-			throw new WebApplicationException(Response.Status.FORBIDDEN);
-
-		UserProject newUserProject = upd.save(UserProject);
+		User u = this.ud.findById(userProject.getIdForUser());
+		userProject.setUser(u);
+		userProject.setProject(p);
+		
+		UserProject newUserProject = upd.save(userProject);
 		//
 		URI uri = UriBuilder.fromResource(UserProjectResource.class).build(
 				newUserProject.getId());

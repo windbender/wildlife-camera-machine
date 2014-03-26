@@ -170,7 +170,7 @@ var app = angular.module('wlcdm.controllers', [])
 app.controller('AccountController', ['$scope','$http',function($scope,$http,CurUser) {
 	$scope.curUser = CurUser;
 
-	$http.get('/api/users/projects').success(function(data) {
+	$http.get('/api/users/myprojects').success(function(data) {
 		$scope.projects = data;
 	});
 
@@ -226,18 +226,21 @@ app.controller({
 	    };
 	
 	    $scope.save = function () {
-	    		$scope.userproject.idForUser = $scope.userproject.user.id;
-	    		$scope.userproject.idForProject = $scope.userproject.project.id;
 	            if ($scope.userproject.isNew()) {
-	                    $scope.userproject.$save(function (userproject, headers) {
-	                            toastr.success("Created");
-	                            $location.path('/setup');
-	                    });
+		    		$scope.userproject.idForUser = $scope.userproject.user.id;
+		    		$scope.userproject.idForProject = $scope.userproject.project.id;
+                    $scope.userproject.$save(function (userproject, headers) {
+                            toastr.success("Created");
+                            $location.path('/setup');
+                    });
 	            } else {
-	                    $scope.userproject.$update(function() {
-	                            toastr.success("Updated");
-	                            $location.path('/setup');
-	                    });
+		    		$scope.userproject.idForUser = $scope.userproject.userId;
+		    		//$scope.userproject.idForProject = $scope.userproject.project.id;
+
+                    $scope.userproject.$update(function() {
+                            toastr.success("Updated");
+                            $location.path('/setup');
+                    });
 	            }
 	    };
 	}
@@ -677,6 +680,9 @@ app.controller({
 			$http.post('/api/users/currentProject',$scope.project_id).success(function() {
 				$route.reload();
 			});
+		}
+		$scope.makeName = function(project) {
+			return project.primaryAdmin;
 		}
 		$scope.gotoLogin = function() {
 			$rootScope.$broadcast('event:auth-loginRequired');

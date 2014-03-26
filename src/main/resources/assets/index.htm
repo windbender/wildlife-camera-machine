@@ -62,7 +62,7 @@
         </button>
                 
     	<div class="menutext navbar-text pull-left visible-xs" id="logout" ng:controller="LogoutController">
-    		<span id="projSelect" ng-show="isLoggedIn()">current project:<select ng-model="project_id" ng-change="projectChanged()" ng-options="u.id as u.name for u in projects" ></select></span>
+    		<span id="projSelect" ng-show="isLoggedIn()">current project:<select ng-model="project_id" ng-change="projectChanged()" ng-options="u.id as u.menuText for u in projects" ></select></span>
         	<span id="loggedinGreeting" ng-show="isLoggedIn()"><a href="/#/account">user: {{curUser.getCurUser().username}}</a> &nbsp; &nbsp; <a id="logoutLink" href="" ng-click="logout()">logout</a></span>
             <span id="loginlink" ng-hide="isLoggedIn()"><a href="" ng-click="gotoLogin()">login</a>&nbsp; &nbsp;<a class="menutext" id="signuplink" href="/signup.htm">signup</a>&nbsp; &nbsp;<a class="menutext" id="lostpwlink" href="/#/lostpw">lost pw</a></span>
         </div>
@@ -70,7 +70,7 @@
     </div>
     <div class="container">
     <div class="menutext navbar-text pull-right hidden-xs" id="logout" ng:controller="LogoutController">                
-    		<span id="projSelect" ng-show="isLoggedIn()">current project:<select ng-model="project_id" ng-change="projectChanged()" ng-options="u.id as u.name for u in projects" ></select></span>
+    		<span id="projSelect" ng-show="isLoggedIn()">current project:<select ng-model="project_id" ng-change="projectChanged()" ng-options="u.id as u.menuText for u in projects" ></select></span>
     	<span id="loggedinGreeting" ng-show="isLoggedIn()"><a href="/#/account">user: {{curUser.getCurUser().username}}</a> &nbsp; &nbsp; <a id="logoutLink" href="" ng-click="logout(
 )">logout</a></span>
         <span id="loginlink" ng-hide="isLoggedIn()"><a href="" ng-click="gotoLogin()">login</a>&nbsp; &nbsp;<a class="menutext" id="signuplink" href="/signup.htm">signup</a>&nbsp; &nbsp;

@@ -38,6 +38,7 @@ import com.github.windbender.auth.SessionCurProj;
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.CurUser;
 import com.github.windbender.core.LoginObject;
+import com.github.windbender.core.ProjectMenuTO;
 import com.github.windbender.core.ResetPWRequest;
 import com.github.windbender.core.SetPWRequest;
 import com.github.windbender.core.SignUpResponse;
@@ -137,9 +138,23 @@ public class UserResource {
 	
 	@GET
 	@Timed
+	@Path("myprojects")
+	@UnitOfWork
+	public List<Project> myProjects(@SessionUser User user) {
+		User u = this.ud.findById(user.getId());
+		if(u==null) throw new WebApplicationException();
+		List<Project> lp = this.projectDAO.findByPrimaryAdmin(u);
+		Set<Project> sp = new TreeSet<Project>();
+		if(lp!=null) sp.addAll(lp);
+		
+		List<Project> outList = new ArrayList<Project>(sp);
+		return outList;
+	}
+	@GET
+	@Timed
 	@Path("projects")
 	@UnitOfWork
-	public List<Project> projects(@SessionUser User user) {
+	public List<ProjectMenuTO> projects(@SessionUser User user) {
 		User u = this.ud.findById(user.getId());
 		if(u==null) throw new WebApplicationException();
 		List<Project> lp = this.projectDAO.findByPrimaryAdmin(u);
@@ -153,7 +168,10 @@ public class UserResource {
 			}
 		}
 		
-		List<Project> outList = new ArrayList<Project>(sp);
+		List<ProjectMenuTO> outList = new ArrayList<ProjectMenuTO>();
+		for(Project p: sp) {
+			outList.add(new ProjectMenuTO(p,user));
+		}
 		return outList;
 	}
 	@POST

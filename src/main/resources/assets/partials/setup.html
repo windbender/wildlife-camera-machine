@@ -33,7 +33,7 @@
 			<td>{{userproject.canAdmin}}</td><td>{{userproject.canUpload}}</td><td>{{userproject.canCategorize}}</td><td>{{userproject.canReport}}</td>
 			<td>
 				<div class="pull-left">
-                <a class="btn  btn-sm btn-info" href="#/userproject/{{userproject.userId}}">
+                <a class="btn  btn-sm btn-info" href="#/userproject/{{userproject.id}}">
                     <i class="icon-pencil icon-white"></i> Edit
                 </a>
                 <button class="btn  btn-sm btn-danger" ng-confirm-click="are you sure you want to remove user {{userproject.username}} from the project?"ng-click="deleteUserproject(userproject)">
