@@ -312,6 +312,7 @@ public class ImageResource {
 						BufferedImage bi = ImageIO.read(bis);
 		
 						store.saveImages(bi,newImage);
+						log.info("new image save done");
 						bis.close();
 						ds.addImage(newImage,currentProject);
 						URI uri = UriBuilder.fromResource(ImageResource.class).build(newImage.getId());
@@ -321,8 +322,9 @@ public class ImageResource {
 						bis.close();
 						throw new ConflictException("that image already exists");
 					}
-//				} catch(Exception e) {
-//					log.info("could not upload one because ",e);
+				} catch(Exception e) {
+					log.info("could not upload one because ",e);
+					throw e;
 				} finally {
 					log.info("and we uploaded one, for better or worse");
 				}

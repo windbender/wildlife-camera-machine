@@ -31,14 +31,17 @@ public class MakeDatesService {
 				@Override
 				public void execute(java.sql.Connection connection) {
 					try {
+						PreparedStatement psd = connection.prepareStatement("delete from dates");
+						int rows = psd.executeUpdate();
+						
 						DateTime maxDate = null;
-						PreparedStatement ps = connection.prepareStatement("select max(dates) from dates");
-						ResultSet rs = ps.executeQuery();
-						while(rs.next()) {
-							Date date = rs.getDate(1);
-							if(date == null) break;
-							maxDate = new DateTime(date);
-						}
+//						PreparedStatement ps = connection.prepareStatement("select max(dates) from dates");
+//						ResultSet rs = ps.executeQuery();
+//						while(rs.next()) {
+//							Date date = rs.getDate(1);
+//							if(date == null) break;
+//							maxDate = new DateTime(date);
+//						}
 						if(maxDate == null) {
 							maxDate = minDate;
 						}

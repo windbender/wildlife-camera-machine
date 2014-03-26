@@ -1,12 +1,17 @@
 package com.github.windbender;
 
 
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
-import org.eclipse.jetty.server.session.HashSessionManager;
+import javax.imageio.ImageIO;
+
 import org.eclipse.jetty.server.session.SessionHandler;
 
+import com.amazonaws.util.StringInputStream;
 import com.bazaarvoice.dropwizard.assets.ConfiguredAssetsBundle;
 import com.github.windbender.auth.SessionAuthProvider;
 import com.github.windbender.auth.SessionCurProjProvider;
@@ -91,7 +96,13 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 	@Override
 	public void run(WLCDMServerConfiguration configuration,
 			Environment environment) {
-        
+        try {
+        	InputStream is = new StringInputStream("hello");
+        	BufferedInputStream bis = new BufferedInputStream(is);
+        	BufferedImage bi = ImageIO.read(bis);
+        } catch(Exception e) {
+        	System.out.println("that didn't work because:"+e);
+        }
         final IdentificationDAO idDAO = new IdentificationDAO(hibernate.getSessionFactory());
         final ImageRecordDAO irDAO = new ImageRecordDAO(hibernate.getSessionFactory());
         final SpeciesDAO spDAO = new SpeciesDAO(hibernate.getSessionFactory());

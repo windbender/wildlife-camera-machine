@@ -93,18 +93,20 @@ public class HibernateDataStore implements Managed, Runnable {
 						if(l.size() ==1) {
 							checkAndAddToFirst(addImage,ir, l);
 						} else {
-							// wow.. this could be good or bad.
-							boolean bad = false;
-							ImageEvent first = l.get(0);
-							for(ImageEvent rest: l) {
-								if(first !=rest) {
-									bad = true;
+							// wow.. this could be good or bad.  Let's find the closest and throw it in there.
+							Long distance = Long.MAX_VALUE;
+							ImageEvent choosenEvent = null;
+							for(ImageEvent ie: l) {
+								long delta = Math.abs(ir.getDatetime().getMillis() - ie.getEventStartTime().getMillis());
+								if(distance > delta) {
+									choosenEvent = ie;
+									distance = delta;
 								}
 							}
-							if(bad) {
-								System.out.println("OH NO MR BILL");
+							if(choosenEvent != null) {
+								addToEvent(ir,choosenEvent);
 							} else {
-								checkAndAddToFirst(addImage,ir, l);
+								log.warn("No suitable event found for "+ir);
 							}
 						}
 					} else {
@@ -168,11 +170,15 @@ public class HibernateDataStore implements Managed, Runnable {
 
 	private void checkAndAddToFirst(ImageRecord ir, ImageRecord ir2, List<ImageEvent> l) {
 		ImageEvent ie = l.get(0);
+		addToEvent(ir, ie);
+		
+	}
+
+	private void addToEvent(ImageRecord ir, ImageEvent ie) {
 		ImageRecord addImage = irDAO.findById(ir.getId());
 		ie.addImage(addImage);
 		irDAO.save(addImage);
 		eventDAO.save(ie);
-		
 	}
 		
 
