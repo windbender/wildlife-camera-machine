@@ -34,12 +34,16 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.windbender.auth.Priv;
+import com.github.windbender.auth.SessionAuth;
 import com.github.windbender.auth.SessionCurProj;
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.CurUser;
 import com.github.windbender.core.LoginObject;
+import com.github.windbender.core.MenuItem;
 import com.github.windbender.core.ProjectMenuTO;
 import com.github.windbender.core.ResetPWRequest;
+import com.github.windbender.core.SessionFilteredAuthorization;
 import com.github.windbender.core.SetPWRequest;
 import com.github.windbender.core.SignUpResponse;
 import com.github.windbender.core.SignupRequest;
@@ -98,6 +102,43 @@ public class UserResource {
 		return Response.status(Response.Status.OK).build();
 	}
 	
+
+	@GET
+	@Timed
+	@Path("menus")
+	@UnitOfWork
+	public List<MenuItem> getMenus(@SessionUser User user, @SessionCurProj Project currentProject ) {
+		List<MenuItem> list = new ArrayList<MenuItem>();
+		User u = this.ud.findById(user.getId());
+		Project p = this.projectDAO.findById(currentProject.getId());
+		boolean isAdmin = false;
+		if(p.getPrimaryAdmin().equals(u)) isAdmin = true;
+		List<UserProject> upl = this.upDAO.findByUserIdProjectId(u,p);
+		if(upl.size() > 0) {
+			UserProject up = upl.get(0);
+			
+			if(up.getCanAdmin()) {
+				list.add(new MenuItem("admin","#/setup"));
+			}
+			if(up.getCanUpload() ) {
+				list.add(new MenuItem("upload","#/upload"));
+			}
+			if(up.getCanCategorize() || p.getPublicCategorize() ) {
+				list.add(new MenuItem("categorize","#/categorize"));
+			}
+			if(up.getCanReport()  || p.getPublicReport() ) {
+				list.add(new MenuItem("report","#/report"));
+			}
+		} else if (isAdmin ) {
+			list.add(new MenuItem("admin","#/setup"));
+			list.add(new MenuItem("upload","#/upload"));
+			list.add(new MenuItem("categorize","#/categorize"));
+			list.add(new MenuItem("report","#/report"));			
+		}
+		
+
+		return list;
+	}
 
 	@GET
 	@Timed

@@ -642,8 +642,22 @@ app.controller({
 
 });
 
+app.factory('Menu', function($resource) {
+	var Menu = $resource('/api/users/menus',
+			{}, {
+			'query':  {method:'GET', isArray:true}
+		});
+	return Menu;
+});
+
 app.controller({
-	MenuController: function($scope, $location, CurUser) {
+	MenuController: function($scope, $location, Menu, CurUser) {
+		$scope.menus = Menu.query();
+		
+		$scope.$on('reloadMenus', function() {
+			$scope.menus = Menu.query();
+		});
+		
 		$scope.doCollapse = function() {
             $scope.isCollapsed=true;
 		};
@@ -679,6 +693,8 @@ app.controller({
 		$scope.projectChanged = function() {
 			$http.post('/api/users/currentProject',$scope.project_id).success(function() {
 				$route.reload();
+				$rootScope.$broadcast('reloadMenus');
+
 			});
 		}
 		$scope.makeName = function(project) {
