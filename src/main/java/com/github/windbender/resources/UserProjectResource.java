@@ -148,6 +148,7 @@ public class UserProjectResource {
 		UserProject deleteableUserProject = upd.findById(id);
 		if(p.getId() != deleteableUserProject.getProject().getId()) throw new WebApplicationException(Response.Status.FORBIDDEN);
 		upd.delete(id);
+		sro.reloadSessionForUser(deleteableUserProject.getUser());
 		return Response.ok().build();
 	}
 }
