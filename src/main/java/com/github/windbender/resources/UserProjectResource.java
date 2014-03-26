@@ -20,6 +20,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.windbender.SessionReloaderOperator;
 import com.github.windbender.auth.Priv;
 import com.github.windbender.auth.SessionAuth;
 import com.github.windbender.auth.SessionCurProj;
@@ -46,11 +47,14 @@ public class UserProjectResource {
 	UserProjectDAO upd;
 
 	private UserDAO ud;
+
+	private SessionReloaderOperator sro;
 	
-	public UserProjectResource(UserProjectDAO upd, ProjectDAO pd,UserDAO ud) {
+	public UserProjectResource(UserProjectDAO upd, ProjectDAO pd,UserDAO ud,SessionReloaderOperator sro) {
 		this.upd = upd;
 		this.pd = pd;
 		this.ud = ud;
+		this.sro = sro;
 	}
 
 	@GET
@@ -103,6 +107,7 @@ public class UserProjectResource {
 		URI uri = UriBuilder.fromResource(UserProjectResource.class).build(
 				newUserProject.getId());
 		log.info("the response uri will be " + uri);
+		sro.reloadSessionForUser(user);
 		return Response.created(uri).build();
 	}
 
@@ -125,6 +130,7 @@ public class UserProjectResource {
 		URI uri = UriBuilder.fromResource(UserProjectResource.class).build(
 				newUserProject.getId());
 		log.info("the response uri will be " + uri);
+		sro.reloadSessionForUser(u);
 		return Response.created(uri).build();
 	}
 

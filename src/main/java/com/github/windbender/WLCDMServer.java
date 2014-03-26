@@ -127,17 +127,10 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		} else {
 			emailService = new EmailService(configuration, ms);
 		}
-		environment.addResource(new UserResource(uDAO, tokenDAO, projDAO, upDAO, emailService));
-		environment.addResource(new ImageResource(ds, store, irDAO, spDAO, reportDAO));
-		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO));
-		environment.addResource(new ReportResource(reportDAO, ieDAO));
-		
-		environment.addResource(new CameraResource(cameraDAO, projDAO));
-		environment.addResource(new UserProjectResource(upDAO, projDAO, uDAO));
 		
 		
-		HashSessionManager hsm = new HashSessionManager();
-		
+//		HashSessionManager hsm = new HashSessionManager();
+		IterableHashSessionManager hsm = new IterableHashSessionManager();
 		try {
 			File dir = new File(configuration.getSessionPersistDirectory());
 			File f = dir.getCanonicalFile();
@@ -157,7 +150,15 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		} catch (IOException e) {
 			
 		}
-		
+		SessionReloaderOperator sro = new SessionReloaderOperator(hsm, uDAO, projDAO, upDAO);
+
+		environment.addResource(new UserResource(uDAO, tokenDAO, projDAO, upDAO, emailService));
+		environment.addResource(new ImageResource(ds, store, irDAO, spDAO, reportDAO));
+		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO));
+		environment.addResource(new ReportResource(reportDAO, ieDAO));
+		environment.addResource(new CameraResource(cameraDAO, projDAO));
+		environment.addResource(new UserProjectResource(upDAO, projDAO, uDAO, sro));
+
 		environment.setSessionHandler(new SessionHandler(hsm));
 		environment.addProvider(SessionUserProvider.class);
 		environment.addProvider(SessionAuthProvider.class);
