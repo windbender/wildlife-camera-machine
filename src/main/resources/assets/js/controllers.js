@@ -513,11 +513,17 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
     	}
     	$scope.sliderTimer = $timeout(function() {
         	$scope.onChange();
-        },200);
+        },30);
     });
     
     
-	$scope.onChange = function() {
+    $scope.onChange = function() {
+    	$timeout.cancel($scope.updateTimer);
+    	$scope.updateTimer = $timeout(function() {
+        	$scope.doUpdate();
+        },100);
+    }
+	$scope.doUpdate = function() {
 		$http.post('/api/report',$scope.params).success(function(data) {
 			$scope.bySpeciesData = data.bySpeciesData;
 			$scope.byHourData = data.byHourData;
@@ -532,7 +538,8 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
 			toastr.error("sorry unable to retrive list");
 		});
 	};
-    $scope.onChange();
+	
+    //$scope.onChange();
           
   }]);
   
