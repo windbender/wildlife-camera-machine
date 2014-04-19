@@ -18,6 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -39,7 +40,6 @@ import com.github.windbender.auth.SessionCurProj;
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.HibernateDataStore;
 import com.github.windbender.core.IdentificationRequest;
-import com.github.windbender.core.ImageRecordTO;
 import com.github.windbender.core.ImageStore;
 import com.github.windbender.core.NextEventRecord;
 import com.github.windbender.core.SessionFilteredAuthorization;
@@ -86,8 +86,9 @@ public class ImageResource {
 		try {
 			ImageRecord ir = this.ds.getRecordFromId(id);
 			InputStream is = store.getInputStreamFor(ir, id,displayWidth);
-			
-			return Response.ok(is).build();
+			CacheControl control = new CacheControl();
+			control.setMaxAge(6 * 60 * 60);   // 6 hours
+			return Response.ok(is).cacheControl(control).build();
 		} catch (IOException e) {
 			log.error("can't deliver because ", e);
 			throw new WebApplicationException();
