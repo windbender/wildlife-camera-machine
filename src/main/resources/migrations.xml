@@ -953,4 +953,20 @@
 		<modifyDataType tableName="events" columnName="camera_id" newDataType="int(11)"/>
 	</changeSet>
 	
+	<changeSet id="21" author="windbender">
+		<createTable tableName="reset_pw_token">
+			<column name="id" type="int(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="user_id" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="expiration_time" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="token" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>

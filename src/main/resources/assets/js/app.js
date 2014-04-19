@@ -30,5 +30,10 @@ config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/signup', {templateUrl: '/partials/signup.html', controller: 'SignupController'});
   $routeProvider.when('/verify', {templateUrl: '/partials/verify.html', controller: 'VerifyController'})
   $routeProvider.when('/createJoin', {templateUrl: '/partials/createOrJoin.html', controller: 'CreateJoinController'})
-  $routeProvider.otherwise({redirectTo: '/report'});
+  $routeProvider.when('/lostpw',{templateUrl: '/partials/lostpw.html', controller:'LostPWController'})
+  $routeProvider.when('/resetpw/:token',{templateUrl: 'partials/resetpw.html', controller:'ResetPWController'})
+
+  $routeProvider.when('/info',{templateUrl: '/partials/info.html', controller:'InfoController'})
+
+  $routeProvider.otherwise({redirectTo: '/info'});
 }]);

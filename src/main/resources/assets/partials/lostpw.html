@@ -1,0 +1,15 @@
+Please enter the email address you used for signup.  If this is a valid email address, you will receive a link with further instructions to reset your password.
+
+<form name="aform" class="row form-horizontal" novalidate  ng-submit="save()">
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="email">Email<span class="text-error">*</span></label>
+		<div class="controls">
+			<input type="email" id="email" placeholder="Email" ng-model="resetemail" required>
+		</div>
+	</div>
+	
+	<button ng-disabled="form.$invalid" id="save" class="btn btn-primary">Begin Password Reset</button>
+	
+
+</form>

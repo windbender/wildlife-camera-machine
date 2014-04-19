@@ -3,13 +3,26 @@
 /* Controllers */
 
 var app = angular.module('wlcdm.controllers', [])
-.controller('CategorizeController', function($http, $scope, focus) {
+.controller('CategorizeController', function($http, $rootScope, $scope, focus) {
 
 	$scope.currentIndex = 1; // Initially the index is at the second image, but this doesn't actually EXIST!  :-)
 	$scope.selected = {};
 	$scope.next = {};
 	$scope.nextnext = {};
 	$scope.numberOfAnimals =1;
+	$scope.showLoad = false;
+	
+	$scope.$on('imageLoadStart', function() {
+		$scope.showLoad = true;
+		console.log("start");
+	});
+
+	$scope.$on('imageLoadDone', function() {
+		$scope.$apply(function() {
+			$scope.showLoad = false;
+			console.log("done");
+		});
+	});
 
 	$scope.getNextEvent = function() {
 		$http.get('/api/images/nextEvent?lastEvent='+$scope.eventId).success(function(data) {
@@ -54,8 +67,9 @@ var app = angular.module('wlcdm.controllers', [])
 //	});
 	$scope.submitTyped = function() {
 		if(typeof $scope.typeSpecies == 'undefined') return;
-		$scope.logAnimal($scope.typeSpecies.name,$scope.typeSpecies.id,$scope.images[$scope.currentIndex].id,$scope.eventId)
-		$scope.getNextEvent();
+		if($scope.logAnimal($scope.typeSpecies.name,$scope.typeSpecies.id,$scope.images[$scope.currentIndex].id,$scope.eventId)) {
+			$scope.getNextEvent();
+		}
 		
 		var elements = angular.element( document.querySelector( '#slide' ) );
 		var el = elements[0]
@@ -63,6 +77,10 @@ var app = angular.module('wlcdm.controllers', [])
 	}
 
 	$scope.logAnimal = function(speciesname,speciesid,imageid,eventid) {
+		if($scope.showLoad) {
+			toastr.info("wait until the image shows up before you try to categorize");
+			return false;
+		}
 		console.log("found "+$scope.numberOfAnimals+" of "+speciesname+" on picture "+imageid);
 		var idRequest = {
 				'numberOfAnimals': $scope.numberOfAnimals,
@@ -82,7 +100,7 @@ var app = angular.module('wlcdm.controllers', [])
 			toastr.error("failed to post");
 		});
 		$scope.numberOfAnimals =1;
-		
+		return true;
 	};
 	
 	$scope.handleKey = function(keyCode) {
@@ -115,15 +133,17 @@ var app = angular.module('wlcdm.controllers', [])
 		
 		// space	
 		} else if(keyCode == 32) {
-			$scope.logAnimal("none",-1,$scope.images[$scope.currentIndex].id,$scope.eventId);
-			$scope.getNextEvent();
+			if($scope.logAnimal("none",-1,$scope.images[$scope.currentIndex].id,$scope.eventId)) {
+				$scope.getNextEvent();
+			}
 		
 		// other keys	
 		} else {
     		$scope.topSpecies.forEach(function(key) {
     			if(key.keycode == keyCode) {
-    				$scope.logAnimal(key.name,key.id,$scope.images[$scope.currentIndex].id,$scope.eventId);
-    				$scope.getNextEvent();
+    				if($scope.logAnimal(key.name,key.id,$scope.images[$scope.currentIndex].id,$scope.eventId)) {
+    					$scope.getNextEvent();
+    				}
     			}
     		});
     	}
@@ -155,6 +175,7 @@ var app = angular.module('wlcdm.controllers', [])
 		if(typeof $scope.images === 'undefined') return;
 		if($scope.images.length ==0) return;
 		$scope.selected.imagesrc = '/api/images/'+$scope.images[$scope.currentIndex].id+'?sz='+size;
+		$rootScope.$broadcast('imageLoadStart');
 		$scope.imagename = $scope.images[$scope.currentIndex].originalFileName;
 	}
 	
@@ -246,7 +267,7 @@ app.controller({
 	}
 });
 app.controller({
-	ProjectDetailController: function($scope, $routeParams, $location, Project) {
+	ProjectDetailController: function($scope, $rootScope, $routeParams, $location, Project) {
 		var projectId = $routeParams.id;
 		
 	    if (projectId === 'new') {
@@ -273,6 +294,8 @@ app.controller({
 	                            $location.path('/account');
 	                    });
 	            }
+				$rootScope.$broadcast('reloadMenus');
+
 	    };
 	
 	}
@@ -347,9 +370,22 @@ app.controller({
 
 });
 
-app.controller('ReportController', ['$scope','$http','$timeout',function($scope,$http,$timeout) {
+app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',function($scope,$rootScope,$http,$timeout) {
 	$scope.options = {width: 500, height: 300, 'bar': 'aaa'};
 	
+	$scope.showLoad = false;
+	$scope.$on('imageReportLoadStart', function() {
+		$scope.showLoad = true;
+		console.log("start");
+	});
+
+	$scope.$on('imageReportLoadDone', function() {
+		$scope.$apply(function() {
+			$scope.showLoad = false;
+			console.log("done");
+		});
+	});
+
 	$http.get('/api/images/topSpecies').success(function(data) {
 		$scope.topSpecies = data;
 	}).error(function(data,status,headers,config) {
@@ -464,6 +500,8 @@ app.controller('ReportController', ['$scope','$http','$timeout',function($scope,
 		if(typeof $scope.imageEvents === 'undefined') return;
 		if($scope.imageEvents.length ==0) return;
 		$scope.reportImg.imagesrc = '/api/images/'+$scope.imageEvents[$scope.reportEventIndex].imageRecords[$scope.reportImgIndex].id+'?sz='+size;
+		$rootScope.$broadcast('imageReportLoadStart');
+
     }
     $scope.$watch('reportEventIndex', function() {
     	$scope.reportImgIndex = 0;
@@ -846,6 +884,51 @@ app.controller({
 			});
 	}
 });
+
+app.controller({
+	LostPWController: function( $scope,$http) {
+		$scope.save = function() {
+			// do something with $scope.resetemail
+			$http.post("/api/users/lostpw",$scope.resetemail);
+		};
+	}
+});
+
+app.controller({
+	ResetPWController: function($rootScope, $scope,$routeParams,$http) {
+		$scope.token = $routeParams.token;
+		$scope.validToken = false;
+		$scope.isGood = false;
+		$scope.isBad = false;
+		$http.get("/api/users/validtoken/"+$scope.token).success(function(data,status, headers, config) {
+			$scope.validToken = true;
+			$scope.msg = "Please enter a new password";
+		}).error(function(data, status, headers, config) {
+			$scope.validToken = false;
+			$scope.isBad = true;
+		});
+		
+		$scope.submit = function() {
+			// do something with $scope.resetemail
+			$http.post("/api/users/resetpw",{
+				token: $scope.token,
+				pass: $scope.password
+			}).success(function(data,status, headers, config) {
+				$scope.validToken = true;
+				toastr.info("reset successful");
+				$scope.isGood = true;
+
+			}).error(function(data, status, headers, config) {
+				$scope.validToken = false;
+				toastr.error("reset failed");
+				$scope.isBad = true;
+
+			});
+		};
+		
+	}
+});
+
 app.controller({
 	CreateJoinController: function($scope, $http) {
 		$scope.selectedProject = undefined;

@@ -15,6 +15,27 @@ var app = angular.module('wlcdm.directives', [])
 		});
 
 		
+app.directive('imageonload', function($rootScope) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.bind('load', function() {
+				scope.$broadcast('imageLoadDone');
+            });
+        }
+    };
+});
+
+app.directive('imagereportonload', function($rootScope) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.bind('load', function() {
+				scope.$broadcast('imageReportLoadDone');
+            });
+        }
+    };
+});
 
 app.directive('authDemoApplication', ['cfpLoadingBar',function(cfpLoadingBar) {
     return {

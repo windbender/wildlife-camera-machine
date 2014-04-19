@@ -1,9 +1,32 @@
+<style>
+#slide
+{
+    position:relative;
+}
+
+#slideimg
+{    
+    position:absolute;
+    left:0;
+    top:0;
+}
+#slidetext
+{
+    z-index:100;
+    position:absolute;    
+    color:white;
+    background-color:black;
+    font-size:24px;
+    font-weight:bold;
+    left:150px;
+    top:150px;
+}
+</style>
 <div >
 <div class="slider" >
 	<div id="slide" class="slide" focus-on="focusMe" tabindex="1" ng-keydown="rOnKeyup($event)">
-		<img class="innerImg" ng-src="{{selected.imagesrc}}" /> <img
-			class="innerImg" ng-src="{{next.imagesrc}}" ng-hide="true" /> <img
-			class="innerImg" ng-src="{{nextnext.imagesrc}}" ng-hide="true" />
+		<img id="slideimg" class="innerImg" ng-src="{{selected.imagesrc}}" imageonload/>
+		<div id="slidetext" ng-show="showLoad"><h1>&nbsp;LOADING&nbsp;</h1></div>
 	</div>
 	<div class="controls">
 		<div id="stats">
