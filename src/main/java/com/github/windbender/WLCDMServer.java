@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
+import javax.mail.MessagingException;
 
 import org.eclipse.jetty.server.session.SessionHandler;
 
@@ -35,6 +36,7 @@ import com.github.windbender.domain.Identification;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.Project;
+import com.github.windbender.domain.ResetPasswordToken;
 import com.github.windbender.domain.Species;
 import com.github.windbender.domain.User;
 import com.github.windbender.domain.UserProject;
@@ -44,12 +46,12 @@ import com.github.windbender.resources.ProjectResource;
 import com.github.windbender.resources.ReportResource;
 import com.github.windbender.resources.UserProjectResource;
 import com.github.windbender.resources.UserResource;
-import com.github.windbender.service.AmazonMessageSender;
 import com.github.windbender.service.AsyncEmailSender;
 import com.github.windbender.service.EmailService;
 import com.github.windbender.service.MakeDatesService;
 import com.github.windbender.service.MessageSender;
 import com.github.windbender.service.SMTPMessageSender;
+import com.github.windbender.service.StartupMessageCreator;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
@@ -86,7 +88,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
       
 
 	private final HibernateBundle<WLCDMServerConfiguration> hibernate = new HibernateBundle<WLCDMServerConfiguration>(
-			Identification.class,ImageRecord.class,ImageEvent.class,User.class,Species.class,Project.class, UserProject.class, Camera.class) {
+			Identification.class,ImageRecord.class,ImageEvent.class,User.class,Species.class,Project.class, UserProject.class, Camera.class, ResetPasswordToken.class) {
 	    @Override
 	    public DatabaseConfiguration getDatabaseConfiguration(WLCDMServerConfiguration configuration) {
 	        return configuration.getDatabaseConfiguration();
@@ -125,11 +127,12 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
     	}
     	
     	MessageSender ms = null;
-		if(configuration.isAmazon()) {
-			ms = new AmazonMessageSender(configuration);
-		} else {
+//		if(configuration.isAmazon()) {
+//			ms = new AmazonMessageSender(configuration);
+//			
+//		} else {
 			ms = new SMTPMessageSender(configuration);
-		}
+//		}
 		EmailService emailService;
 		if(configuration.isAsync() ) {
 			AsyncEmailSender ams = new AsyncEmailSender(configuration, ms);
@@ -178,5 +181,12 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 
 		MakeDatesService mds = new MakeDatesService(hibernate.getSessionFactory());
 		mds.makeDates();
+		
+		try {
+			ms.sendMessage(new StartupMessageCreator());
+			System.out.println("startup message sent");
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

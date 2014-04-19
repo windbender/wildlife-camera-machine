@@ -107,8 +107,11 @@ public class UserResource {
 	@Timed
 	@Path("menus")
 	@UnitOfWork
-	public List<MenuItem> getMenus(@SessionUser User user, @SessionCurProj Project currentProject ) {
+	public List<MenuItem> getMenus(@SessionUser(required=false) User user, @SessionCurProj Project currentProject ) {
 		List<MenuItem> list = new ArrayList<MenuItem>();
+		if(user == null) {
+			return list;
+		}
 		User u = this.ud.findById(user.getId());
 		Project p = this.projectDAO.findById(currentProject.getId());
 		boolean isAdmin = false;
@@ -195,23 +198,24 @@ public class UserResource {
 	@Timed
 	@Path("projects")
 	@UnitOfWork
-	public List<ProjectMenuTO> projects(@SessionUser User user) {
-		User u = this.ud.findById(user.getId());
-		if(u==null) throw new WebApplicationException();
-		List<Project> lp = this.projectDAO.findByPrimaryAdmin(u);
-		Set<Project> sp = new TreeSet<Project>();
-		if(lp!=null) sp.addAll(lp);
-		List<UserProject> lup = this.upDAO.findAllByUser(u);
-		if(lup != null) {
-			for(UserProject up: lup) {
-				Project p = up.getProject();
-				sp.add(p);
-			}
-		}
-		
+	public List<ProjectMenuTO> projects(@SessionUser(required=false) User user) {
 		List<ProjectMenuTO> outList = new ArrayList<ProjectMenuTO>();
-		for(Project p: sp) {
-			outList.add(new ProjectMenuTO(p,user));
+		if(user!=null) {
+			User u = this.ud.findById(user.getId());
+			List<Project> lp = this.projectDAO.findByPrimaryAdmin(u);
+			Set<Project> sp = new TreeSet<Project>();
+			if(lp!=null) sp.addAll(lp);
+			List<UserProject> lup = this.upDAO.findAllByUser(u);
+			if(lup != null) {
+				for(UserProject up: lup) {
+					Project p = up.getProject();
+					sp.add(p);
+				}
+			}
+			
+			for(Project p: sp) {
+				outList.add(new ProjectMenuTO(p,user));
+			}
 		}
 		return outList;
 	}
@@ -234,7 +238,7 @@ public class UserResource {
 	@Timed
 	@Path("currentProject")
 	@UnitOfWork
-	public Project currentProjectGet(@SessionUser User user, @SessionCurProj Project currentProject) {
+	public Project currentProjectGet(@SessionUser(required=false) User user, @SessionCurProj Project currentProject) {
 		if(currentProject == null) return null;
 		Project cp = this.projectDAO.findById(currentProject.getId());
 		
