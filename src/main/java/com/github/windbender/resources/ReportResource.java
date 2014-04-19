@@ -51,7 +51,7 @@ public class ReportResource {
 	@Timed
 	@UnitOfWork
 	public ReportResponse makeReport(@SessionAuth(required={Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @SessionCurProj Project currentProject, ReportParams reportParams) {
-
+		log.info("making a report for "+user.getUsername()+" on project "+currentProject.getName()+" with params "+reportParams+" and  auth TBD");
 		Limiter limits = new Limiter(reportParams,currentProject);
 		List<StringSeries> bySpecies = rd.makeBySpecies(limits);
 		List<Series> byHour = rd.makeByHour(limits);
@@ -72,6 +72,7 @@ public class ReportResource {
 		rr.setByHourData(byHour);
 		rr.setByDayData(byDay);
 		rr.setImageEvents(lout);
+
 		return rr;
 	}
 
