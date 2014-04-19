@@ -11,6 +11,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.windbender.core.SessionFilteredAuthorization;
 import com.github.windbender.domain.Project;
 import com.github.windbender.domain.User;
@@ -25,6 +28,8 @@ import com.sun.jersey.spi.inject.InjectableProvider;
 public class SessionAuthProvider implements InjectableProvider<SessionAuth, Type> {
 	private static class SessionPrivInjectable extends AbstractHttpContextInjectable<SessionFilteredAuthorization> {
 
+		Logger log = LoggerFactory.getLogger(SessionAuthProvider.class);
+
 		private Priv[] required;
 		HttpServletRequest request;
 
@@ -38,10 +43,10 @@ public class SessionAuthProvider implements InjectableProvider<SessionAuth, Type
 			Project curProject = (Project) request.getSession().getAttribute("current_project");
 			User user = (User) request.getSession().getAttribute("user");
 			if(curProject == null) {
-				throw new WebApplicationException(Response.Status.FORBIDDEN); 
+				throw new WebApplicationException(Response.Status.UNAUTHORIZED); 
 			}
 			if(user == null) {
-				throw new WebApplicationException(Response.Status.FORBIDDEN); 
+				throw new WebApplicationException(Response.Status.UNAUTHORIZED); 
 			}
 			if(curProject.getPrimaryAdmin().equals(user)) {
 				// this means the user is the primary admin, so don't test the rest of stuff
@@ -73,7 +78,10 @@ public class SessionAuthProvider implements InjectableProvider<SessionAuth, Type
 						if(reqRole.equals(Priv.ADMIN) && curUP.getCanAdmin()) foundEnoughPriv = true;
 					}
 				}
-				if(!foundEnoughPriv) throw new WebApplicationException(Response.Status.FORBIDDEN);
+				if(!foundEnoughPriv) {
+					log.info("not enough privs for "+user.getUsername()+" against "+curProject);
+					throw new WebApplicationException(Response.Status.FORBIDDEN);
+				}
 			}
 
 			SessionFilteredAuthorization out = new SessionFilteredAuthorization();
