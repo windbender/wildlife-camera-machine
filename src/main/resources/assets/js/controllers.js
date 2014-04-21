@@ -463,17 +463,21 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
     $scope.reportEventIndex = 0;
     $scope.reportImgIndex = 0;
     $scope.prevEvent = function() {
+    	$scope.needReview = false;
 		$scope.reportEventIndex > 0 ? $scope.reportEventIndex-- : $scope.reportEventIndex = $scope.imageEvents.length-1;
     };
     $scope.nextEvent = function() {
+    	$scope.needReview = false;
 		$scope.reportEventIndex < $scope.imageEvents.length - 1 ? $scope.reportEventIndex++ : $scope.reportEventIndex = 0;
     };
     
     $scope.prevImage = function() {
+    	$scope.isGood = false;
     	var ar = $scope.imageEvents[$scope.reportEventIndex].imageRecords;
 		$scope.reportImgIndex > 0 ? $scope.reportImgIndex-- : $scope.reportImgIndex = ar.length-1;
     };
     $scope.nextImage = function() {
+    	$scope.isGood = false;
     	var ar = $scope.imageEvents[$scope.reportEventIndex].imageRecords;
 		$scope.reportImgIndex < ar.length - 1 ? $scope.reportImgIndex++ : $scope.reportImgIndex = 0;
     };
@@ -493,6 +497,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
     	return false;
     }
     $scope.loadImage = function() {
+    	$scope.isGood = false;
     	var elements = angular.element( document.querySelector( '#pics' ) );
 		var el = elements[0]
 		var w = el.clientWidth;
@@ -501,8 +506,32 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 		if($scope.imageEvents.length ==0) return;
 		$scope.reportImg.imagesrc = '/api/images/'+$scope.imageEvents[$scope.reportEventIndex].imageRecords[$scope.reportImgIndex].id+'?sz='+size;
 		$rootScope.$broadcast('imageReportLoadStart');
-
     }
+    
+    $scope.sendGood = function() {
+    	$http.post('/api/report/good',{
+				imageId: $scope.imageEvents[$scope.reportEventIndex].imageRecords[$scope.reportImgIndex].id,
+				good: $scope.isGood
+			}
+		).success(function(data) {
+		})
+    }
+    $scope.updateGood = function() {
+    	$timeout($scope.sendGood, 250);
+    	
+    };
+    $scope.sendReview = function() {
+    	$http.post('/api/report/review',{
+			eventId: $scope.imageEvents[$scope.reportEventIndex].id,
+			review: $scope.needReview
+		}
+		).success(function(data) {
+			
+		})
+    }
+    $scope.updateReview = function() {
+    	$timeout($scope.sendReview, 250);
+    };
     $scope.$watch('reportEventIndex', function() {
     	$scope.reportImgIndex = 0;
     	if(typeof $scope.reportEventIndex === 'undefined') return;
@@ -517,6 +546,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
     });
 
     $scope.params = {};
+    $scope.params.showCharts = true;
     $scope.params.projectId = undefined;
     $scope.params.polyGeoRegion = [];
     $scope.params.timeStart = 1356998400;

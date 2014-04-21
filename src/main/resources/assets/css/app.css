@@ -42,6 +42,9 @@
 .arrows-right {
 	float: right;
 }
+.arrows-mid {
+	float: left;
+}
 .arrows-left {
 	float:left;
 }

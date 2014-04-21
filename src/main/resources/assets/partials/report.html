@@ -3,7 +3,18 @@
         .chartBlob {
         	height: 300px;
         }
+#overlaytext {
+    z-index:100;
+    position:absolute;    
+    color:white;
+    background-color:black;
+    font-size:24px;
+    font-weight:bold;
+    left:150px;
+    top:150px;
+}
     </style>
+<div class="well">
 <p><h1>Wildlife Camera Machine Report</h1></p>
 <div class="well" >
 <!-- 	project selector<p> -->
@@ -11,15 +22,15 @@
 	
 	<div style="width:450px;">
 	Select a date range to view:
-	<rzslider
-    rz-slider-floor="1356998400"
-    rz-slider-ceil="1420070400"
-    rz-slider-precision="0"
-    rz-slider-step="86400"
-    rz-slider-model="params.timeStart"
-    rz-slider-high="params.timeEnd"
-    rz-slider-translate="sliderTimeFormatting"
-    ></rzslider>
+		<rzslider
+	    rz-slider-floor="1356998400"
+	    rz-slider-ceil="1420070400"
+	    rz-slider-precision="0"
+	    rz-slider-step="86400"
+	    rz-slider-model="params.timeStart"
+	    rz-slider-high="params.timeEnd"
+	    rz-slider-translate="sliderTimeFormatting"
+	    ></rzslider>
 	</div>
 	<div>
 		Select time of day to view:
@@ -37,10 +48,59 @@
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" ng-click="checkClick(spec.id)" ng-checked="isChecked(spec.id)">{{spec.name}}
 		</span>
 	</div>
-	
+	<div>
+		Show stats charts: <input type="checkbox" ng-model="params.showCharts">
+	</div>
 	
 </div>
 <div class="row">
+<div ng-class="{'col-md-6': params.showCharts}" id="pics">
+	<h3>Images</h3>
+	<div id="arrowBar" class="arrowBar">
+		<div class="arrows arrows-left" style="width:250px">
+			events:
+			<button type="button" ng-click="prevEvent()" class="btn btn-primary btn-sm">&lt;</button>
+			<button type="button" ng-click="nextEvent()" class="btn btn-primary btn-sm">&gt;</button>
+			{{reportEventIndex+1}} of {{imageEvents.length}}
+		</div>
+		<div class="arrows-mid">
+			<button type="button" class="btn btn-sm btn-warning" ng-model="needReview" ng-click="updateReview()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+				<span ng-hide="needReview">event needs review</span>
+				<span ng-show="needReview">will be reviewed</span>
+			</button>
+			<button type="button" class="btn btn-sm btn-success" ng-model="isGood" ng-click="updateGood()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+				<span ng-hide="isGood">flag image as good</span>
+				<span ng-show="isGood">flagged as good</span>
+			</button>
+		</div>
+		<div class="arrows arrows-right" ng-show="showImageControls()">
+			images:
+			<button type="button" ng-click="prevImage()" class="btn btn-primary btn-sm">&lt;</button>
+			<button type="button" ng-click="nextImage()" class="btn btn-primary btn-sm">&gt;</button>
+			{{reportImgIndex+1}} of {{imageLength}}
+		</div>
+	</div>	
+	<div>
+		<img class="reportImg" ng-src="{{reportImg.imagesrc}}" imagereportonload/>
+		<div id="overlaytext" ng-show="showLoad"><h1>&nbsp;LOADING&nbsp;</h1></div>
+	</div>
+</div>
+<div ng-show="params.showCharts" class="col-md-6 chartBlob" id="bySpecies">
+	<h3>Count By Species</h3>
+	<nvd3-discrete-bar-chart
+    	data="bySpeciesData"
+        id="bySpeciesChart"
+        showXAxis="true"
+        showYAxis="true"
+        xAxisTickFormat="xAxisNumberTickFormat()"
+        color="colorFunction()"
+        >
+        	<svg></svg>
+    </nvd3-discrete-bar-chart>
+</div>
+
+</div> <!--  row -->
+<div ng-show="params.showCharts" class="row">
 <div class="col-md-6 chartBlob" id="byDay">
 	<h3>Count By Day</h3>
 	<nvd3-discrete-bar-chart
@@ -69,42 +129,8 @@
     </nvd3-discrete-bar-chart>
 	
 </div>
-</div> <!--  row -->
+</div>
 <div class="row">
-<div class="col-md-6 chartBlob" id="bySpecies">
-	<h3>Count By Species</h3>
-	<nvd3-discrete-bar-chart
-    	data="bySpeciesData"
-        id="bySpeciesChart"
-        showXAxis="true"
-        showYAxis="true"
-        xAxisTickFormat="xAxisNumberTickFormat()"
-        color="colorFunction()"
-        >
-        	<svg></svg>
-    </nvd3-discrete-bar-chart>
-</div>
-<div class="col-md-6" id="pics">
-	<h3>Images</h3>
-	<div id="arrowBar" class="arrowBar">
-		<div class="arrows arrows-left" style="width:250px">
-			events:
-			<button type="button" ng-click="prevEvent()" class="btn btn-primary btn-sm">&lt;</button>
-			<button type="button" ng-click="nextEvent()" class="btn btn-primary btn-sm">&gt;</button>
-			{{reportEventIndex+1}} of {{imageEvents.length}}
-		</div>
-		<div class="arrows arrows-right" ng-show="showImageControls()">
-			images:
-			<button type="button" ng-click="prevImage()" class="btn btn-primary btn-sm">&lt;</button>
-			<button type="button" ng-click="nextImage()" class="btn btn-primary btn-sm">&gt;</button>
-			{{reportImgIndex+1}} of {{imageLength}}
-		</div>
-	</div>	
-	<div>
-		<img class="reportImg" ng-src="{{reportImg.imagesrc}}" imagereportonload/>
-		<H1 ng-show="showLoad" >loading</H1>
-	</div>
-</div>
 <!-- <div class="col-md-4" id="maps"> -->
 <!-- 	<h3>Locations</h3> -->
 <!-- 			<div id="map"> -->
@@ -115,4 +141,4 @@
 <!-- </div> -->
 
 </div> <!--  row -->
-
+</div>
