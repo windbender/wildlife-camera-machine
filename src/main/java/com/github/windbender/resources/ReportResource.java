@@ -8,6 +8,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +17,11 @@ import com.github.windbender.auth.Priv;
 import com.github.windbender.auth.SessionAuth;
 import com.github.windbender.auth.SessionCurProj;
 import com.github.windbender.auth.SessionUser;
+import com.github.windbender.core.GoodParams;
 import com.github.windbender.core.Limiter;
 import com.github.windbender.core.ReportParams;
 import com.github.windbender.core.ReportResponse;
+import com.github.windbender.core.ReviewParams;
 import com.github.windbender.core.Series;
 import com.github.windbender.core.SessionFilteredAuthorization;
 import com.github.windbender.dao.EventDAO;
@@ -45,6 +48,24 @@ public class ReportResource {
 	public ReportResource(ReportDAO rd,EventDAO eventDAO) {
 		this.rd = rd;
 		this.eventDAO = eventDAO;
+	}
+
+	@POST
+	@Timed
+	@UnitOfWork
+	@Path("good")
+	public Response updateGood(@SessionAuth(required={Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @SessionCurProj Project currentProject, GoodParams goodParams) {
+		log.info("image "+goodParams.getImageId()+" is "+goodParams.getGood());
+		return Response.ok().build();
+	}
+
+	@POST
+	@Timed
+	@UnitOfWork
+	@Path("review")
+	public Response updateReview(@SessionAuth(required={Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @SessionCurProj Project currentProject, ReviewParams reviewParams) {
+		log.info("event "+reviewParams.getEventId()+" is "+reviewParams.getReview());
+		return Response.ok().build();
 	}
 
 	@POST
