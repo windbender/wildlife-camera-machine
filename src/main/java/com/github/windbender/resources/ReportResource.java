@@ -33,9 +33,11 @@ import com.github.windbender.core.SessionFilteredAuthorization;
 import com.github.windbender.core.SpeciesCount;
 import com.github.windbender.dao.EventDAO;
 import com.github.windbender.dao.GoodDAO;
+import com.github.windbender.dao.ImageRecordDAO;
 import com.github.windbender.dao.ReportDAO;
 import com.github.windbender.dao.ReviewDAO;
 import com.github.windbender.dao.StringSeries;
+import com.github.windbender.domain.Good;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.Project;
@@ -54,13 +56,14 @@ public class ReportResource {
 	ReportDAO rd;
 
 	private EventDAO eventDAO;
-
+	private ImageRecordDAO imageRecordDAO;
 	private ReviewDAO reviewDao;
 	private GoodDAO goodDao;
 	
-	public ReportResource(ReportDAO rd,EventDAO eventDAO, ReviewDAO reviewDao, GoodDAO goodDao) {
+	public ReportResource(ReportDAO rd,EventDAO eventDAO,ImageRecordDAO imageRecordDAO, ReviewDAO reviewDao, GoodDAO goodDao) {
 		this.rd = rd;
 		this.eventDAO = eventDAO;
+		this.imageRecordDAO = imageRecordDAO;
 		this.reviewDao = reviewDao;
 		this.goodDao = goodDao;
 	}
@@ -70,7 +73,11 @@ public class ReportResource {
 	@UnitOfWork
 	@Path("good")
 	public Response updateGood(@SessionAuth(required={Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @SessionCurProj Project currentProject, GoodParams goodParams) {
-		log.info("image "+goodParams.getImageId()+" is "+goodParams.getGood());
+		if(goodParams.getImageId() != null) {
+			ImageRecord ir = imageRecordDAO.findById(goodParams.getImageId());
+			Good g = new Good(ir,user,goodParams.getGood());
+			goodDao.saveOrUpdate(g);
+		}
 		return Response.ok().build();
 	}
 
@@ -103,7 +110,7 @@ public class ReportResource {
 		Map<String, Integer> m = new HashMap<String,Integer>();
 		// load images data included "good" images data
 		for(ImageRecord ir :e.getImageRecords()) {
-			Integer good = this.goodDao.getGoodFlagCount(ir.getId(),user);
+			Integer good = this.goodDao.getGoodFlagCount(ir,user);
 			m.put(ir.getId(),good);
 		}
 		CurrentEventInfo cei = new CurrentEventInfo(lsc,reviewCount,m);

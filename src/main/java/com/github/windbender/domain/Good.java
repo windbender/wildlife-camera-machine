@@ -13,6 +13,15 @@ import javax.persistence.Table;
 @Entity
 @Table(name="image_flagged_good")
 public class Good {
+	public Good(ImageRecord ir, User user2, int good) {
+		user = user2;
+		image = ir;
+		flagged = (good > 0);
+	}
+	public Good() {
+		
+	}
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id", nullable=false)
@@ -28,6 +37,23 @@ public class Good {
 	
 	@Column(name="flagged", nullable=false)
 	boolean flagged;
+
+	public int getId() {
+		return id;
+	}
+	public ImageRecord getImage() {
+		return image;
+	}
+	public User getUser() {
+		return user;
+	}
+	public boolean isFlagged() {
+		return flagged;
+	}
+	public void setFlagged(boolean flagged2) {
+		this.flagged = flagged2;
+		
+	}
 	
 	
 }

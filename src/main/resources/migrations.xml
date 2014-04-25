@@ -1001,5 +1001,7 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="23" author="windbender">
+		<modifyDataType tableName="image_flagged_good" columnName="image_id" newDataType="varchar(255)"/>
+	</changeSet>
 </databaseChangeLog>

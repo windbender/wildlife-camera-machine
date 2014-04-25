@@ -176,7 +176,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		environment.addResource(new UserResource(uDAO, tokenDAO, projDAO, upDAO, emailService));
 		environment.addResource(new ImageResource(ds, store, irDAO, spDAO, reportDAO));
 		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO));
-		environment.addResource(new ReportResource(reportDAO, ieDAO, reviewDAO, goodDAO));
+		environment.addResource(new ReportResource(reportDAO, ieDAO, irDAO, reviewDAO, goodDAO));
 		environment.addResource(new CameraResource(cameraDAO, projDAO));
 		environment.addResource(new UserProjectResource(upDAO, projDAO, uDAO, sro));
 

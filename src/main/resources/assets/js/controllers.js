@@ -475,14 +475,20 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
     };
     
     $scope.prevImage = function() {
-    	$scope.isGood = false;
     	var ar = $scope.imageEvents[$scope.reportEventIndex].imageRecords;
 		$scope.reportImgIndex > 0 ? $scope.reportImgIndex-- : $scope.reportImgIndex = ar.length-1;
+
+		var imgId = $scope.imageEvents[$scope.reportEventIndex].imageRecords[$scope.reportImgIndex].id;
+    	var n = $scope.curEventData.goodMap[imgId]
+    	$scope.isGood = (n > 0);
     };
     $scope.nextImage = function() {
-    	$scope.isGood = false;
     	var ar = $scope.imageEvents[$scope.reportEventIndex].imageRecords;
 		$scope.reportImgIndex < ar.length - 1 ? $scope.reportImgIndex++ : $scope.reportImgIndex = 0;
+
+		var imgId = $scope.imageEvents[$scope.reportEventIndex].imageRecords[$scope.reportImgIndex].id;
+    	var n = $scope.curEventData.goodMap[imgId]
+    	$scope.isGood = (n > 0);
     };
     
     $scope.map = {
@@ -500,7 +506,6 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
     	return false;
     }
     $scope.loadImage = function() {
-    	$scope.isGood = false;
     	var elements = angular.element( document.querySelector( '#pics' ) );
 		var el = elements[0]
 		var w = el.clientWidth;
@@ -522,6 +527,9 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 			    		} else {
 			    	    	$scope.needReview = false;		    			
 			    		}
+			    		var imgId = $scope.imageEvents[$scope.reportEventIndex].imageRecords[$scope.reportImgIndex].id;
+			        	var n = $scope.curEventData.goodMap[imgId]
+			        	$scope.isGood = (n > 0);
 			    	});
 	    		}
     		}
@@ -533,6 +541,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 				good: $scope.isGood
 			}
 		).success(function(data) {
+			$scope.loadEventData();
 		})
     }
     $scope.updateGood = function() {
