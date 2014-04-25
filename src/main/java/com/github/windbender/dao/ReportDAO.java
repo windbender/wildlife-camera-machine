@@ -1,5 +1,7 @@
 package com.github.windbender.dao;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -16,8 +18,10 @@ import org.joda.time.Interval;
 import com.github.windbender.core.Limiter;
 import com.github.windbender.core.NV;
 import com.github.windbender.core.Series;
+import com.github.windbender.core.SpeciesCount;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.Species;
+import com.github.windbender.domain.User;
 
 public class ReportDAO {
 
@@ -158,5 +162,26 @@ public class ReportDAO {
         }
         return l;
 	}
+
+
+
+	public List<SpeciesCount> findCategorizationData(ImageEvent e) {
+		long id = e.getId();
+		String sql = "select species_id, count(*) from identifications where image_event_id = "+id+" group by species_id order by count(*) desc";
+		SQLQuery sqlQuery = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
+        Query query = sqlQuery;
+        List<Object[]> result = query.list();
+        List<SpeciesCount> l = new ArrayList<SpeciesCount>();
+        for(Object[] ar: result) {
+        	long species_id = ((Integer)ar[0]).longValue();
+        	Integer count = ((BigInteger)ar[1]).intValue();
+            Species s =  (Species) this.sessionFactory.getCurrentSession().get(Species.class, checkNotNull(species_id));
+            l.add(new SpeciesCount(s,count));
+        }
+		return l;
+	}
+
+
+
 
 }

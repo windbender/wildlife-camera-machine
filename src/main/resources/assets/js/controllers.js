@@ -14,13 +14,13 @@ var app = angular.module('wlcdm.controllers', [])
 	
 	$scope.$on('imageLoadStart', function() {
 		$scope.showLoad = true;
-		console.log("start");
+		//console.log("start");
 	});
 
 	$scope.$on('imageLoadDone', function() {
 		$scope.$apply(function() {
 			$scope.showLoad = false;
-			console.log("done");
+			//console.log("done");
 		});
 	});
 
@@ -187,6 +187,9 @@ var app = angular.module('wlcdm.controllers', [])
     
 	});
 
+app.controller('InfoController', ['$scope',function($scope) {
+
+}]);
 
 app.controller('AccountController', ['$scope','$http',function($scope,$http,CurUser) {
 	$scope.curUser = CurUser;
@@ -376,13 +379,13 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 	$scope.showLoad = false;
 	$scope.$on('imageReportLoadStart', function() {
 		$scope.showLoad = true;
-		console.log("start");
+//		console.log("start");
 	});
 
 	$scope.$on('imageReportLoadDone', function() {
 		$scope.$apply(function() {
 			$scope.showLoad = false;
-			console.log("done");
+//			console.log("done");
 		});
 	});
 
@@ -506,8 +509,24 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 		if($scope.imageEvents.length ==0) return;
 		$scope.reportImg.imagesrc = '/api/images/'+$scope.imageEvents[$scope.reportEventIndex].imageRecords[$scope.reportImgIndex].id+'?sz='+size;
 		$rootScope.$broadcast('imageReportLoadStart');
-    }
+	}
     
+    $scope.loadEventData = function() {
+    	if(typeof $scope.imageEvents != 'undefined') {
+    		if(typeof $scope.imageEvents[$scope.reportEventIndex] != 'undefined') {
+    		    if(typeof $scope.imageEvents[$scope.reportEventIndex].id != 'undefined') {
+			    	$http.get('/api/report/event/'+$scope.imageEvents[$scope.reportEventIndex].id).success(function(data) {
+			    		$scope.curEventData = data;
+			    		if($scope.curEventData.flaggedCount > 0) {
+			    	    	$scope.needReview = true;
+			    		} else {
+			    	    	$scope.needReview = false;		    			
+			    		}
+			    	});
+	    		}
+    		}
+    	}
+    }
     $scope.sendGood = function() {
     	$http.post('/api/report/good',{
 				imageId: $scope.imageEvents[$scope.reportEventIndex].imageRecords[$scope.reportImgIndex].id,
@@ -532,19 +551,23 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
     $scope.updateReview = function() {
     	$timeout($scope.sendReview, 250);
     };
-    $scope.$watch('reportEventIndex', function() {
-    	$scope.reportImgIndex = 0;
+    $scope.setImageLength = function() {
     	if(typeof $scope.reportEventIndex === 'undefined') return;
     	if(typeof $scope.imageEvents === 'undefined' ) return;
     	if(typeof $scope.imageEvents[$scope.reportEventIndex] === 'undefined' ) return;
     	if(typeof $scope.imageEvents[$scope.reportEventIndex].imageRecords === 'undefined' ) return;
     	$scope.imageLength = $scope.imageEvents[$scope.reportEventIndex].imageRecords.length;
+    }
+    $scope.$watch('reportEventIndex', function() {
+    	$scope.reportImgIndex = 0;
+    	$scope.setImageLength();
     	$scope.loadImage();
+    	$scope.loadEventData();
     });
     $scope.$watch('reportImgIndex', function() {
     	$scope.loadImage();
     });
-
+    
     $scope.params = {};
     $scope.params.showCharts = true;
     $scope.params.projectId = undefined;
@@ -600,8 +623,9 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 			$scope.imageEvents = data.imageEvents;
 			$scope.reportEventIndex = 0;
 		    $scope.reportImgIndex = 0;
-
+		    $scope.setImageLength();
 			$scope.loadImage();
+			$scope.loadEventData();
 		}).error(function(data,status,headers,config) {
 			toastr.error("sorry unable to retrive list");
 		});

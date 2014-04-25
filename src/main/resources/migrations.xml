@@ -969,4 +969,37 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="22" author="windbender">
+		<createTable tableName="event_review_needed">
+			<column name="id" type="int(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="user_id" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="image_event_id" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="flagged" type="boolean">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	
+		<createTable tableName="image_flagged_good">
+			<column name="id" type="int(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="user_id" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="image_id" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="flagged" type="boolean">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -57,23 +57,21 @@
 <div ng-class="{'col-md-6': params.showCharts}" id="pics">
 	<h3>Images</h3>
 	<div id="arrowBar" class="arrowBar">
-		<div class="arrows arrows-left" style="width:250px">
+		<div class="arrows arrows-left" style="width:320px">
 			events:
 			<button type="button" ng-click="prevEvent()" class="btn btn-primary btn-sm">&lt;</button>
 			<button type="button" ng-click="nextEvent()" class="btn btn-primary btn-sm">&gt;</button>
 			{{reportEventIndex+1}} of {{imageEvents.length}}
-		</div>
-		<div class="arrows-mid">
 			<button type="button" class="btn btn-sm btn-warning" ng-model="needReview" ng-click="updateReview()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
-				<span ng-hide="needReview">event needs review</span>
-				<span ng-show="needReview">will be reviewed</span>
-			</button>
-			<button type="button" class="btn btn-sm btn-success" ng-model="isGood" ng-click="updateGood()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
-				<span ng-hide="isGood">flag image as good</span>
-				<span ng-show="isGood">flagged as good</span>
+				<span ng-hide="needReview"><span class="glyphicon glyphicon-unchecked"></span>event needs review</span>
+				<span ng-show="needReview"><span class="glyphicon glyphicon-check"></span>will be reviewed</span>
 			</button>
 		</div>
 		<div class="arrows arrows-right" ng-show="showImageControls()">
+			<button type="button" class="btn btn-sm btn-success" ng-model="isGood" ng-click="updateGood()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+				<span ng-hide="isGood"><span class="glyphicon glyphicon-unchecked">flag image as good</span>
+				<span ng-show="isGood"><span class="glyphicon glyphicon-check">flagged as good</span>
+			</button>
 			images:
 			<button type="button" ng-click="prevImage()" class="btn btn-primary btn-sm">&lt;</button>
 			<button type="button" ng-click="nextImage()" class="btn btn-primary btn-sm">&gt;</button>

@@ -1,14 +1,19 @@
 package com.github.windbender.resources;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +22,7 @@ import com.github.windbender.auth.Priv;
 import com.github.windbender.auth.SessionAuth;
 import com.github.windbender.auth.SessionCurProj;
 import com.github.windbender.auth.SessionUser;
+import com.github.windbender.core.CurrentEventInfo;
 import com.github.windbender.core.GoodParams;
 import com.github.windbender.core.Limiter;
 import com.github.windbender.core.ReportParams;
@@ -24,12 +30,16 @@ import com.github.windbender.core.ReportResponse;
 import com.github.windbender.core.ReviewParams;
 import com.github.windbender.core.Series;
 import com.github.windbender.core.SessionFilteredAuthorization;
+import com.github.windbender.core.SpeciesCount;
 import com.github.windbender.dao.EventDAO;
+import com.github.windbender.dao.GoodDAO;
 import com.github.windbender.dao.ReportDAO;
+import com.github.windbender.dao.ReviewDAO;
 import com.github.windbender.dao.StringSeries;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.Project;
+import com.github.windbender.domain.Review;
 import com.github.windbender.domain.User;
 import com.yammer.dropwizard.hibernate.UnitOfWork;
 import com.yammer.metrics.annotation.Timed;
@@ -44,10 +54,15 @@ public class ReportResource {
 	ReportDAO rd;
 
 	private EventDAO eventDAO;
+
+	private ReviewDAO reviewDao;
+	private GoodDAO goodDao;
 	
-	public ReportResource(ReportDAO rd,EventDAO eventDAO) {
+	public ReportResource(ReportDAO rd,EventDAO eventDAO, ReviewDAO reviewDao, GoodDAO goodDao) {
 		this.rd = rd;
 		this.eventDAO = eventDAO;
+		this.reviewDao = reviewDao;
+		this.goodDao = goodDao;
 	}
 
 	@POST
@@ -64,10 +79,37 @@ public class ReportResource {
 	@UnitOfWork
 	@Path("review")
 	public Response updateReview(@SessionAuth(required={Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @SessionCurProj Project currentProject, ReviewParams reviewParams) {
-		log.info("event "+reviewParams.getEventId()+" is "+reviewParams.getReview());
+		long eventId = Long.parseLong(reviewParams.getEventId());
+		log.info("event "+eventId+" is "+reviewParams.getReview());
+		ImageEvent ie = eventDAO.findById(eventId);
+		Review r = new Review(ie,user,reviewParams.getReview()>0);
+		reviewDao.saveOrUpdate(r);
 		return Response.ok().build();
 	}
 
+	@GET
+	@Timed
+	@UnitOfWork
+	@Path("event/{eventId}")
+	public Response getEventData(@SessionAuth(required={Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @SessionCurProj Project currentProject, @PathParam("eventId") Long eventId) {
+		if(eventId == null) return Response.status(Status.NOT_FOUND).build();
+		ImageEvent e = eventDAO.findById(eventId);
+		if(e == null) return Response.status(Status.NOT_FOUND).build();
+		// load data about categorization
+		List<SpeciesCount> lsc = this.rd.findCategorizationData(e);
+		// load flagging data
+		Integer reviewCount = this.reviewDao.getReviewFlagCount(e,user);
+		
+		Map<String, Integer> m = new HashMap<String,Integer>();
+		// load images data included "good" images data
+		for(ImageRecord ir :e.getImageRecords()) {
+			Integer good = this.goodDao.getGoodFlagCount(ir.getId(),user);
+			m.put(ir.getId(),good);
+		}
+		CurrentEventInfo cei = new CurrentEventInfo(lsc,reviewCount,m);
+		return Response.ok(cei).build();		
+	}
+	
 	@POST
 	@Timed
 	@UnitOfWork
