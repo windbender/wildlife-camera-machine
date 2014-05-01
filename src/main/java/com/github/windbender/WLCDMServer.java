@@ -51,11 +51,16 @@ import com.github.windbender.resources.ReportResource;
 import com.github.windbender.resources.UserProjectResource;
 import com.github.windbender.resources.UserResource;
 import com.github.windbender.service.AsyncEmailSender;
+import com.github.windbender.service.CachingTimeZoneGetter;
+import com.github.windbender.service.CompositeTimeZoneGetter;
 import com.github.windbender.service.EmailService;
+import com.github.windbender.service.GeoNameTimeZoneGetter;
 import com.github.windbender.service.MakeDatesService;
 import com.github.windbender.service.MessageSender;
 import com.github.windbender.service.SMTPMessageSender;
 import com.github.windbender.service.StartupMessageCreator;
+import com.github.windbender.service.StupidTimeZoneGetter;
+import com.github.windbender.service.TimeZoneGetter;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
@@ -173,8 +178,11 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		}
 		SessionReloaderOperator sro = new SessionReloaderOperator(hsm, uDAO, projDAO, upDAO);
 
+		String geoNameUsername = configuration.getGeoNameUsername();
+		TimeZoneGetter timeZoneGetter = new CompositeTimeZoneGetter(new CachingTimeZoneGetter(new GeoNameTimeZoneGetter(geoNameUsername)), new StupidTimeZoneGetter());
+		
 		environment.addResource(new UserResource(uDAO, tokenDAO, projDAO, upDAO, emailService));
-		environment.addResource(new ImageResource(ds, store, irDAO, spDAO, reportDAO));
+		environment.addResource(new ImageResource(ds, store, irDAO, spDAO, reportDAO, timeZoneGetter));
 		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO));
 		environment.addResource(new ReportResource(reportDAO, ieDAO, irDAO, reviewDAO, goodDAO));
 		environment.addResource(new CameraResource(cameraDAO, projDAO));

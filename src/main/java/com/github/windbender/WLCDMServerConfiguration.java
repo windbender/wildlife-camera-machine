@@ -63,7 +63,11 @@ AssetsBundleConfiguration {
 
 	@JsonProperty
 	@NotNull
-	private String sessionPersistDirectory;;
+	private String sessionPersistDirectory;
+
+	@JsonProperty
+	@NotNull
+	private String geoNameUsername;
 
 
 	public AmazonS3Configuration getAmazon() {
@@ -118,6 +122,11 @@ AssetsBundleConfiguration {
 
 	public String getSessionPersistDirectory() {
 		return sessionPersistDirectory;
+	}
+
+
+	public String getGeoNameUsername() {
+		return geoNameUsername;
 	}
 
 	

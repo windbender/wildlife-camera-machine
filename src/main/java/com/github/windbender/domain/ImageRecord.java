@@ -13,11 +13,14 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import com.drew.lang.GeoLocation;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.windbender.core.LatLonPair;
+import com.github.windbender.service.TimeZoneGetter;
 import com.sun.jersey.api.ConflictException;
 
 
@@ -69,7 +72,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 	}
 
 	
-	public static ImageRecord makeImageFromExif(ExifSubIFDDirectory directory,
+	public static ImageRecord makeImageFromExif(TimeZoneGetter timeZoneGetter, ExifSubIFDDirectory directory,
 			GpsDirectory gpsDirectory, String filename, long cameraId, String latStr, String lonStr) {
 		Double lat = null;
 		if(latStr != null) {
@@ -119,7 +122,10 @@ public class ImageRecord implements Comparable<ImageRecord>{
 		}
 		
 		long millis = date.getTime() + seq;
-		ir.setDateTimeViaMillis(millis);
+		DateTimeZone dtz = timeZoneGetter.getTimeZone(new LatLonPair(ir.getLat(),ir.getLon()));
+		
+		DateTime imgTime = new DateTime(millis,dtz);
+		ir.setDatetime(imgTime);
 		long temp = ir.getLat() != +0.0d ? Double.doubleToLongBits(ir.getLat()) : 0L;
 		int locationHash = (int) (temp ^ (temp >>> 32));
 		temp = ir.getLon() != +0.0d ? Double.doubleToLongBits(ir.getLon()) : 0L;

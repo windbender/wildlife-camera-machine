@@ -51,6 +51,7 @@ import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.Project;
 import com.github.windbender.domain.Species;
 import com.github.windbender.domain.User;
+import com.github.windbender.service.TimeZoneGetter;
 import com.sun.jersey.api.ConflictException;
 import com.sun.jersey.multipart.BodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
@@ -68,13 +69,15 @@ public class ImageResource {
 	ImageRecordDAO irDAO;
 	private SpeciesDAO speciesDAO;
 	private ReportDAO reportDAO;
+	private TimeZoneGetter timeZoneGetter;
 
-	public ImageResource(HibernateDataStore ds, ImageStore store,	ImageRecordDAO irDAO, SpeciesDAO speciesDAO, ReportDAO reportDAO) {
+	public ImageResource(HibernateDataStore ds, ImageStore store,	ImageRecordDAO irDAO, SpeciesDAO speciesDAO, ReportDAO reportDAO,TimeZoneGetter timeZoneGetter) {
 		this.ds = ds;
 		this.store = store;
 		this.irDAO = irDAO;
 		this.speciesDAO = speciesDAO;
 		this.reportDAO = reportDAO;
+		this.timeZoneGetter = timeZoneGetter;
 	}
 
 	@GET
@@ -94,34 +97,6 @@ public class ImageResource {
 			throw new WebApplicationException();
 		}
 	}
-
-//	@GET
-//	@Timed
-//	@UnitOfWork
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public List<ImageRecordTO> list(@SessionUser User user) {
-//		List<ImageRecord> list = ds.getTimeOrderedImages();
-//		
-//		List<ImageRecordTO> outList = new ArrayList<ImageRecordTO>();
-//		
-//		for(ImageRecord ir : list) {
-//			ImageRecordTO irto = new ImageRecordTO(ir);
-//			outList.add(irto);
-//		}
-//		return outList;
-//	}
-	
-//	@GET
-//	@Timed
-//	@Produces(MediaType.APPLICATION_JSON)
-//	@UnitOfWork
-//	@Path("events")
-//	public List<ImageEvent> listEvents(@SessionUser User user) {
-//		List<ImageEvent> imageEvents = ds.getImageEvents();
-//		return imageEvents;
-//	}
-	
-	
 	
 	@GET
 	@Timed
@@ -305,7 +280,7 @@ public class ImageResource {
 						String latStr = request.getHeader("pos_lat");
 						String lonStr = request.getHeader("pos_lon");
 						
-						newImage = ImageRecord.makeImageFromExif(directory,gpsDirectory,filename,cameraId,latStr,lonStr);
+						newImage = ImageRecord.makeImageFromExif(timeZoneGetter, directory,gpsDirectory,filename,cameraId,latStr,lonStr);
 					}
 					ImageRecord exist = irDAO.findById(newImage.getId());
 					if(exist == null) {
