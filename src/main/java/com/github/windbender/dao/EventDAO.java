@@ -135,5 +135,21 @@ public class EventDAO extends AbstractDAO<ImageEvent> {
         List<Integer> l = query.list(); 
         return l;
 	}
+	public List<Integer> findFlaggedEventsIdsWithFewerThanIdentifications(Long project_id,int number) {
+		List<ImageEvent> list = new ArrayList<ImageEvent>();
+//		String sql = "select eventId from (select count(identifications.image_event_id) as totalActions, events.id as eventId from events left join identifications  on identifications.image_event_id = events.id group by events.id ) x where x.totalActions < ? order by totalActions,eventId";
+		String sql = "select eventId from  ( "+
+					"select count(i.image_event_id) as totalActions, e.id as eventId "+
+				"from cameras c, events e left join identifications i  on i.image_event_id = e.id  "+
+				"where c.id = e.camera_id and c.project_id=? group by e.id  "+
+				") x, "+
+				"(select image_event_id ,count(*) flags  from event_review_needed, events  "+
+				"where event_review_needed.image_event_id = events.id and event_review_needed.flagged=1 group by events.id "+
+				") y where x.eventId= y.image_event_id and totalActions < flags+? order by totalActions,eventId";
+		SQLQuery sqlQuery = this.currentSession().createSQLQuery(sql);
+        Query query = sqlQuery.setParameter(0, project_id).setParameter(1, number);
+        List<Integer> l = query.list(); 
+        return l;
+	}
 
 }

@@ -244,8 +244,10 @@ public class HibernateDataStore implements Managed, Runnable {
 		// b) have a number of zero or 1 previous identifications
 		int number =2;
 		List<Integer> lowNumber = this.eventDAO.findEventsIdsWithFewerThanIdentifications(currentProject.getId(),number);
-		SortedSet<Integer> lowNumberSet =  new TreeSet<Integer>(lowNumber);
+		List<Integer> flagged = this.eventDAO.findFlaggedEventsIdsWithFewerThanIdentifications(currentProject.getId(), number);
 		
+		SortedSet<Integer> lowNumberSet =  new TreeSet<Integer>(lowNumber);
+		lowNumberSet.addAll(flagged);
 		lowNumberSet.removeAll(doneSet);
 		
 		// Ok we could cache that set... or we could just pick one and go with it for now.
