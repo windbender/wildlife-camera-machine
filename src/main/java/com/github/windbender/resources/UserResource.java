@@ -34,16 +34,14 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.windbender.auth.Priv;
-import com.github.windbender.auth.SessionAuth;
 import com.github.windbender.auth.SessionCurProj;
 import com.github.windbender.auth.SessionUser;
+import com.github.windbender.core.AcceptRequest;
 import com.github.windbender.core.CurUser;
 import com.github.windbender.core.LoginObject;
 import com.github.windbender.core.MenuItem;
 import com.github.windbender.core.ProjectMenuTO;
 import com.github.windbender.core.ResetPWRequest;
-import com.github.windbender.core.SessionFilteredAuthorization;
 import com.github.windbender.core.SetPWRequest;
 import com.github.windbender.core.SignUpResponse;
 import com.github.windbender.core.SignupRequest;
@@ -52,10 +50,12 @@ import com.github.windbender.core.UserUpdate;
 import com.github.windbender.core.VerifyRequest;
 import com.github.windbender.core.VerifyResponse;
 import com.github.windbender.dao.HibernateUserDAO;
+import com.github.windbender.dao.InviteDAO;
 import com.github.windbender.dao.ProjectDAO;
 import com.github.windbender.dao.TokenDAO;
 import com.github.windbender.dao.UserDAO;
 import com.github.windbender.dao.UserProjectDAO;
+import com.github.windbender.domain.Invite;
 import com.github.windbender.domain.Project;
 import com.github.windbender.domain.User;
 import com.github.windbender.domain.UserProject;
@@ -76,10 +76,12 @@ public class UserResource {
 	private EmailService emailService;
 	private ProjectDAO projectDAO;
 	private UserProjectDAO upDAO;
+
+	private InviteDAO inviteDAO;
 	
 	
 
-	public UserResource(UserDAO ud, TokenDAO tokendao,ProjectDAO projectDAO,UserProjectDAO upDAO,
+	public UserResource(UserDAO ud, TokenDAO tokendao,ProjectDAO projectDAO,UserProjectDAO upDAO,InviteDAO inviteDAO,
 			EmailService emailService) {
 		super();
 		this.ud = ud;
@@ -87,6 +89,7 @@ public class UserResource {
 		this.emailService = emailService;
 		this.projectDAO = projectDAO;
 		this.upDAO = upDAO;
+		this.inviteDAO = inviteDAO;
 	}
 
 
@@ -392,6 +395,62 @@ public class UserResource {
 		
 		request.getSession().invalidate();
 		return Response.status(Response.Status.OK).build();
+
+	}
+	
+	@POST
+	@Timed
+	@Path("accept")
+	@UnitOfWork
+	public Response accept(AcceptRequest req, @Context HttpServletRequest request) {
+		Invite inv = this.inviteDAO.findByCode(req.getInviteCode());
+		if(inv == null) throw new NotFoundException();
+
+		User oldUser = ud.findByUsername(req.getUsername());
+		if(oldUser != null) {
+			throw new ConflictException("That username is already taken");
+		}
+		User emailUser = ud.findByEmail(inv.getEmail());
+		if(emailUser != null) {
+			throw new ConflictException("That email already has an account. Consider using password recovery");
+		}
+		if(!validatePassword(req.getPassword())) {
+			throw new ConflictException("Password does not follow the complexity rules");
+		}
+		User u = new User();
+		u.setEmail(inv.getEmail());
+		u.setUsername(req.getUsername());
+		u.setPassword(req.getPassword());
+		u.setVerified(true);
+		u.setVerifyCode(inv.getInviteCode());
+		u.setVerifyCodeSentDate(inv.getInviteCodeSentDate());
+		Long userid = null;
+		try {
+			userid = ud.create(u);
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e1) {
+			log.error("can't create the user because ",e1);
+			throw new WebApplicationException(e1);
+		}
+		// OK now make a User Project record also!!
+		UserProject up = new UserProject();
+		User u2 = this.ud.findById(userid.intValue());
+		Project p2 = this.projectDAO.findById(inv.getProject().getId());
+		
+		up.setProject(p2);
+		up.setUser(u2);
+		up.setCanAdmin(inv.getCanAdmin());
+		up.setCanCategorize(inv.getCanCategorize());
+		up.setCanReport(inv.getCanReport());
+		up.setCanUpload(inv.getCanReport());
+		this.upDAO.save(up);
+		
+		
+		loadAssociatedAndSetSessionWith(request, u2);
+		loadStartingProject(request,u2);
+		//now delete the invite
+		this.inviteDAO.delete(inv);
+		String sur ="done";
+		return Response.ok(sur, MediaType.APPLICATION_JSON).build();
 
 	}
 	

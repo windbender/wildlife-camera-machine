@@ -3,6 +3,7 @@ package com.github.windbender.service;
 import javax.mail.MessagingException;
 
 import com.github.windbender.WLCDMServerConfiguration;
+import com.github.windbender.domain.Project;
 import com.github.windbender.domain.User;
 
 public class EmailService {
@@ -34,6 +35,11 @@ public class EmailService {
 		MessageCreator mc = new VerificationMessageCreator(u,configuration);
 		messageSender.sendMessage(mc);
 		
+	}
+	public void sendInviteEmail(User user, String inviteEmail, String inviteCode,
+			Project currentProject) throws MessagingException {
+		MessageCreator mc = new InviteEmailMessageCreator( user, inviteEmail, inviteCode, currentProject,configuration);
+		messageSender.sendMessage(mc);
 	}
 	
 

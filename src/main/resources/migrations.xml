@@ -1004,4 +1004,31 @@
 	<changeSet id="23" author="windbender">
 		<modifyDataType tableName="image_flagged_good" columnName="image_id" newDataType="varchar(255)"/>
 	</changeSet>
+	<changeSet id="24" author="windbender" >
+		<createTable tableName="invites">
+			<column name="id" type="int(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="email" type="varchar(255)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="inviteCode" type="varchar(255)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="inviteCodeSentDate" type="datetime" />
+			<column name="userCreated" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="inviter_user_id" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="project_id" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="canReport" type="Boolean" defaultValue="1"/>
+			<column name="canCategorize" type="Boolean" defaultValue="1"/>
+			<column name="canUpload" type="Boolean" defaultValue="1"/>
+			<column name="canAdmin" type="Boolean" defaultValue="0"/>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>

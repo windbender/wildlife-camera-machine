@@ -27,6 +27,7 @@ import com.github.windbender.dao.GoodDAO;
 import com.github.windbender.dao.HibernateUserDAO;
 import com.github.windbender.dao.IdentificationDAO;
 import com.github.windbender.dao.ImageRecordDAO;
+import com.github.windbender.dao.InviteDAO;
 import com.github.windbender.dao.ProjectDAO;
 import com.github.windbender.dao.ReportDAO;
 import com.github.windbender.dao.ReviewDAO;
@@ -38,6 +39,7 @@ import com.github.windbender.domain.Good;
 import com.github.windbender.domain.Identification;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
+import com.github.windbender.domain.Invite;
 import com.github.windbender.domain.Project;
 import com.github.windbender.domain.ResetPasswordToken;
 import com.github.windbender.domain.Review;
@@ -97,7 +99,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
       
 
 	private final HibernateBundle<WLCDMServerConfiguration> hibernate = new HibernateBundle<WLCDMServerConfiguration>(
-			Identification.class,ImageRecord.class,ImageEvent.class,User.class,Species.class,Project.class, UserProject.class, Camera.class, ResetPasswordToken.class, Review.class, Good.class) {
+			Identification.class,ImageRecord.class,Invite.class,ImageEvent.class,User.class,Species.class,Project.class, UserProject.class, Camera.class, ResetPasswordToken.class, Review.class, Good.class) {
 	    @Override
 	    public DatabaseConfiguration getDatabaseConfiguration(WLCDMServerConfiguration configuration) {
 	        return configuration.getDatabaseConfiguration();
@@ -126,7 +128,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
         final CameraDAO cameraDAO = new CameraDAO(hibernate.getSessionFactory());
         final ReviewDAO reviewDAO = new ReviewDAO(hibernate.getSessionFactory());
         final GoodDAO goodDAO = new GoodDAO(hibernate.getSessionFactory());
-        
+        final InviteDAO inviteDAO = new InviteDAO(hibernate.getSessionFactory());
         
         HibernateDataStore ds = new HibernateDataStore(idDAO,irDAO,spDAO,uDAO, ieDAO, hibernate.getSessionFactory());
     	environment.manage(ds);
@@ -181,9 +183,9 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		String geoNameUsername = configuration.getGeoNameUsername();
 		TimeZoneGetter timeZoneGetter = new CompositeTimeZoneGetter(new CachingTimeZoneGetter(new GeoNameTimeZoneGetter(geoNameUsername)), new StupidTimeZoneGetter());
 		
-		environment.addResource(new UserResource(uDAO, tokenDAO, projDAO, upDAO, emailService));
+		environment.addResource(new UserResource(uDAO, tokenDAO, projDAO, upDAO, inviteDAO, emailService));
 		environment.addResource(new ImageResource(ds, store, irDAO, spDAO, reportDAO, timeZoneGetter));
-		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO));
+		environment.addResource(new ProjectResource(projDAO, uDAO, upDAO,inviteDAO, emailService));
 		environment.addResource(new ReportResource(reportDAO, ieDAO, irDAO, reviewDAO, goodDAO));
 		environment.addResource(new CameraResource(cameraDAO, projDAO));
 		environment.addResource(new UserProjectResource(upDAO, projDAO, uDAO, sro));

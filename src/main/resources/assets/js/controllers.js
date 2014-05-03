@@ -5,7 +5,8 @@
 var app = angular.module('wlcdm.controllers', [])
 .controller('CategorizeController', function($http, $rootScope, $scope, focus) {
 
-	$scope.currentIndex = 1; // Initially the index is at the second image, but this doesn't actually EXIST!  :-)
+	$scope.currentIndex = 1; // Initially the index is at the second image,
+								// but this doesn't actually EXIST! :-)
 	$scope.selected = {};
 	$scope.next = {};
 	$scope.nextnext = {};
@@ -14,13 +15,13 @@ var app = angular.module('wlcdm.controllers', [])
 	
 	$scope.$on('imageLoadStart', function() {
 		$scope.showLoad = true;
-		//console.log("start");
+		// console.log("start");
 	});
 
 	$scope.$on('imageLoadDone', function() {
 		$scope.$apply(function() {
 			$scope.showLoad = false;
-			//console.log("done");
+			// console.log("done");
 		});
 	});
 
@@ -62,9 +63,9 @@ var app = angular.module('wlcdm.controllers', [])
 	};
 		
 	
-//	elem.bind("keyup", function() {
-//		scope.$apply(attrs.onkey);
-//	});
+// elem.bind("keyup", function() {
+// scope.$apply(attrs.onkey);
+// });
 	$scope.submitTyped = function() {
 		if(typeof $scope.typeSpecies == 'undefined') return;
 		if($scope.logAnimal($scope.typeSpecies.name,$scope.typeSpecies.id,$scope.images[$scope.currentIndex].id,$scope.eventId)) {
@@ -122,22 +123,22 @@ var app = angular.module('wlcdm.controllers', [])
 	    if(keyCode == 39  ) {
 	       $scope.nextImage();
 	     	
-	     		// left arrow	
+	     		// left arrow
 	    } else if(keyCode == 37 ) {
 	        $scope.prevImage();
 	     		
-	     	// numbers	
+	     	// numbers
 	    } else if((keyCode >= 48) && (keyCode <=56)) {
 			// numbers
 			$scope.numberOfAnimals = keyCode - 48;
 		
-		// space	
+		// space
 		} else if(keyCode == 32) {
 			if($scope.logAnimal("none",-1,$scope.images[$scope.currentIndex].id,$scope.eventId)) {
 				$scope.getNextEvent();
 			}
 		
-		// other keys	
+		// other keys
 		} else {
     		$scope.topSpecies.forEach(function(key) {
     			if(key.keycode == keyCode) {
@@ -191,6 +192,54 @@ app.controller('InfoController', ['$scope',function($scope) {
 
 }]);
 
+
+app.controller('AcceptController', ['$scope','$http','$location',function($scope,$http,$location) {
+	$scope.code = $location.search()['inviteCode'];
+	$scope.pwdHasNumber = false;
+	$http.get('/api/projects/accept?code='+$scope.code).success(function(data) {
+		$scope.invite = data;
+		$scope.email = data.email;
+	}).error(function(data) {
+	})
+	$scope.submit = function() {
+		$http.post('/api/users/accept', {
+			username : $scope.username,
+			inviteCode : $scope.code,
+			password : $scope.password,
+		})
+		.success(function() {
+			toastr.success("signup successful!");
+			$location.path('/info');
+		}).error(function(data, status, headers, config) {
+			toastr.error("there was a problem");
+			$scope.msg = data;
+		});
+	}
+	$scope.cancel = function() {
+		
+	}
+}]);
+
+app.controller('InviteController', ['$scope','$http','$location',function($scope,$http,$location) {
+	$scope.invite = function() {
+		$http.post('/api/projects/invite',{
+			email: $scope.inviteEmail,
+			canAdmin: $scope.canAdmin,
+			canUpload: $scope.canUpload,
+			canCategorize: $scope.canCategorize,
+			canReport: $scope.canReport
+		}).success(function(data) {
+			toastr.success("Invite Sent");
+			$location.path('/setup');
+		}).error(function(data) {
+			toastr.error("Invite Failed");
+		})
+	};
+	$scope.cancel = function() {
+        $location.path('/setup');
+	};
+	
+}]);
 app.controller('AccountController', ['$scope','$http',function($scope,$http,CurUser) {
 	$scope.curUser = CurUser;
 
@@ -227,7 +276,7 @@ app.controller({
 		
 		$scope.userOther = function(val) {
 			return $http.get('/api/users/lookup/?text='+val+'&p='+$scope.current_project.id).then(function(res){
-				//return res.data;
+				// return res.data;
 				return res.data;
 			});
 		}
@@ -259,7 +308,8 @@ app.controller({
                     });
 	            } else {
 		    		$scope.userproject.idForUser = $scope.userproject.userId;
-		    		//$scope.userproject.idForProject = $scope.userproject.project.id;
+		    		// $scope.userproject.idForProject =
+					// $scope.userproject.project.id;
 
                     $scope.userproject.$update(function() {
                             toastr.success("Updated");
@@ -311,13 +361,19 @@ app.controller('SetupController', ['$scope','$http','$route',function($scope,$ht
 	});
 
     $scope.deleteUserproject = function(userproject) {
-//    	userproject.$delete(function() {
-//    		$scope.vineyards.splice($scope.vineyards.indexOf(vineyard),1);
-//    		toastr.success("Deleted");
-//    	});
+// userproject.$delete(function() {
+// $scope.vineyards.splice($scope.vineyards.indexOf(vineyard),1);
+// toastr.success("Deleted");
+// });
     	alert("deleting "+userproject.id);
     	$http.delete('/api/userproject/'+userproject.id).success(function(data) {
     		$scope.userprojects = data;
+    	});
+		$route.reload();
+    }
+    
+    $scope.deleteInvite = function(inviteId) {
+    	$http.post('/api/projects/deleteInvite',inviteId).success(function(data) {
     	});
 		$route.reload();
     }
@@ -327,6 +383,9 @@ app.controller('SetupController', ['$scope','$http','$route',function($scope,$ht
 	});
 	$http.get('/api/userproject').success(function(data) {
 		$scope.userprojects = data;
+	});
+	$http.get('/api/projects/invites').success(function(data) {
+		$scope.invites = data;
 	});
 
   }]);
@@ -379,13 +438,13 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 	$scope.showLoad = false;
 	$scope.$on('imageReportLoadStart', function() {
 		$scope.showLoad = true;
-//		console.log("start");
+// console.log("start");
 	});
 
 	$scope.$on('imageReportLoadDone', function() {
 		$scope.$apply(function() {
 			$scope.showLoad = false;
-//			console.log("done");
+// console.log("done");
 		});
 	});
 
@@ -454,8 +513,8 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 	    return function(d, i) {
 	    	if(d[1] == 0) return "#000000";
 	    	return "#0088DD";
-//	        var q= colorCategory(i);
-//	        return q;
+// var q= colorCategory(i);
+// return q;
 	    };
 	}
     $scope.bySpeciesData = [];
@@ -640,11 +699,11 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 		});
 	};
 	
-    //$scope.onChange();
+    // $scope.onChange();
           
   }]);
   
-//https://github.com/danialfarid/angular-file-upload  
+// https://github.com/danialfarid/angular-file-upload
 app.controller('UploadController', ['$scope','$upload','$http',function($scope,$upload,$http) {
 	$scope.actualProg = 0;
 	$scope.possibleProg = 0;
@@ -679,38 +738,49 @@ app.controller('UploadController', ['$scope','$upload','$http',function($scope,$
 		return false;
 	};
 	$scope.onFileSelect = function($files) {
-		//$files: an array of files selected, each file has name, size, and type.
+		// $files: an array of files selected, each file has name, size, and
+		// type.
 		
 		$scope.progress = {};
 		$scope.uploads = [];
 		for (var i = 0; i < $files.length; i++) {
 			var file = $files[i];
 			var upload = $upload.upload({
-				url: '/api/images', //upload.php script, node.js route, or servlet url
+				url: '/api/images', // upload.php script, node.js route, or
+									// servlet url
 		        method: 'POST',
 		        headers: {'camera_id': $scope.camera_id,'pos_lat': $scope.lat,'pos_lon': $scope.lon},
 		        // withCredentials: true,
-//		        data: {myObj: $scope.myModelObj},
+// data: {myObj: $scope.myModelObj},
 		        file: file,
-//		         file: $files, //upload multiple files, this feature only works in HTML5 FromData browsers
-		        /* set file formData name for 'Content-Desposition' header. Default: 'file' */
-		        //fileFormDataName: myFile, //OR for HTML5 multiple upload only a list: ['name1', 'name2', ...]
-		        /* customize how data is added to formData. See #40#issuecomment-28612000 for example */
-		        //formDataAppender: function(formData, key, val){} //#40#issuecomment-28612000
+// file: $files, //upload multiple files, this feature only works in HTML5
+// FromData browsers
+		        /*
+				 * set file formData name for 'Content-Desposition' header.
+				 * Default: 'file'
+				 */
+		        // fileFormDataName: myFile, //OR for HTML5 multiple upload only
+				// a list: ['name1', 'name2', ...]
+		        /*
+				 * customize how data is added to formData. See
+				 * #40#issuecomment-28612000 for example
+				 */
+		        // formDataAppender: function(formData, key, val){}
+				// //#40#issuecomment-28612000
 		      	}).progress(function(evt) {
 		      		$scope.update(this.file.name,parseInt(100.0 * evt.loaded / evt.total));
 		        }).success(function(data, status, headers, config) {
 		        // file is uploaded successfully
 		      		console.log(data);
-		      		// so pull it from the 
+		      		// so pull it from the
 		      	}).error(function(data,status,headers,config) {
 		      		toastr.error("sorry can't upload the image because "+data);
 		      	});
-		      	//.then(success, error, progress); 
+		      	// .then(success, error, progress);
 			$scope.uploads.push(upload);
 
 		}
-		//alert(" done starting uploads");
+		// alert(" done starting uploads");
 	};
 	
 	$scope.doAbort = function() {
@@ -825,7 +895,8 @@ app.controller({
 
 app.config(function(authServiceProvider) {
 	authServiceProvider.addIgnoreUrlExpression(function(response) {
-		// this keeps the auth provider from intercepting the actual login attempt!
+		// this keeps the auth provider from intercepting the actual login
+		// attempt!
 		return response.config.url === "users/login";
 	});
 });
@@ -893,10 +964,10 @@ app.controller({
 		$scope.usernameIsUnique = 'valid';
 
 		// should be one of
-//		BARE,
-//		UNITS_ONLY,
-//		UNIT_AND_ATTRIBUTES,
-//		FULL_SAMPLE;		
+// BARE,
+// UNITS_ONLY,
+// UNIT_AND_ATTRIBUTES,
+// FULL_SAMPLE;
 		$scope.initialData = "FULL_SAMPLE";
 		$scope.submit = function() {
 			$http.post('api/users/signup', {

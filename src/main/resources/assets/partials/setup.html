@@ -25,7 +25,8 @@
 <div class="row">
 <div class="col-md-6 col-md-offset-1 well">
 	<h3>Guest Users for {{current_project.name}}</h3>
-	Search: <input ng-model="searchText2"  ng-my-focus="shouldFocus()">&nbsp;&nbsp;<a class="btn btn-primary pull-right" href="#/userproject/new"><span class="glyphicon glyphicon-plus"></span>Add New...</a>
+	Search: <input ng-model="searchText2"  ng-my-focus="shouldFocus()">&nbsp;&nbsp;
+		<a class="btn btn-primary pull-right" href="#/userproject/new"><span class="glyphicon glyphicon-plus"></span>Add Existing...</a>
 	<table class="table table-striped table-bordered">
 		<tr><th>username</th><th>email</th><th>can setup</th><th>can upload</th><th>can categorize</th><th>can report</th></tr>
 		<tr ng-repeat="userproject in userprojects | filter:searchText2" >
@@ -37,6 +38,29 @@
                     <i class="icon-pencil icon-white"></i> Edit
                 </a>
                 <button class="btn  btn-sm btn-danger" ng-confirm-click="are you sure you want to remove user {{userproject.username}} from the project?"ng-click="deleteUserproject(userproject)">
+                    <i class="icon-trash icon-white"></i> Delete
+                </button>
+            </div>
+				
+			</td>
+		</tr>
+	</table>
+</div>
+</div>
+<div class="row">
+<div class="col-md-6 col-md-offset-1 well">
+	<h3>Invites to {{current_project.name}}</h3>
+	Search: <input ng-model="searchText2"  ng-my-focus="shouldFocus()">&nbsp;&nbsp;
+		<a class="btn btn-primary pull-right" href="#/invite" ><span class="glyphicon glyphicon-plus"></span>Invite New...</a>
+		&nbsp;
+	<table class="table table-striped table-bordered">
+		<tr><th>email</th><th>when</th><th>can setup</th><th>can upload</th><th>can categorize</th><th>can report</th></tr>
+		<tr ng-repeat="invite in invites | filter:searchText2" >
+			<td>{{invite.email}}</td><td>{{invite.inviteCodeSentDate}}</td>
+			<td>{{invite.canAdmin}}</td><td>{{invite.canUpload}}</td><td>{{invite.canCategorize}}</td><td>{{invite.canReport}}</td>
+			<td>
+				<div class="pull-left">
+                <button class="btn  btn-sm btn-danger" ng-confirm-click="are you sure you want to remove invite to {{invite.email}} from the project?"ng-click="deleteInvite(invite.id)">
                     <i class="icon-trash icon-white"></i> Delete
                 </button>
             </div>

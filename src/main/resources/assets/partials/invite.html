@@ -1,0 +1,36 @@
+	<div class="row">
+		<div class="col-md-6 col-md-offset-1 well">
+			<form id="inviteform" name="inviteform" class="form-horizontal">
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="inviteEmail">Email<span class="text-danger"></span></label>
+					<input class="widerInput" type="email" ng-model="inviteEmail" name="inviteEmail" id="inviteEmail" required ng-minlength=5/>
+				</div>
+				<div class="form-group">
+		        <label class="col-sm-2 control-label" for="name">can Admin</label>
+		        <div class="controls">
+		            <input type="checkbox" ng-model="canAdmin" name="admin" id="admin" />
+		        </div>
+			    </div>
+			    <div class="form-group">
+			        <label class="col-sm-2 control-label" for="name">can Upload</label>
+			        <div class="controls">
+			            <input type="checkbox" ng-model="canUpload" name="upload" id="upload" />
+			        </div>
+			    </div>
+			    <div class="form-group">
+			        <label class="col-sm-2 control-label" for="name">can Categorize</label>
+			        <div class="controls">
+			            <input type="checkbox" ng-model="canCategorize" name="categorize" id="categorize" />
+			        </div>
+			    </div>
+			    <div class="form-group">
+			        <label class="col-sm-2 control-label" for="name">can Report</label>
+			        <div class="controls">
+			            <input type="checkbox" ng-model="canReport" name="report" id="report" />
+			        </div>
+			    </div>
+				<button id="cancel" ng-click="cancel()" class="btn btn-warning">Cancel</button>
+				<button ng-disabled="inviteform.$invalid" ng-click="invite()" id="save" class="btn btn-primary">Invite</button>
+			</form>
+		</div>
+</div>
