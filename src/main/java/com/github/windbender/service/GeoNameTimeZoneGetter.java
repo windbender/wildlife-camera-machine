@@ -73,15 +73,16 @@ public class GeoNameTimeZoneGetter implements TimeZoneGetter {
 		// http://api.geonames.org/timezoneJSON?lat=47.01&lng=10.2&username=demo
 		String url = "http://api.geonames.org/timezoneJSON?lat=" + nlat
 				+ "&lng=" + nlon + "&username=" + username;
+		JSONObject obj = null;
 		try {
-			JSONObject obj = readJsonFromUrl(url);
+			obj = readJsonFromUrl(url);
 			String s = obj.get("timezoneId").toString();
 			DateTimeZone dtz = DateTimeZone.forID(s);
 			return dtz;
 		} catch (IOException e) {
 			log.error("unable to contact the timezone machine",e);
 		} catch (JSONException e) {
-			log.error("unable to parse response from the timezone machine",e);
+			log.error("unable to parse response from the timezone machine which was: "+obj.toString(),e);
 		}
 		
 		return null;
