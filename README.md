@@ -34,28 +34,31 @@ install required packages
 * MySQL (or equivalent, I haven't tried postgres, but this project doesn't use anything fancy )
 
 clone the project:
-
+```
 git clone https://github.com/windbender/wildlife-camera-machine.git
+```
 
 build the project:
-
+```
 mvn clean package
+```
 
 create a database and database user:
-
+```
 create database wlcdm;
 create user 'wlcdm'@'localhost' identified by 'supersecret';
 grant all on wlcdm.* to 'wlcdm'@'localhost';
+```
 
 setup the config file:
-
+```
+cp serverconfig.example.yml serverconfig.yml
 vi serverconfig.yml
 ```
-something
-```
 
+Now edit serverconfig.yml.  replace all instances of <something> with more appropriate data.
 
-create database tables:
+create database tables ( this command uses liquibase to make sure your DB is up to date)
 
 java -jar target/wlcdmsrv.jar  db migrate serverconfig.yml
 
