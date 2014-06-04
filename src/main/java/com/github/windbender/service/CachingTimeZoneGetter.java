@@ -29,7 +29,7 @@ public class CachingTimeZoneGetter implements TimeZoneGetter {
 	public DateTimeZone getTimeZone(LatLonPair pair) {
 		try {
 			return graphs.get(pair);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			return null;
 		}
 

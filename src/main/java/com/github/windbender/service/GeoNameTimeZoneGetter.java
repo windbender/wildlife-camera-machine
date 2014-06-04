@@ -26,7 +26,7 @@ public class GeoNameTimeZoneGetter implements TimeZoneGetter {
 		
 		TimeZoneGetter timeZoneGetter = new CompositeTimeZoneGetter(new CachingTimeZoneGetter(new GeoNameTimeZoneGetter("demo")), new StupidTimeZoneGetter());
 		DateTimeZone dtz = timeZoneGetter.getTimeZone(new LatLonPair(38.5, -122.0));
-
+		System.out.println("got timezone "+dtz);
 	}
 
 	String username;
