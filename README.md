@@ -32,6 +32,8 @@ QuickStart
 install required packages
 * JDK
 * MySQL (or equivalent, I haven't tried postgres, but this project doesn't use anything fancy )
+* an amazon S3 account  ( it might start without this, but you won't be able to upload pictures unless you set the "amazon" field to false in the config in which case you get a file system image storage.
+* an SMTP server capable of sending emails.
 
 clone the project:
 ```
@@ -59,12 +61,17 @@ vi serverconfig.yml
 Now edit serverconfig.yml.  replace all instances of <something> with more appropriate data.
 
 create database tables ( this command uses liquibase to make sure your DB is up to date)
-
+```
 java -jar target/wlcdmsrv.jar  db migrate serverconfig.yml
-
+```
 start server:
-
+```
 java -jar target/wlcdmsrv.jar server serverconfig.yml
+```
+
+and go visit it:
+http://localhost:8080/
+
 
 
 
