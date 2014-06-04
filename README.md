@@ -12,8 +12,11 @@ Three easy steps:
 Technology
 ============
 Dropwizard ( https://dropwizard.github.io/dropwizard/ )
+
 AngularJS ( https://angularjs.org/ )
+
 Relational Database (currently mysql, but postgres would also work )
+
 Bootstrap ( http://getbootstrap.com/ )
 
 ToTo
