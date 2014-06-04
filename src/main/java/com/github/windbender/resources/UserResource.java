@@ -115,6 +115,9 @@ public class UserResource {
 		if(user == null) {
 			return list;
 		}
+		if(currentProject == null) {
+			return list;
+		}
 		User u = this.ud.findById(user.getId());
 		Project p = this.projectDAO.findById(currentProject.getId());
 		boolean isAdmin = false;
