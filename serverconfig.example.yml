@@ -53,6 +53,9 @@ SMTPPort: 587
 SMTPUser: <yoursmtpuserhere>
 SMTPPass: <yoursmtppasswordhere> 
 
+# setting this to false would allow a localfile system store and allows you to ignore the amazonS3 config
+amazon: true
+
 amazonS3:
   accesskey: <yours3accesskey> 
   secretkey: <yours3secretkey> 
