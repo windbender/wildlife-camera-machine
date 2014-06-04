@@ -791,7 +791,7 @@ app.controller('UploadController', ['$scope','$upload','$http',function($scope,$
   }]);
 
 app.controller({
-	LoginController : function($cookies, $scope, $rootScope, $http, authService, CurUser) {
+	LoginController : function($cookies, $scope, $rootScope, $timeout, $http, authService, CurUser) {
 		$scope.curUser = CurUser;
 		
 		$scope.submit = function() {
@@ -804,6 +804,10 @@ app.controller({
 				$scope.curUser.setUsername($scope.username);
 				$scope.failMsg = "";
 				$rootScope.$broadcast('reloadMenus');
+				var shortWait = $timeout(function() {
+					$rootScope.$broadcast('reloadMenus');
+				},500);
+
 				$scope.password = "";
 			}).error(function(data, status, headers, config) {
 				$scope.failMsg = "sorry that user or password invalid";
@@ -862,6 +866,16 @@ app.controller({
 		};
 		$scope.projects = [];
 		$scope.project_id = 1;
+		
+		$scope.$on('reloadMenus', function() {
+			$http.get('/api/users/currentProject').success(function(data) {
+				$scope.project_id = parseInt(data.id,10);
+			});
+			$http.get('/api/users/projects').success(function(data) {
+				$scope.projects = data;
+			});
+		});
+
 		$http.get('/api/users/currentProject').success(function(data) {
 			$scope.project_id = parseInt(data.id,10);
 		});
@@ -1010,6 +1024,7 @@ app.controller({
 					$location.path('/account');	
 					$location.replace();
 					$location.search('verifyCode', null);
+					$rootScope.$broadcast('reloadMenus');
 				},4000);
 				$rootScope.$broadcast('reloadMenus');
 			}).error(function(data) {
