@@ -19,13 +19,13 @@ Relational Database (currently mysql, but postgres would also work )
 
 Bootstrap ( http://getbootstrap.com/ )
 
-ToTo
+ToTo ( how to pitch in )
 ======================
 Currently this project needs
-* testing
-* better use of layout/css within bootstrap to up the visual quality
-* a better name
-
+* testing  - submit problems to the "issues" part of github.
+* better use of layout/css within bootstrap to up the visual quality.  pull requests please!
+* a better name -  I purposely made WLCDM as bad as possible so that I'd get something better.  and I still haven't.  send 'em!
+* If you have experience with wildlife camera arrays/grid and how this data is analyzed, I would love to push in that direction.
 
 QuickStart
 ===============================
