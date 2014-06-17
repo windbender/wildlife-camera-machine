@@ -47,7 +47,7 @@ var app = angular.module('wlcdm.controllers', [])
 		});
 	}
 	$scope.getNextEvent();
-	$http.get('/api/images/topSpecies').success(function(data) {
+	$http.get('/api/images/topSpecies?includeNone=true&includeUnknown=true').success(function(data) {
 		$scope.topSpecies = data;
 	}).error(function(data,status,headers,config) {
 		toastr.error("sorry unable to retrive list");
@@ -105,8 +105,18 @@ var app = angular.module('wlcdm.controllers', [])
 		return true;
 	};
 	
+	$scope.getKeyText = function(species) {
+		if(species.c == ' ') {
+			return "spc"
+		} else {
+			return species.c;
+		}
+	}
 	$scope.handleKey = function(keyCode) {
-		if(keyCode == 8) {
+		if(keyCode == 9) {
+			// tab should behave as expected
+			return true;
+		} else if(keyCode == 8) {
 			if(typeof $scope.lastIdentification == 'undefined') return;
 			// this is backspace... we need this for "oops"
 			console.log("oops we need to undo"+$scope.lastIdentification);
@@ -117,6 +127,10 @@ var app = angular.module('wlcdm.controllers', [])
 				toastr.error("failed to clear post");
 			});
 			return false;
+		}
+		if(keyCode == 13) {
+			// they hit return submit the species.
+			$scope.submitTyped();
 		}
 		// force upper case
 		if(keyCode > 96) keyCode = keyCode - (97-65);
@@ -134,21 +148,6 @@ var app = angular.module('wlcdm.controllers', [])
 			$scope.numberOfAnimals = keyCode - 48;
 		
 		// space
-		} else if(keyCode == 32) {
-			$scope.typeSpecies.name = "none";
-			$scope.typeSpecies.id = -1;
-			$scope.typeSpecies.latinName = "";
-//			"none"
-//			-1
-		// other keys
-		} else if(keyCode == 85) {  // key code for 'u'
-// unknown -2
-			$scope.typeSpecies.name = "unknown";
-			$scope.typeSpecies.id = -2;
-			$scope.typeSpecies.latinName = "";
-			
-		
-		// other keys
 		} else {
     		$scope.topSpecies.forEach(function(key) {
     			if(key.keycode == keyCode) {

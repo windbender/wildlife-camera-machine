@@ -149,9 +149,13 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("topSpecies")
-	public List<Species> listTopSpecies(@SessionAuth(required={Priv.CATEGORIZE,Priv.REPORT}) SessionFilteredAuthorization auths,@SessionCurProj Project currentProject, @SessionUser User user, @QueryParam("includeNone") boolean includeNone) {
+	public List<Species> listTopSpecies(@SessionAuth(required={Priv.CATEGORIZE,Priv.REPORT}) SessionFilteredAuthorization auths,@SessionCurProj Project currentProject, @SessionUser User user, @QueryParam("includeNone") boolean includeNone,@QueryParam("includeUnknown") boolean includeUnknown,@QueryParam("count") Integer count) {
 		List<Species> outList = null;
-		List<Long> l = reportDAO.makeTopSpeciesIdList(10,currentProject.getId());
+		if(count == null) {
+			count = 10;
+		}
+		count = count -2;
+		List<Long> l = reportDAO.makeTopSpeciesIdList(count,currentProject.getId());
 		if(l.size() < 3) {
 			outList = getTopTenForProject();
 		} else {
@@ -161,13 +165,28 @@ public class ImageResource {
 				outList.add(s);
 			}
 		}
+		
 		// filter out "none"
 		List<Species> realOut = new ArrayList<Species>();
+		if(includeNone) {
+			Species s = speciesDAO.findByNameContains("none");
+			if(s != null) {
+				realOut.add(s);
+			}
+		}
+		if(includeUnknown) {
+			Species s = speciesDAO.findByNameContains("unknown");
+			if(s != null) {
+				realOut.add(s);
+			}
+		}
+		
 		for(Species s: outList) {
-			
-			if(!s.getName().equals("none") ) {
-				realOut .add(s);
-			} else if( includeNone) {
+			if(s.getName().equals("none")) {
+				//
+			} else if(s.getName().equals("unknown")) {
+				//				
+			} else {
 				realOut.add(s);
 			}
 		}

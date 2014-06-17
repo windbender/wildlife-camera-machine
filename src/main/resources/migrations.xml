@@ -1031,4 +1031,8 @@
 			<column name="canAdmin" type="Boolean" defaultValue="0"/>
 		</createTable>
 	</changeSet>
+	<changeSet id="25" author="windbender" dbms="mysql">
+		<sql >insert into species (cros_id,common_name, latin_name) values (-2, "unknown", "something but unknown")</sql>
+	</changeSet>
+	
 </databaseChangeLog>
