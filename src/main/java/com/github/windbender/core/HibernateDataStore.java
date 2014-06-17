@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.context.internal.ManagedSessionContext;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.Project;
 import com.github.windbender.domain.Species;
 import com.github.windbender.domain.User;
+import com.github.windbender.service.TimeZoneGetter;
 import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
 import com.luckycatlabs.sunrisesunset.dto.Location;
 import com.yammer.dropwizard.lifecycle.Managed;
@@ -41,10 +43,11 @@ public class HibernateDataStore implements Managed, Runnable {
 	HibernateUserDAO uDAO;
 	EventDAO eventDAO;
 	SessionFactory sessionFactory;
+	private TimeZoneGetter timeZoneGetter;
 	private final ConcurrentLinkedQueue<ImageRecord> eventSearchQueue;
 
 
-	public HibernateDataStore(IdentificationDAO idDAO, ImageRecordDAO irDAO, SpeciesDAO speciesDAO, HibernateUserDAO uDAO, EventDAO eventDAO, SessionFactory sessionFactory) {
+	public HibernateDataStore(IdentificationDAO idDAO, ImageRecordDAO irDAO, SpeciesDAO speciesDAO, HibernateUserDAO uDAO, EventDAO eventDAO, SessionFactory sessionFactory, TimeZoneGetter timeZoneGetter) {
 		this.idDAO = idDAO;
 		this.irDAO = irDAO;
 		this.speciesDAO = speciesDAO;
@@ -52,6 +55,7 @@ public class HibernateDataStore implements Managed, Runnable {
 		this.eventDAO = eventDAO;
 		this.sessionFactory = sessionFactory;
 		eventSearchQueue = new ConcurrentLinkedQueue<ImageRecord>();
+		this.timeZoneGetter = timeZoneGetter;
 	}
 
 	public void addImage(ImageRecord newImage, Project currentProject) {
@@ -64,6 +68,7 @@ public class HibernateDataStore implements Managed, Runnable {
 	}
 
 	private int secondsDelta = 5;
+
 
 	private void queueForEventSearch(ImageRecord newImage) {
 		eventSearchQueue.add(newImage);
@@ -154,7 +159,10 @@ public class HibernateDataStore implements Managed, Runnable {
 		DateTime whenDT = ie.getEventStartTime();
 		Calendar when = whenDT.toCalendar(Locale.US);
 		Location location = new Location(addImage.getLat(), addImage.getLon());
-		SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "America/New_York");
+		DateTimeZone dtz = timeZoneGetter.getTimeZone(new LatLonPair(addImage.getLat(),addImage.getLon()));
+		String tzid = dtz.getID();
+		
+		SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, tzid);
 		Calendar rise = calculator.getNauticalSunriseCalendarForDate(when);
 		Calendar set = calculator.getNauticalSunsetCalendarForDate(when);
 		DateTime risedt = new DateTime(rise.getTime());
@@ -249,6 +257,12 @@ public class HibernateDataStore implements Managed, Runnable {
 		SortedSet<Integer> lowNumberSet =  new TreeSet<Integer>(lowNumber);
 		lowNumberSet.addAll(flagged);
 		lowNumberSet.removeAll(doneSet);
+//OK, so this should be		
+		// all the events with less than number identifications.
+		// PLUS all the vents which have been flagged and have less than number plus number of times flagged.  so one flag means one extra ID.
+		// no one can re-id an event.
+		// so once an event is flagged then it basically means new people need to come by and flag that event even more.
+		
 		
 		// Ok we could cache that set... or we could just pick one and go with it for now.
 		if(lowNumberSet.size() == 0) {
@@ -298,10 +312,12 @@ public class HibernateDataStore implements Managed, Runnable {
 			identifiedImage = irDAO.findById(idRequest.getImageid());
 		if(idRequest.getEventid() != null)
 			identifiedEvent = eventDAO.findById(idRequest.getEventid());
+		
 		if(idRequest.getSpeciesId() == -1) {
 			// this means no species was seen....  what do we do here ?  we should have a "none" species
 			speciesIdentified = speciesDAO.findByNameContains("none");
-			
+		} else if(idRequest.getSpeciesId() == -2) {
+			speciesIdentified = speciesDAO.findByNameContains("unknown");
 		} else {
 			speciesIdentified = speciesDAO.findById(idRequest.getSpeciesId());
 		}

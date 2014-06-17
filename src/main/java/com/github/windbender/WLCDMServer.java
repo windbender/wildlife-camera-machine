@@ -116,6 +116,9 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
         } catch(Exception e) {
         	System.out.println("that didn't work because:"+e);
         }
+		String geoNameUsername = configuration.getGeoNameUsername();
+		TimeZoneGetter timeZoneGetter = new CompositeTimeZoneGetter(new CachingTimeZoneGetter(new GeoNameTimeZoneGetter(geoNameUsername)), new StupidTimeZoneGetter());
+
         final IdentificationDAO idDAO = new IdentificationDAO(hibernate.getSessionFactory());
         final ImageRecordDAO irDAO = new ImageRecordDAO(hibernate.getSessionFactory());
         final SpeciesDAO spDAO = new SpeciesDAO(hibernate.getSessionFactory());
@@ -130,7 +133,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
         final GoodDAO goodDAO = new GoodDAO(hibernate.getSessionFactory());
         final InviteDAO inviteDAO = new InviteDAO(hibernate.getSessionFactory());
         
-        HibernateDataStore ds = new HibernateDataStore(idDAO,irDAO,spDAO,uDAO, ieDAO, hibernate.getSessionFactory());
+        HibernateDataStore ds = new HibernateDataStore(idDAO,irDAO,spDAO,uDAO, ieDAO, hibernate.getSessionFactory(), timeZoneGetter);
     	environment.manage(ds);
     	String bucketName = "wlcdm-test";
     	ImageStore store = null;
@@ -180,8 +183,6 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		}
 		SessionReloaderOperator sro = new SessionReloaderOperator(hsm, uDAO, projDAO, upDAO);
 
-		String geoNameUsername = configuration.getGeoNameUsername();
-		TimeZoneGetter timeZoneGetter = new CompositeTimeZoneGetter(new CachingTimeZoneGetter(new GeoNameTimeZoneGetter(geoNameUsername)), new StupidTimeZoneGetter());
 		
 		environment.addResource(new UserResource(uDAO, tokenDAO, projDAO, upDAO, inviteDAO, emailService));
 		environment.addResource(new ImageResource(ds, store, irDAO, spDAO, reportDAO, timeZoneGetter));

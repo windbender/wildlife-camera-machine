@@ -117,7 +117,6 @@ public class EventDAO extends AbstractDAO<ImageEvent> {
 
 	public List<Integer> findEventIdsDoneByUser(Long project_id, User u) {
 		List<ImageEvent> list = new ArrayList<ImageEvent>();
-//		String sql = "select image_event_id from identifications where user_id=? group by image_event_id order by image_event_id";
 		String sql = "select image_event_id from identifications i, events e, cameras c where i.image_event_id=e.id and e.camera_id = c.id and c.project_id=? and user_id=? group by e.id order by e.id";
 		SQLQuery sqlQuery = this.currentSession().createSQLQuery(sql);
         Query query = sqlQuery.setParameter(0, project_id).setParameter(1, u.getId());
@@ -128,7 +127,6 @@ public class EventDAO extends AbstractDAO<ImageEvent> {
 	public List<Integer> findEventsIdsWithFewerThanIdentifications(Long project_id,
 			int number) {
 		List<ImageEvent> list = new ArrayList<ImageEvent>();
-//		String sql = "select eventId from (select count(identifications.image_event_id) as totalActions, events.id as eventId from events left join identifications  on identifications.image_event_id = events.id group by events.id ) x where x.totalActions < ? order by totalActions,eventId";
 		String sql = "select eventId from (select count(i.image_event_id) as totalActions, e.id as eventId from cameras c, events e left join identifications i  on i.image_event_id = e.id where c.id = e.camera_id and c.project_id=? group by e.id ) x where x.totalActions < ? order by totalActions,eventId";
 		SQLQuery sqlQuery = this.currentSession().createSQLQuery(sql);
         Query query = sqlQuery.setParameter(0, project_id).setParameter(1, number);
@@ -137,7 +135,6 @@ public class EventDAO extends AbstractDAO<ImageEvent> {
 	}
 	public List<Integer> findFlaggedEventsIdsWithFewerThanIdentifications(Long project_id,int number) {
 		List<ImageEvent> list = new ArrayList<ImageEvent>();
-//		String sql = "select eventId from (select count(identifications.image_event_id) as totalActions, events.id as eventId from events left join identifications  on identifications.image_event_id = events.id group by events.id ) x where x.totalActions < ? order by totalActions,eventId";
 		String sql = "select eventId from  ( "+
 					"select count(i.image_event_id) as totalActions, e.id as eventId "+
 				"from cameras c, events e left join identifications i  on i.image_event_id = e.id  "+

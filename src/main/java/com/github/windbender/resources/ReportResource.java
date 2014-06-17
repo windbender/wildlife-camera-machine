@@ -136,7 +136,6 @@ public class ReportResource {
 			lout.add(ie);
 		}
 		
-		List<ImageEvent> ies;
 		ReportResponse rr = new ReportResponse();
 		rr.setBySpeciesData(bySpecies);
 		rr.setByHourData(byHour);

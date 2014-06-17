@@ -23,55 +23,72 @@
 }
 </style>
 <div >
-<div class="slider" >
-	<div id="slide" class="slide" focus-on="focusMe" tabindex="1" ng-keydown="rOnKeyup($event)">
-		<img id="slideimg" class="innerImg" ng-src="{{selected.imagesrc}}" imageonload/>
+<div class="slider" ng-keydown="rOnKeyup($event)">
+	<div id="slide" class="slide" focus-on="focusMe" tabindex="1" >
+		<img id="slideimg" ng-hide="noMoreImages" class="innerImg" ng-src="{{selected.imagesrc}}" imageonload/>
+		<div ng-show="noMoreImages" >
+			<h2>You have finished categorizing, there are no more events. Thanks!</h2>
+		</div>
 		<div id="slidetext" ng-show="showLoad"><h1>&nbsp;LOADING&nbsp;</h1></div>
 	</div>
 	<div class="controls">
-		<div id="stats">
+		<div class="well well-sm">
+			<div id="stats">
+				<div>
+					events identified: {{numberIdentified}}
+					<p>
+					events remaining: {{remainingToIdentify}}
+					<p>
+					<progressbar type="success" max="100" value="percentIdentified"><span style="color:black; white-space:nowrap;">{{percentIdentified}} %</span></progressbar>
+				</div>
+			</div>
+			<div class="arrows">
+				<button type="button" ng-click="prevImage()" class="btn btn-primary ">&lt;</button>
+				<button type="button" ng-click="nextImage()" class="btn btn-primary ">&gt;</button>
+			</div>
 			<div>
-				number identified: {{numberIdentified}}
-				<p>
-				number remaining: {{remainingToIdentify}}
-				<p>
-				<progressbar type="success" max="100" value="percentIdentified"><span style="color:black; white-space:nowrap;">{{percentIdentified}} %</span></progressbar>
+				<table>
+					<tr>
+						<td>image name: </td>
+						<td>{{imagename}}</td>
+					</tr>
+				</table>
 			</div>
 		</div>
-		<div class="arrows">
-			<button type="button" ng-click="prevImage()" class="btn btn-primary btn-lg">&lt;</button>
-			<button type="button" ng-click="nextImage()" class="btn btn-primary btn-lg">&gt;</button>
+		<div class="well well-sm">
+			<h5>categorize</h5>
+			<div>
+				<table>
+					<tr>
+						<td>number of individuals</td>
+						<td><input id="numIndv" type="text" style="width: 45px" size="3" maxlength="3" ng-model="numberOfAnimals"></td>
+					</tr>
+				</table>
+			</div>
+			<div>
+				<table>
+					<tr>
+						<td>species selected:</td>
+						<td>
+							<div ng-show="typeSpecies">common name: {{typeSpecies.name}}<p>latin name:{{typeSpecies.latinName}}</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="well well-sm" >
+				<table>
+					<tr><td><button type="button" ng-click="sendKey(32)" class="btn btn-primary">spc</button></td><td>nothing found</td></tr>
+					<tr><td><button type="button" ng-click="sendKey('u')" class="btn btn-primary">u</button></td><td>something unknown</td></tr>
+					<tr ng-repeat="key in topSpecies">
+						<td><button type="button" ng-click="sendKey(key.c)" class="btn btn-primary">{{key.c}}</button></td><td>{{key.name}}</td>
+					</tr>
+				</table>
+				<input id="typeSel" tabindex="2" type="text" ng-model="typeSpecies" typeahead="spc as spc.name for spc in species | filter:$viewValue | limitTo:8" class="form-control">
+			</div>
+			<div>
+				<button tabindex="3" type="button" ng-disable="typeSpecies" ng-click="submitTyped(spc)" class="btn btn-primary ">submit selected species</button>
+			</div>
 		</div>
-		<div>
-			<table>
-				<tr>
-					<td>image name</td>
-					<td>{{imagename}}</td>
-				</tr>
-			</table>
-			<table>
-				<tr>
-					<td>number of individuals</td>
-					<td>{{numberOfAnimals}}</td>
-				</tr>
-			</table>
-		</div>
-		<div>
-			<table>
-				<tr><td><button type="button" ng-click="sendKey(32)" class="btn btn-primary btn-lg">spc</button></td><td>nothing found</td></tr>
-				<tr ng-repeat="key in topSpecies">
-					<td><button type="button" ng-click="sendKey(key.c)" class="btn btn-primary btn-lg">{{key.c}}</button></td><td>{{key.name}}</td>
-				</tr>
-			</table>
-		</div>
-		<div>
-		<hr>
-			<div ng-show="typeSpecies">common name: {{typeSpecies.name}}<p>latin name:{{typeSpecies.latinName}}</div>
-			<input tabindex="2" type="text" ng-model="typeSpecies" typeahead="spc as spc.name for spc in species | filter:$viewValue | limitTo:8" class="form-control">
-			<button tabindex="3" type="button" ng-disable="typeSpecies" ng-click="submitTyped(spc)" class="btn btn-primary ">submit typed name</button>
-		
-		</div>
-
 	</div>
 </div>
 <!-- 	<slider images="images" map="map" keys="keys" tabindex="1" onkey="rOnKeyup($event)" focus-on="focusMe" /> -->

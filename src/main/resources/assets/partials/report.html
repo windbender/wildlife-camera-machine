@@ -16,11 +16,9 @@
     </style>
 <div class="well">
 <p><h1>Wildlife Camera Machine Report</h1></p>
-<div class="well" >
-<!-- 	project selector<p> -->
-<!-- 	geographic region selector<p> -->
-	
-	<div style="width:450px;">
+<div class="well well-sm" >
+	<h3>selector</h3>
+	<div style="width:450px;" class="well">
 	Select a date range to view:
 		<rzslider
 	    rz-slider-floor="1356998400"
@@ -32,7 +30,7 @@
 	    rz-slider-translate="sliderTimeFormatting"
 	    ></rzslider>
 	</div>
-	<div>
+	<div class="well well-sm">
 		Select time of day to view:
 		<input type="checkbox" ng-model="params.tod.DAYTIME" >Day&nbsp;&nbsp;&nbsp;
 		<input type="checkbox" ng-model="params.tod.EVENING" >Evening&nbsp;&nbsp;&nbsp;
@@ -40,94 +38,97 @@
 		<input type="checkbox" ng-model="params.tod.MORNING" >Dawn&nbsp;&nbsp;&nbsp;
 		
 	</div>
-	<div>
+	<div class="well well-sm">
 		Select species to view:<p>
 		<button type="button" ng-click="selectAllSpecies()" class="btn btn-primary btn-sm">Select ALL Species</button>
 		<button type="button" ng-click="selectNoSpecies()" class="btn btn-primary btn-sm">Select No Species</button>
-		<span ng-repeat="spec in topSpecies" >
+		<div  ng-repeat="spec in topSpecies" >
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" ng-click="checkClick(spec.id)" ng-checked="isChecked(spec.id)">{{spec.name}}
-		</span>
+		</div>
 	</div>
+	
+</div>
+<div>
 	<div>
 		Show stats charts: <input type="checkbox" ng-model="params.showCharts">
 	</div>
+	<div class="row">
+	<div ng-class="{'col-md-6': params.showCharts}" id="pics">
+		<h3>Images</h3>
+		<div id="arrowBar" class="arrowBar">
+			<div class="arrows arrows-left" style="width:320px">
+				events:
+				<button type="button" ng-click="prevEvent()" class="btn btn-primary btn-sm">&lt;</button>
+				<button type="button" ng-click="nextEvent()" class="btn btn-primary btn-sm">&gt;</button>
+				{{reportEventIndex+1}} of {{imageEvents.length}}
+				<button type="button" class="btn btn-sm btn-warning" ng-model="needReview" ng-click="updateReview()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+					<span ng-hide="needReview"><span class="glyphicon glyphicon-unchecked"></span>event needs review</span>
+					<span ng-show="needReview"><span class="glyphicon glyphicon-check"></span>will be reviewed</span>
+				</button>
+			</div>
+			<div class="arrows arrows-right" ng-show="showImageControls()">
+				<button type="button" class="btn btn-sm btn-success" ng-model="isGood" ng-click="updateGood()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+					<span ng-hide="isGood"><span class="glyphicon glyphicon-unchecked"></span>flag image as good</span>
+					<span ng-show="isGood"><span class="glyphicon glyphicon-check"></span>flagged as good</span>
+				</button>
+				images:
+				<button type="button" ng-click="prevImage()" class="btn btn-primary btn-sm">&lt;</button>
+				<button type="button" ng-click="nextImage()" class="btn btn-primary btn-sm">&gt;</button>
+				{{reportImgIndex+1}} of {{imageLength}}
+			</div>
+		</div>	
+		<div>
+			<img class="reportImg" ng-src="{{reportImg.imagesrc}}" imagereportonload/>
+			<div id="overlaytext" ng-show="showLoad"><h1>&nbsp;LOADING&nbsp;</h1></div>
+		</div>
+	</div>
+	<div ng-show="params.showCharts" class="col-md-6 chartBlob" id="bySpecies">
+		<h3>Count By Species</h3>
+		<nvd3-discrete-bar-chart
+	    	data="bySpeciesData"
+	        id="bySpeciesChart"
+	        showXAxis="true"
+	        showYAxis="true"
+	        xAxisTickFormat="xAxisNumberTickFormat()"
+	        color="colorFunction()"
+	        >
+	        	<svg></svg>
+	    </nvd3-discrete-bar-chart>
+	</div>
 	
-</div>
-<div class="row">
-<div ng-class="{'col-md-6': params.showCharts}" id="pics">
-	<h3>Images</h3>
-	<div id="arrowBar" class="arrowBar">
-		<div class="arrows arrows-left" style="width:320px">
-			events:
-			<button type="button" ng-click="prevEvent()" class="btn btn-primary btn-sm">&lt;</button>
-			<button type="button" ng-click="nextEvent()" class="btn btn-primary btn-sm">&gt;</button>
-			{{reportEventIndex+1}} of {{imageEvents.length}}
-			<button type="button" class="btn btn-sm btn-warning" ng-model="needReview" ng-click="updateReview()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
-				<span ng-hide="needReview"><span class="glyphicon glyphicon-unchecked"></span>event needs review</span>
-				<span ng-show="needReview"><span class="glyphicon glyphicon-check"></span>will be reviewed</span>
-			</button>
-		</div>
-		<div class="arrows arrows-right" ng-show="showImageControls()">
-			<button type="button" class="btn btn-sm btn-success" ng-model="isGood" ng-click="updateGood()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
-				<span ng-hide="isGood"><span class="glyphicon glyphicon-unchecked"></span>flag image as good</span>
-				<span ng-show="isGood"><span class="glyphicon glyphicon-check"></span>flagged as good</span>
-			</button>
-			images:
-			<button type="button" ng-click="prevImage()" class="btn btn-primary btn-sm">&lt;</button>
-			<button type="button" ng-click="nextImage()" class="btn btn-primary btn-sm">&gt;</button>
-			{{reportImgIndex+1}} of {{imageLength}}
-		</div>
-	</div>	
-	<div>
-		<img class="reportImg" ng-src="{{reportImg.imagesrc}}" imagereportonload/>
-		<div id="overlaytext" ng-show="showLoad"><h1>&nbsp;LOADING&nbsp;</h1></div>
+	</div> <!--  row -->
+	<div ng-show="params.showCharts" class="row">
+	<div class="col-md-6 chartBlob" id="byDay">
+		<h3>Count By Day</h3>
+		<nvd3-discrete-bar-chart
+	    	data="byDayData"
+	        id="byDayChart"
+	        showXAxis="true"
+	        showYAxis="true"
+	        xAxisTickFormat="xAxisDateTickFormat()"
+	        color="colorFunction()"
+	        >
+	        	<svg></svg>
+	    </nvd3-discrete-bar-chart>
+		
+	</div>
+	<div class="col-md-6 chartBlob" id="byHour">
+		<h3>Count By Hour</h3>
+		<nvd3-discrete-bar-chart
+	    	data="byHourData"
+	        id="byHourChart"
+	        showXAxis="true"
+	        showYAxis="true"
+	        xAxisTickFormat="xAxisNumberTickFormat()"
+	        color="colorFunction()"
+	        >
+	        	<svg></svg>
+	    </nvd3-discrete-bar-chart>
+		
+	</div>
 	</div>
 </div>
-<div ng-show="params.showCharts" class="col-md-6 chartBlob" id="bySpecies">
-	<h3>Count By Species</h3>
-	<nvd3-discrete-bar-chart
-    	data="bySpeciesData"
-        id="bySpeciesChart"
-        showXAxis="true"
-        showYAxis="true"
-        xAxisTickFormat="xAxisNumberTickFormat()"
-        color="colorFunction()"
-        >
-        	<svg></svg>
-    </nvd3-discrete-bar-chart>
-</div>
 
-</div> <!--  row -->
-<div ng-show="params.showCharts" class="row">
-<div class="col-md-6 chartBlob" id="byDay">
-	<h3>Count By Day</h3>
-	<nvd3-discrete-bar-chart
-    	data="byDayData"
-        id="byDayChart"
-        showXAxis="true"
-        showYAxis="true"
-        xAxisTickFormat="xAxisDateTickFormat()"
-        color="colorFunction()"
-        >
-        	<svg></svg>
-    </nvd3-discrete-bar-chart>
-	
-</div>
-<div class="col-md-6 chartBlob" id="byHour">
-	<h3>Count By Hour</h3>
-	<nvd3-discrete-bar-chart
-    	data="byHourData"
-        id="byHourChart"
-        showXAxis="true"
-        showYAxis="true"
-        xAxisTickFormat="xAxisNumberTickFormat()"
-        color="colorFunction()"
-        >
-        	<svg></svg>
-    </nvd3-discrete-bar-chart>
-	
-</div>
-</div>
 <div class="row">
 <!-- <div class="col-md-4" id="maps"> -->
 <!-- 	<h3>Locations</h3> -->

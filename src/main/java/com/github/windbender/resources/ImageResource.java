@@ -149,19 +149,29 @@ public class ImageResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UnitOfWork
 	@Path("topSpecies")
-	public List<Species> listTopSpecies(@SessionAuth(required={Priv.CATEGORIZE,Priv.REPORT}) SessionFilteredAuthorization auths,@SessionCurProj Project currentProject, @SessionUser User user) {
+	public List<Species> listTopSpecies(@SessionAuth(required={Priv.CATEGORIZE,Priv.REPORT}) SessionFilteredAuthorization auths,@SessionCurProj Project currentProject, @SessionUser User user, @QueryParam("includeNone") boolean includeNone) {
+		List<Species> outList = null;
 		List<Long> l = reportDAO.makeTopSpeciesIdList(10,currentProject.getId());
 		if(l.size() < 3) {
-			List<Species> topTen = getTopTenForProject();
-			return topTen;
+			outList = getTopTenForProject();
 		} else {
-			List<Species> out = new ArrayList<Species>();
+			outList = new ArrayList<Species>();
 			for(Long id : l) {
 				Species s = speciesDAO.findById(id);
-				out.add(s);
+				outList.add(s);
 			}
-			return out;
 		}
+		// filter out "none"
+		List<Species> realOut = new ArrayList<Species>();
+		for(Species s: outList) {
+			
+			if(!s.getName().equals("none") ) {
+				realOut .add(s);
+			} else if( includeNone) {
+				realOut.add(s);
+			}
+		}
+		return realOut;
 	}
 	
 	private List<Species> getTopTenForProject() {
@@ -291,6 +301,8 @@ public class ImageResource {
 						log.info("new image save done");
 						bis.close();
 						ds.addImage(newImage,currentProject);
+						bi.flush();
+						
 						URI uri = UriBuilder.fromResource(ImageResource.class).build(newImage.getId());
 						log.info("the response uri will be " + uri);
 						return Response.created(uri).build();
@@ -310,8 +322,8 @@ public class ImageResource {
 		} finally {
 			formData.cleanup();
 		}
-
-		URI uri = UriBuilder.fromResource(ImageResource.class).build(newImage.getId());
+		
+		URI uri = UriBuilder.fromResource(ImageResource.class).build();
 		log.info("the response uri will be " + uri);
 		return Response.created(uri).build();
 	}

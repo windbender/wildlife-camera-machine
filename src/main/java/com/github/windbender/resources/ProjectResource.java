@@ -104,7 +104,6 @@ public class ProjectResource {
 	@UnitOfWork
 	@Path("cameras")
 	public List<Camera> listCameras(@SessionAuth(required={Priv.UPLOAD}) SessionFilteredAuthorization auths,@Context HttpServletRequest request,@SessionUser User user) {
-		List<Camera> listNames = new ArrayList<Camera>();
 		Project cp = (Project) request.getSession().getAttribute("current_project");
 		Project p = projectDAO.findById(cp.getId());
 		Set<Camera> s = p.getCameras();

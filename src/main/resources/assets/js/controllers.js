@@ -8,11 +8,13 @@ var app = angular.module('wlcdm.controllers', [])
 	$scope.currentIndex = 1; // Initially the index is at the second image,
 								// but this doesn't actually EXIST! :-)
 	$scope.selected = {};
+	$scope.typeSpecies = {};
 	$scope.next = {};
 	$scope.nextnext = {};
 	$scope.numberOfAnimals =1;
 	$scope.showLoad = false;
-	
+	$scope.noMoreImages = false;
+
 	$scope.$on('imageLoadStart', function() {
 		$scope.showLoad = true;
 		// console.log("start");
@@ -34,6 +36,8 @@ var app = angular.module('wlcdm.controllers', [])
 				$scope.maxindex = $scope.images.length;
 				$scope.currentIndex=0;
 				$scope.setImage();
+			} else {
+				$scope.noMoreImages = true;
 			}
 			$scope.remainingToIdentify = data.remainingToIdentify;
 			$scope.numberIdentified = data.numberIdentified;
@@ -62,12 +66,9 @@ var app = angular.module('wlcdm.controllers', [])
 		$scope.currentIndex > 0 ? $scope.currentIndex-- : $scope.currentIndex = $scope.images.length - 1;
 	};
 		
-	
-// elem.bind("keyup", function() {
-// scope.$apply(attrs.onkey);
-// });
 	$scope.submitTyped = function() {
 		if(typeof $scope.typeSpecies == 'undefined') return;
+		if(typeof $scope.typeSpecies.id == 'undefined') return;
 		if($scope.logAnimal($scope.typeSpecies.name,$scope.typeSpecies.id,$scope.images[$scope.currentIndex].id,$scope.eventId)) {
 			$scope.getNextEvent();
 		}
@@ -134,17 +135,31 @@ var app = angular.module('wlcdm.controllers', [])
 		
 		// space
 		} else if(keyCode == 32) {
-			if($scope.logAnimal("none",-1,$scope.images[$scope.currentIndex].id,$scope.eventId)) {
-				$scope.getNextEvent();
-			}
+			$scope.typeSpecies.name = "none";
+			$scope.typeSpecies.id = -1;
+			$scope.typeSpecies.latinName = "";
+//			"none"
+//			-1
+		// other keys
+		} else if(keyCode == 85) {  // key code for 'u'
+// unknown -2
+			$scope.typeSpecies.name = "unknown";
+			$scope.typeSpecies.id = -2;
+			$scope.typeSpecies.latinName = "";
+			
 		
 		// other keys
 		} else {
     		$scope.topSpecies.forEach(function(key) {
     			if(key.keycode == keyCode) {
-    				if($scope.logAnimal(key.name,key.id,$scope.images[$scope.currentIndex].id,$scope.eventId)) {
-    					$scope.getNextEvent();
-    				}
+    				for(var i=0; i<$scope.species.length; i++) {
+    			        if ($scope.species[i].id == key.id) {
+    			        	$scope.typeSpecies = $scope.species[i];
+    			        }
+    			    }
+    				// find based on ID in scope.species   
+//    				$scope.typeSpecies.name = key.name;
+ //   				$scope.typeSpecies.id = key.id;
     			}
     		});
     	}
@@ -155,6 +170,12 @@ var app = angular.module('wlcdm.controllers', [])
 	}
 	$scope.rOnKeyup = function() {
 		var e = window.event;
+		if(e.srcElement.id == "numIndv") {
+			return true;
+		}
+		if(e.srcElement.id == "typeSel") {
+			return true;
+		}
 		if(e.type == "keypress") {
 			var kc = e.keyCode;
 			return $scope.handleKey(kc);
@@ -448,7 +469,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 		});
 	});
 
-	$http.get('/api/images/topSpecies').success(function(data) {
+	$http.get('/api/images/topSpecies?includeNone=true').success(function(data) {
 		$scope.topSpecies = data;
 	}).error(function(data,status,headers,config) {
 		toastr.error("sorry unable to retrive list");
@@ -512,6 +533,8 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 	$scope.colorFunction = function() {
 	    return function(d, i) {
 	    	if(d[1] == 0) return "#000000";
+	    	//if(d[0] == $scope.imageEvents[$scope.reportEventIndex].)
+	    	//if( i == $scope.reportEventIndex) return "#DD0000";
 	    	return "#0088DD";
 // var q= colorCategory(i);
 // return q;
@@ -569,8 +592,14 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 		var el = elements[0]
 		var w = el.clientWidth;
 		var size = ''+w;
-		if(typeof $scope.imageEvents === 'undefined') return;
-		if($scope.imageEvents.length ==0) return;
+		if(typeof $scope.imageEvents === 'undefined') {
+			$scope.reportImg.imagesrc = '/img/none.png';
+			return;
+		}
+		if($scope.imageEvents.length ==0) {
+			$scope.reportImg.imagesrc = '/img/none.png';
+			return;
+		}
 		$scope.reportImg.imagesrc = '/api/images/'+$scope.imageEvents[$scope.reportEventIndex].imageRecords[$scope.reportImgIndex].id+'?sz='+size;
 		$rootScope.$broadcast('imageReportLoadStart');
 	}
