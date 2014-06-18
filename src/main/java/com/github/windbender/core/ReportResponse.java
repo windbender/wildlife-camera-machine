@@ -11,13 +11,13 @@ public class ReportResponse {
 	List<StringSeries> bySpeciesData;
 	List<Series> byHourData;
 	List<Series> byDayData;
-	List<ImageEvent> imageEvents;
+	List<ImageRec> imageEvents;
 	
-	public List<ImageEvent> getImageEvents() {
+	public List<ImageRec> getImageEvents() {
 		return imageEvents;
 	}
 
-	public void setImageEvents(List<ImageEvent> imageEvents) {
+	public void setImageEvents(List<ImageRec> imageEvents) {
 		this.imageEvents = imageEvents;
 	}
 

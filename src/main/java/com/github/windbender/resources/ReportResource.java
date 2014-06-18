@@ -24,6 +24,7 @@ import com.github.windbender.auth.SessionCurProj;
 import com.github.windbender.auth.SessionUser;
 import com.github.windbender.core.CurrentEventInfo;
 import com.github.windbender.core.GoodParams;
+import com.github.windbender.core.ImageRec;
 import com.github.windbender.core.Limiter;
 import com.github.windbender.core.ReportParams;
 import com.github.windbender.core.ReportResponse;
@@ -127,13 +128,14 @@ public class ReportResource {
 		List<Series> byHour = rd.makeByHour(limits);
 		List<Series> byDay = rd.makeByDay(limits);
 		List<Long> l = rd.makeImageEvents(limits);
-		List<ImageEvent> lout = new ArrayList<ImageEvent>();
+		List<ImageRec> lout = new ArrayList<ImageRec>();
 		for(Long lng: l) {
 			ImageEvent ie = eventDAO.findById(lng);
 			for(ImageRecord ir : ie.getImageRecords()) {
 				ir.getId();
 			}
-			lout.add(ie);
+			ImageRec irec = new ImageRec(ie);
+			lout.add(irec);
 		}
 		
 		ReportResponse rr = new ReportResponse();
