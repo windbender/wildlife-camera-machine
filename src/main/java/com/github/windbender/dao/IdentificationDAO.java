@@ -1,8 +1,15 @@
 package com.github.windbender.dao;
 
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 
 import com.github.windbender.domain.Identification;
+import com.github.windbender.domain.ImageEvent;
+import com.github.windbender.domain.Invite;
 import com.yammer.dropwizard.hibernate.AbstractDAO;
 
 public class IdentificationDAO extends AbstractDAO<Identification> {
@@ -25,5 +32,12 @@ public class IdentificationDAO extends AbstractDAO<Identification> {
 		this.currentSession().delete(id);
 	}
 	
+	public List<Identification> findAllIdentificationForEvent(ImageEvent ie) {
+		Session currentSession = this.currentSession();
+		Criteria crit = currentSession.createCriteria(Identification.class);
+		crit.add(Restrictions.eq("identifiedEvent", ie));
+		List<Identification> list = (List<Identification>)crit.list();
+		return list;
+	}
 
 }

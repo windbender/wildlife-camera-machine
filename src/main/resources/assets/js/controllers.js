@@ -531,12 +531,10 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 	var colorCategory = d3.scale.category20b()
 	$scope.colorFunction = function() {
 	    return function(d, i) {
-	    	if(d[1] == 0) return "#000000";
-	    	//if(d[0] == $scope.imageEvents[$scope.reportEventIndex].)
-	    	//if( i == $scope.reportEventIndex) return "#DD0000";
+	    	// this next thing works for species.  it will need to be generalized for TOD and Date
+	    	// However, I don't know how to force a redraw...so changing to a new event doesn't change the charts
+	    	//if(d[0] == $scope.imageEvents[$scope.reportEventIndex].nameHist[0].name ) return "#DD0000";
 	    	return "#0088DD";
-// var q= colorCategory(i);
-// return q;
 	    };
 	}
     $scope.bySpeciesData = [];
@@ -600,6 +598,9 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 			return;
 		}
 		$scope.reportImg.imagesrc = '/api/images/'+$scope.imageEvents[$scope.reportEventIndex].imageEvent.imageRecords[$scope.reportImgIndex].id+'?sz='+size;
+		
+		$scope.idedSpecies = $scope.imageEvents[$scope.reportEventIndex].nameHist;
+		
 		$rootScope.$broadcast('imageReportLoadStart');
 	}
     

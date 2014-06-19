@@ -1,6 +1,5 @@
 package com.github.windbender.domain;
 
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 

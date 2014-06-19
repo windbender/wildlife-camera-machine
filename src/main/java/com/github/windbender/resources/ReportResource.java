@@ -128,15 +128,18 @@ public class ReportResource {
 		List<Series> byHour = rd.makeByHour(limits);
 		List<Series> byDay = rd.makeByDay(limits);
 		List<Long> l = rd.makeImageEvents(limits);
-		List<ImageRec> lout = new ArrayList<ImageRec>();
-		for(Long lng: l) {
-			ImageEvent ie = eventDAO.findById(lng);
-			for(ImageRecord ir : ie.getImageRecords()) {
-				ir.getId();
-			}
-			ImageRec irec = new ImageRec(ie);
-			lout.add(irec);
-		}
+		
+		List<ImageRec> lout = rd.makeImageRecs(limits);
+		
+//		List<ImageRec> lout = new ArrayList<ImageRec>();
+//		for(Long lng: l) {
+//			ImageEvent ie = eventDAO.findById(lng);
+//			for(ImageRecord ir : ie.getImageRecords()) {
+//				ir.getId();
+//			}
+//			ImageRec irec = new ImageRec(ie);
+//			lout.add(irec);
+//		}
 		
 		ReportResponse rr = new ReportResponse();
 		rr.setBySpeciesData(bySpecies);

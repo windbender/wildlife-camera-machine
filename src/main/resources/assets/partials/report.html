@@ -54,7 +54,10 @@
 	</div>
 	<div class="row">
 	<div ng-class="{'col-md-6': params.showCharts}" id="pics">
-		<h3>Images</h3>
+		<h3>Image</h3>
+		<table>
+			<tr ng-repeat="spec in idedSpecies" ><td>species: </td><td>{{spec.name}}</td><td>{{spec.count}}</td></tr>
+		</table>
 		<div id="arrowBar" class="arrowBar">
 			<div class="arrows arrows-left" style="width:320px">
 				events:

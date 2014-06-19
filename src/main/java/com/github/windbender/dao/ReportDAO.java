@@ -15,19 +15,27 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
 
+import com.github.windbender.core.IdHist;
+import com.github.windbender.core.ImageRec;
 import com.github.windbender.core.Limiter;
 import com.github.windbender.core.NV;
+import com.github.windbender.core.NameHist;
 import com.github.windbender.core.Series;
 import com.github.windbender.core.SpeciesCount;
+import com.github.windbender.domain.Identification;
 import com.github.windbender.domain.ImageEvent;
+import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.Species;
-import com.github.windbender.domain.User;
 
 public class ReportDAO {
 
 	SessionFactory sessionFactory;
-	public ReportDAO(SessionFactory sessionFactory) {
+	private EventDAO eventDAO;
+	private IdentificationDAO identificationDAO;
+	public ReportDAO(SessionFactory sessionFactory, EventDAO eventDAO,IdentificationDAO identificationDAO) {
 		this.sessionFactory = sessionFactory;
+		this.eventDAO = eventDAO;
+		this.identificationDAO = identificationDAO;
 	}
 	
 	
@@ -179,6 +187,32 @@ public class ReportDAO {
             l.add(new SpeciesCount(s,count));
         }
 		return l;
+	}
+
+
+
+	public List<ImageRec> makeImageRecs(Limiter limits) {
+		List<ImageRec> lout = new ArrayList<ImageRec>();
+		
+		String innerSQL = limits.makeSQL();
+		String sql = "select imageTime, e.id from identifications ids, events e,images i, cameras c where e.camera_id=c.id and c.project_id="+limits.getProjectId()+" and ids.image_event_id=e.id and e.id=i.event_id "+innerSQL+"group by e.id order by imageTime;";
+		
+		SQLQuery sqlQuery = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
+        Query query = sqlQuery;
+        List<Object[]> result = query.list();
+		for(Object[] ar: result) {
+        	Long event_id = ((Integer)ar[1]).longValue();
+        	ImageEvent ie = eventDAO.findById(event_id);
+			for(ImageRecord ir : ie.getImageRecords()) {
+				ir.getId();
+			}
+			List<Identification> ids = identificationDAO.findAllIdentificationForEvent(ie);
+			IdHist idHist = new IdHist(ids);
+			NameHist nameHist = new NameHist(ids);
+			ImageRec irec = new ImageRec(ie,idHist,nameHist);
+			lout.add(irec);
+        }
+        return lout;
 	}
 
 
