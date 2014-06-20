@@ -57,7 +57,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 	}
 	
 	@Column(name="camera_id", nullable=true)
-	public long getCameraID() {
+	public Long getCameraID() {
 		return cameraID;
 	}
 

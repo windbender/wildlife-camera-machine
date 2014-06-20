@@ -28,4 +28,8 @@ public class NameHist extends ArrayList<NameHistEntry> {
 		}
 	}
 
+	public NameHist() {
+		super();
+	}
+
 }

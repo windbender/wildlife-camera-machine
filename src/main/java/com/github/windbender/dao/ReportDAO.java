@@ -6,7 +6,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.TreeSet;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -16,12 +19,15 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
 
 import com.github.windbender.core.IdHist;
+import com.github.windbender.core.IdHistEntry;
 import com.github.windbender.core.ImageRec;
 import com.github.windbender.core.Limiter;
 import com.github.windbender.core.NV;
 import com.github.windbender.core.NameHist;
+import com.github.windbender.core.NameHistEntry;
 import com.github.windbender.core.Series;
 import com.github.windbender.core.SpeciesCount;
+import com.github.windbender.core.TypeOfDay;
 import com.github.windbender.domain.Identification;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
@@ -191,7 +197,8 @@ public class ReportDAO {
 
 
 
-	public List<ImageRec> makeImageRecs(Limiter limits) {
+	public List<ImageRec> makeImageRecsOld(Limiter limits) {
+		long start = System.currentTimeMillis();
 		List<ImageRec> lout = new ArrayList<ImageRec>();
 		
 		String innerSQL = limits.makeSQL();
@@ -212,7 +219,136 @@ public class ReportDAO {
 			ImageRec irec = new ImageRec(ie,idHist,nameHist);
 			lout.add(irec);
         }
+		long end = System.currentTimeMillis();
+		long delta = end - start;
+		System.out.println("that took "+delta);
         return lout;
+	}
+	
+	public List<ImageRec> makeImageRecs(Limiter limits) {
+		long start = System.currentTimeMillis();
+		List<ImageRec> lout = new ArrayList<ImageRec>();
+		
+		String innerSQL = limits.makeSQL();
+		String sql = "select eid, species_name, species_id, event_start_time,camera_id,time_of_day, count(iid), imageid from (" +
+				" select e.id as eid, common_name as species_name, species_id, event_start_time,e.camera_id,time_of_day, i.id as imageid, ids.id as iid  " +
+				"from identifications ids, species spc, events e,images i, cameras c   " +
+				"where e.camera_id=c.id and c.project_id="+limits.getProjectId()+" and spc.id = ids.species_id and ids.image_event_id=e.id and e.id=i.event_id  " +
+				innerSQL +
+				" group by imageid, ids.id " +
+				") x  group by imageid, eid, species_id " +
+				"order by eid,count(iid) desc, species_id, imageid";
+				
+		//String sql = "select eid, species_name, species_id, event_start_time,camera_id,time_of_day, count(iid), imageid from ("
+		//		+" select e.id as eid, common_name as species_name, species_id, event_start_time,e.camera_id,time_of_day, i.id as imageid, ids.id as iid "
+		//		+" from identifications ids, species spc, events e,images i, cameras c  "
+		//		+" where e.camera_id=c.id and c.project_id="+limits.getProjectId()+" and spc.id = ids.species_id and ids.image_event_id=e.id and e.id=i.event_id "
+		//		+innerSQL
+		//		+" group by ids.id "
+		//		+" ) x "
+		//		+" group by eid, species_id";
+		
+		// 0 select eid, 
+		// 1 species_name, 
+		// 2 species_id, 
+		// 3 event_start_time,
+		// 4 camera_id,
+		// 5 time_of_day, 
+		// 6 count(iid)
+		// 7 imageid
+		
+		DateTime now = new DateTime();
+
+		SQLQuery sqlQuery = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
+        Query query = sqlQuery;
+        List<Object[]> result = query.list();
+        Iterator<Object[]> iter = result.iterator();
+        try {
+        	Object[] ar = iter.next();
+	        do {
+	        	ImageRec irec = makeIrec(ar,now);
+	        	lout.add(irec);
+	        	do {
+	        		ar = iter.next();
+	        	} while(addIfCan(irec,ar,now));
+	        	// ar should now be used to create the next one
+	        } while(ar != null);
+        } catch(NoSuchElementException nsee) {
+        	// what a shitty way to end a loop
+        }
+        
+		long end = System.currentTimeMillis();
+		long delta = end - start;
+		System.out.println("that took "+delta);
+        return lout;
+	}
+
+
+
+	private boolean addIfCan(ImageRec irec, Object[] ar, DateTime now) {
+		Long event_id = ((Integer)ar[0]).longValue();
+		if(irec.getImageEvent().getId() == event_id.longValue()) {
+			// ok we can have multiple image within the same ID .  for the images all we need is the ID.
+			String imageid = (String)ar[7];
+			ImageEvent ie = irec.getImageEvent();
+			
+			ImageRecord nir = new ImageRecord();
+			nir.setId(imageid);
+			nir.setDatetime(now);
+			ie.getImageRecords().add(nir);
+			
+			// or we can have multiple identifications within the same event. We need the id and the count;
+			// for the ids we should check for duplicates no ?
+			IdHistEntry ihe = new IdHistEntry(((Integer)ar[2]).longValue(),((BigInteger)ar[6]).intValue());
+			boolean alreadyThere = false;
+			for(IdHistEntry cur : irec.getIdHist()) {
+				if(cur.getId().equals(ihe.getId())) {
+					alreadyThere = true;
+				}
+			}
+			if(!alreadyThere) {
+				// we need one of these too:
+				NameHistEntry nhe = new NameHistEntry((String)ar[1], ((BigInteger)ar[6]).intValue());
+				irec.getIdHist().add(ihe);
+				irec.getNameHist().add(nhe);
+			}
+			
+			return true;
+		} else {
+			
+			return false;
+		}
+	}
+
+
+
+	public ImageRec makeIrec(Object[] ar, DateTime now) {
+		Long event_id = ((Integer)ar[0]).longValue();
+		ImageEvent ie = new ImageEvent();
+		ie.setCameraID(((Integer)ar[4]).longValue());
+		ie.setEventStartTime(new DateTime(ar[3]));
+		ie.setId(event_id);
+		String todstr = (String)ar[5];
+		ie.setTypeOfDay(TypeOfDay.valueOf(todstr));
+		
+		// add ONE image record
+		String imageid = (String)ar[7];
+		ie.setImageRecords(new TreeSet<ImageRecord>());
+		ImageRecord nir = new ImageRecord();
+		nir.setId(imageid);
+		nir.setDatetime(now);
+		ie.getImageRecords().add(nir);
+		
+		
+		// add ONE set of record for histogram.
+		IdHist idHist = new IdHist();
+		NameHist nameHist = new NameHist();
+		NameHistEntry nhe = new NameHistEntry((String)ar[1], ((BigInteger)ar[6]).intValue());
+		nameHist.add(nhe);
+		IdHistEntry ihe = new IdHistEntry(((Integer)ar[2]).longValue(),((BigInteger)ar[6]).intValue());
+		idHist.add(ihe);
+		ImageRec irec = new ImageRec(ie,idHist,nameHist);
+		return irec;
 	}
 
 

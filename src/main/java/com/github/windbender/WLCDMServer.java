@@ -204,7 +204,8 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 			ms.sendMessage(new StartupMessageCreator());
 			System.out.println("startup message sent");
 		} catch (MessagingException e) {
-			throw new RuntimeException(e);
+			System.out.println("failed to send startup message "+e);
+//			throw new RuntimeException(e);
 		}
 	}
 }

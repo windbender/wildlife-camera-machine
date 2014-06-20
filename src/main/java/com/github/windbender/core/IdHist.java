@@ -10,6 +10,9 @@ import com.github.windbender.domain.Species;
 
 public class IdHist extends ArrayList<IdHistEntry> {
 
+	public IdHist() {
+		super();
+	}
 	public IdHist(List<Identification> ids) {
 		TreeMap<Long,Integer> map  = new TreeMap<Long,Integer>();
 		for(Identification id: ids) {
