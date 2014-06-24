@@ -15,37 +15,49 @@
 }
     </style>
 <div class="well">
-<p><h1>Wildlife Camera Machine Report</h1></p>
+	<h2>Wildlife Camera Machine Report</h2>
 <div class="well well-sm" >
-	<h3>selector</h3>
-	<div style="width:450px;" class="well">
-	Select a date range to view:
-		<rzslider
-	    rz-slider-floor="1356998400"
-	    rz-slider-ceil="1420070400"
-	    rz-slider-precision="0"
-	    rz-slider-step="86400"
-	    rz-slider-model="params.timeStart"
-	    rz-slider-high="params.timeEnd"
-	    rz-slider-translate="sliderTimeFormatting"
-	    ></rzslider>
-	</div>
-	<div class="well well-sm">
-		Select time of day to view:
-		<input type="checkbox" ng-model="params.tod.DAYTIME" >Day&nbsp;&nbsp;&nbsp;
-		<input type="checkbox" ng-model="params.tod.EVENING" >Evening&nbsp;&nbsp;&nbsp;
-		<input type="checkbox" ng-model="params.tod.NIGHTTIME" >Night&nbsp;&nbsp;&nbsp;
-		<input type="checkbox" ng-model="params.tod.MORNING" >Dawn&nbsp;&nbsp;&nbsp;
-		
-	</div>
-	<div class="well well-sm">
-		Select species to view:<p>
-		<button type="button" ng-click="selectAllSpecies()" class="btn btn-primary btn-sm">Select ALL Species</button>
-		<button type="button" ng-click="selectNoSpecies()" class="btn btn-primary btn-sm">Select No Species</button>
-		<div  ng-repeat="spec in topSpecies" >
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" ng-click="checkClick(spec.id)" ng-checked="isChecked(spec.id)">{{spec.name}}
+	<div class="row"><div class="col-md-12"><h3>data selector</h3></div></div>
+	<div class="row" >
+		<div class="well well-sm col-md-3 col-md-offset-1">
+		Select a date range to view:
+			<rzslider
+		    rz-slider-floor="1356998400"
+		    rz-slider-ceil="1420070400"
+		    rz-slider-precision="0"
+		    rz-slider-step="86400"
+		    rz-slider-model="params.timeStart"
+		    rz-slider-high="params.timeEnd"
+		    rz-slider-translate="sliderTimeFormatting"
+		    ></rzslider>
+		    <div style="display:inline;">
+		    	<div style="display:inline;"><my-dateselect date="params.timeStart"></my-dateselect></div>
+		    	<div style="display:inline; float:right"><<my-dateselect date="params.timeEnd"></my-dateselect></div>
+		    </div>
+		    
 		</div>
-	</div>
+		<div class="well well-sm col-md-3">
+			Select time of day to view:
+			<div><input type="checkbox" ng-model="params.tod.DAYTIME" >Day&nbsp;&nbsp;&nbsp;</div>
+			<div><input type="checkbox" ng-model="params.tod.EVENING" >Evening&nbsp;&nbsp;&nbsp;</div>
+			<div><input type="checkbox" ng-model="params.tod.NIGHTTIME" >Night&nbsp;&nbsp;&nbsp;</div>
+			<div><input type="checkbox" ng-model="params.tod.MORNING" >Dawn&nbsp;&nbsp;&nbsp;</div>
+			
+		</div>
+		<div class="well well-sm col-md-3"  style="box-sizing:content-box;">
+			Select species to view:<p>
+			<div >
+				<button type="button" ng-click="selectAllSpecies()" class="btn btn-primary btn-sm">Select ALL Species</button>
+				<button type="button" ng-click="selectNoSpecies()" class="btn btn-primary btn-sm">Select No Species</button>
+			</div>
+			<div style="display:inline; box-sizing:content-box;">
+				<table>
+					<tr  ng-repeat="spec in topSpecies" style="display:inline; box-sizing:content-box;" ><td style="width:50px"><input type="checkbox" ng-click="checkClick(spec.id)" ng-checked="isChecked(spec.id)"></td><td>{{spec.name}}</td></tr>
+				</table>
+			</div>
+			
+		</div>
+	</div> <!--  row -->
 	
 </div>
 <div>

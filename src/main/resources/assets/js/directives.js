@@ -3,6 +3,8 @@
 /* Directives */
 
 
+
+
 var app = angular.module('wlcdm.directives', [])
 	.directive('focusOn', function() {
 		   return function(scope, elem, attr) {
@@ -14,7 +16,36 @@ var app = angular.module('wlcdm.directives', [])
 		   };
 		});
 
-		
+app.directive('myDateselect', ['$http', function($http) {
+	return {
+		restrict: 'E',
+		scope: {
+			outsideTime: '=date'
+		},
+		templateUrl: '/partials/dateselect/dateselect.html',
+		link: function (scope, element,attrs) {
+			
+		    scope.$watch('outsideTime', function() {
+		    	scope.insideTime = new Date(scope.outsideTime*1000);
+		    });
+		    scope.$watch('insideTime', function() {
+		    	scope.outsideTime = scope.insideTime.getTime()/1000;
+		    });
+
+			scope.setNow = function() {
+				scope.insideTime = new Date();
+			};
+			scope.addDay = function(days) {
+				var m = moment(scope.insideTime);
+				m = m.add('days', days);
+				scope.insideTime = m.toDate();
+			};
+			
+		}
+	};
+}]);
+
+
 app.directive('imageonload', function($rootScope) {
     return {
         restrict: 'A',

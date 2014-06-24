@@ -12,6 +12,8 @@ angular.module('wlcdm', [
   'wlcdm.filters',
   'rzModule',
   'nvd3ChartDirectives',
+  'ui.bootstrap.datetimepicker',
+  'ui.dateTimeInput',
   'wlcdm.services',
   'wlcdm.directives',
   'wlcdm.controllers',
