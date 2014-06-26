@@ -74,7 +74,7 @@
 			<div class="well well-sm" >
 				<table>
 					<tr ng-repeat="key in topSpecies">
-						<td><button type="button" ng-click="sendKey(key.c)" class="btn btn-primary">{{getKeyText(key)}}</button></td><td>{{key.name}}</td>
+						<td><button type="button" ng-click="speciesButtonPush(key)" class="btn btn-primary">{{getKeyText(key)}}</button></td><td>{{key.name}}</td>
 					</tr>
 				</table>
 				<input id="typeSel" tabindex="2" type="text" ng-model="typeSpecies" typeahead="spc as spc.name for spc in species | filter:$viewValue | limitTo:8" class="form-control">

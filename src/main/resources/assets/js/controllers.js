@@ -163,9 +163,14 @@ var app = angular.module('wlcdm.controllers', [])
     		});
     	}
 	};
-	$scope.sendKey = function(keyStr) {
-		var key = keyStr.charCodeAt(0);
-		return $scope.handleKey(key);
+	$scope.speciesButtonPush = function(species) {
+		var keyStr = species.c;
+		for(var i=0; i<$scope.species.length; i++) {
+	        if ($scope.species[i].id == species.id) {
+	        	$scope.typeSpecies = $scope.species[i];
+	        }
+	    }
+		return true;
 	}
 	$scope.rOnKeyup = function() {
 		var e = window.event;
