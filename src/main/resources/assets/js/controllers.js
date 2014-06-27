@@ -96,6 +96,13 @@ var app = angular.module('wlcdm.controllers', [])
 			toastr.options.showDuration = 300;
 			toastr.options.hideDuration = 300;
 			toastr.options.timeOut = 500;
+			// clear the one you just did.
+			for(var i=0; i<$scope.species.length; i++) {
+		        if ($scope.species[i].name == 'none') {
+		        	$scope.typeSpecies = $scope.species[i];
+		        }
+		    }
+			$scope.eventId = undefined;
 			
 			toastr.success(""+idRequest.numberOfAnimals+" "+idRequest.speciesName);
 		}).error(function(data, status, headers, config) {
