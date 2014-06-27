@@ -119,6 +119,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 			String lastPart = stripped.substring(endIndex-3, endIndex);
 			seq =Long.parseLong(lastPart);
 		} catch (NumberFormatException e) {
+		}catch (StringIndexOutOfBoundsException e) {
 		}
 		
 		long millis = date.getTime() + seq;
