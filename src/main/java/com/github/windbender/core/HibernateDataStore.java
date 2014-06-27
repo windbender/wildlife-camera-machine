@@ -250,13 +250,18 @@ public class HibernateDataStore implements Managed, Runnable {
 		List<Integer> done = this.eventDAO.findEventIdsDoneByUser(currentProject.getId(),u);
 		SortedSet<Integer> doneSet = new TreeSet<Integer>(done);
 		// b) have a number of zero or 1 previous identifications
-		int number =2;
+		int number =3; 
 		List<Integer> lowNumber = this.eventDAO.findEventsIdsWithFewerThanIdentifications(currentProject.getId(),number);
-		List<Integer> flagged = this.eventDAO.findFlaggedEventsIdsWithFewerThanIdentifications(currentProject.getId(), number);
+		List<Integer> flagged = this.eventDAO.findFlaggedEventsIdsWithFewerThanIdentifications(currentProject.getId(), number+(number/2 + 1));
 		
 		SortedSet<Integer> lowNumberSet =  new TreeSet<Integer>(lowNumber);
 		lowNumberSet.addAll(flagged);
 		lowNumberSet.removeAll(doneSet);
+		// ok, see where we're at
+//		if(lowNumberSet.size() ==0) {
+//			// Look for 
+//			lowNumberSet.removeAll(doneSet);
+//		}
 //OK, so this should be		
 		// all the events with less than number identifications.
 		// PLUS all the vents which have been flagged and have less than number plus number of times flagged.  so one flag means one extra ID.
