@@ -42,6 +42,7 @@ import com.github.windbender.core.HibernateDataStore;
 import com.github.windbender.core.IdentificationRequest;
 import com.github.windbender.core.ImageStore;
 import com.github.windbender.core.NextEventRecord;
+import com.github.windbender.core.RegionUtil;
 import com.github.windbender.core.SessionFilteredAuthorization;
 import com.github.windbender.dao.ImageRecordDAO;
 import com.github.windbender.dao.ReportDAO;
@@ -310,6 +311,13 @@ public class ImageResource {
 						String lonStr = request.getHeader("pos_lon");
 						
 						newImage = ImageRecord.makeImageFromExif(timeZoneGetter, directory,gpsDirectory,filename,cameraId,latStr,lonStr);
+					
+						Float distanceFromProjectCenterInMiles = RegionUtil.distanceInMilesBetween(currentProject.getCenterLat(), currentProject.getCenterLon(), newImage.getLat(), newImage.getLon());
+						if(distanceFromProjectCenterInMiles > currentProject.getProjectRadiusMi()) {
+							// this images is too far away from the project.  reject reject reject
+							throw new ConflictException("The Lat/Lon of that images is outside of the project boundaries");
+						}
+					
 					}
 					ImageRecord exist = irDAO.findById(newImage.getId());
 					if(exist == null) {

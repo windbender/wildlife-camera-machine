@@ -12,14 +12,18 @@ import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
 
+import org.eclipse.jetty.util.log.Log;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.drew.lang.GeoLocation;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.windbender.core.LatLonPair;
+import com.github.windbender.resources.ImageResource;
 import com.github.windbender.service.TimeZoneGetter;
 import com.sun.jersey.api.ConflictException;
 
@@ -36,6 +40,8 @@ import com.sun.jersey.api.ConflictException;
 @Entity
 @Table(name="images")
 public class ImageRecord implements Comparable<ImageRecord>{
+
+	static Logger log = LoggerFactory.getLogger(ImageRecord.class);
 
 	String id;
 	DateTime datetime;
@@ -123,7 +129,9 @@ public class ImageRecord implements Comparable<ImageRecord>{
 		}
 		
 		long millis = date.getTime() + seq;
-		DateTimeZone dtz = timeZoneGetter.getTimeZone(new LatLonPair(ir.getLat(),ir.getLon()));
+		LatLonPair location2 = new LatLonPair(ir.getLat(),ir.getLon());
+
+		DateTimeZone dtz = timeZoneGetter.getTimeZone(location2);
 		
 		DateTime imgTime = new DateTime(millis,dtz);
 		ir.setDatetime(imgTime);
@@ -134,6 +142,9 @@ public class ImageRecord implements Comparable<ImageRecord>{
 		
 		long timeMillis = ir.getDatetime().getMillis();
 		String id = "id"+locationHash+":"+timeMillis+":"+seq;
+		
+		log.info("we set datetime on "+id+" to "+imgTime);
+		
 		ir.setId(id);
 		ir.setUploadTime(new DateTime());
 		return ir;

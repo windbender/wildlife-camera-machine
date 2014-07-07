@@ -44,6 +44,39 @@ public class Project implements Serializable,Comparable<Project> {
 	@Column(name="publicCategorize", nullable=false)
 	private Boolean publicCategorize = false;
 	
+	@Column(name="centerLat", nullable = false)
+	private Float centerLat;
+	@Column(name="centerLon", nullable = false)
+	private Float centerLon;
+	@Column(name="projectRadiusMi", nullable = false)
+	private Float projectRadiusMi;
+	
+	
+	
+	public Float getCenterLat() {
+		return centerLat;
+	}
+
+	public void setCenterLat(Float centerLat) {
+		this.centerLat = centerLat;
+	}
+
+	public Float getCenterLon() {
+		return centerLon;
+	}
+
+	public void setCenterLon(Float centerLon) {
+		this.centerLon = centerLon;
+	}
+
+	public Float getProjectRadiusMi() {
+		return projectRadiusMi;
+	}
+
+	public void setProjectRadiusMi(Float projectRadiusMi) {
+		this.projectRadiusMi = projectRadiusMi;
+	}
+
 	@JsonProperty
 	@OneToMany(mappedBy="project",fetch=FetchType.LAZY)
 	@ElementCollection(targetClass=ImageRecord.class)

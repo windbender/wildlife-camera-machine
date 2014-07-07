@@ -1034,5 +1034,22 @@
 	<changeSet id="25" author="windbender" dbms="mysql">
 		<sql >insert into species (cros_id,common_name, latin_name) values (-2, "unknown", "something but unknown")</sql>
 	</changeSet>
-	
+	<changeSet id="26" author="windbender" dbms="mysql">
+		<addColumn tableName="projects">
+			<column name="centerLat" type="float" defaultValue="-1" >
+				<constraints nullable="false" />
+			</column>	
+		</addColumn>
+		<addColumn tableName="projects">
+			<column name="centerLon" type="float" defaultValue="-1" >
+				<constraints nullable="false" />
+			</column>	
+		</addColumn>
+		<addColumn tableName="projects">
+			<column name="projectRadiusMi" type="float" defaultValue="24000" >
+				<constraints nullable="false" />
+			</column>	
+		</addColumn>
+		
+	</changeSet>
 </databaseChangeLog>
