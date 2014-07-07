@@ -14,7 +14,7 @@ public class RegionUtil {
 	    return dist;
 	}
 
-	public static Float distanceInMilesBetween(Float centerLat,
+	public static Float distanceInMilesBetweenDouble(Float centerLat,
 			Float centerLon, double lat, double lon) {
 		return distanceInMilesBetween(centerLat, centerLon, (float)lat,(float)lon);
 	}

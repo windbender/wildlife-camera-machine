@@ -133,7 +133,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 
 		DateTimeZone dtz = timeZoneGetter.getTimeZone(location2);
 		
-		DateTime imgTime = new DateTime(millis,dtz);
+		DateTime imgTime = (new DateTime(millis)).withZoneRetainFields(dtz);
 		ir.setDatetime(imgTime);
 		long temp = ir.getLat() != +0.0d ? Double.doubleToLongBits(ir.getLat()) : 0L;
 		int locationHash = (int) (temp ^ (temp >>> 32));

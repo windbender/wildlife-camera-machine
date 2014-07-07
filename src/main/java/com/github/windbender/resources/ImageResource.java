@@ -312,10 +312,10 @@ public class ImageResource {
 						
 						newImage = ImageRecord.makeImageFromExif(timeZoneGetter, directory,gpsDirectory,filename,cameraId,latStr,lonStr);
 					
-						Float distanceFromProjectCenterInMiles = RegionUtil.distanceInMilesBetween(currentProject.getCenterLat(), currentProject.getCenterLon(), newImage.getLat(), newImage.getLon());
+						Float distanceFromProjectCenterInMiles = RegionUtil.distanceInMilesBetweenDouble(currentProject.getCenterLat(), currentProject.getCenterLon(), newImage.getLat(), newImage.getLon());
 						if(distanceFromProjectCenterInMiles > currentProject.getProjectRadiusMi()) {
 							// this images is too far away from the project.  reject reject reject
-							throw new ConflictException("The Lat/Lon of that images is outside of the project boundaries");
+							throw new ConflictException("The Lat/Lon "+newImage.getLat()+" "+newImage.getLon()+" of that images is outside of the project boundaries center:"+currentProject.getCenterLat()+" x " +currentProject.getCenterLon()+" dist:"+currentProject.getProjectRadiusMi());
 						}
 					
 					}
