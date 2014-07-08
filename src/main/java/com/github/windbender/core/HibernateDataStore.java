@@ -14,6 +14,7 @@ import org.hibernate.context.internal.ManagedSessionContext;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
+import org.joda.time.LocalTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,22 +158,32 @@ public class HibernateDataStore implements Managed, Runnable {
 
 	private TypeOfDay dayNightTwilight(ImageEvent ie, ImageRecord addImage) {
 		DateTime whenDT = ie.getEventStartTime();
+		double lat = addImage.getLat();
+		double lon = addImage.getLon();
+		
+		return makeTimeOfDay(whenDT, lat, lon, timeZoneGetter,log);
+	}
+
+	public static TypeOfDay makeTimeOfDay(DateTime whenDT, double lat, double lon, TimeZoneGetter tzGetter, Logger lg) {
+		Location location = new Location(lat, lon);
+		
 		Calendar when = whenDT.toCalendar(Locale.US);
-		Location location = new Location(addImage.getLat(), addImage.getLon());
-		DateTimeZone dtz = timeZoneGetter.getTimeZone(new LatLonPair(addImage.getLat(),addImage.getLon()));
+		DateTimeZone dtz = tzGetter.getTimeZone(new LatLonPair(lat,lon));
 		String tzid = dtz.getID();
+		LocalTime tod = new LocalTime(whenDT);
 		
 		SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, tzid);
 		Calendar rise = calculator.getNauticalSunriseCalendarForDate(when);
 		Calendar set = calculator.getNauticalSunsetCalendarForDate(when);
-		DateTime risedt = new DateTime(rise.getTime());
-		DateTime setdt = new DateTime(set.getTime());
-		Interval morning = new Interval(risedt.minusMinutes(30),risedt.plusMinutes(90));
-		Interval evening = new Interval(setdt.minusMinutes(90),setdt.plusMinutes(30));
-		log.info("TOD we have "+whenDT+" somewhere in morning: "+morning+"  and evening: "+evening);
-		if(morning.contains(whenDT)) return TypeOfDay.MORNING;
-		if(evening.contains(whenDT)) return TypeOfDay.EVENING;
-		if(whenDT.isAfter(morning.getEnd()) && whenDT.isBefore(evening.getStart()) ) return TypeOfDay.DAYTIME;
+		DateTime riseDatetime = (new DateTime(rise.getTime())).withZone(dtz);
+		LocalTime risedt =  new LocalTime(riseDatetime);
+		DateTime setDatetime = (new DateTime(set.getTime())).withZone(dtz);
+		LocalTime setdt =  new LocalTime(setDatetime);
+		
+		if(tod.isBefore(risedt.minusMinutes(30))) return TypeOfDay.NIGHTTIME;
+		if(tod.isBefore(risedt.plusMinutes(90))) return TypeOfDay.MORNING;
+		if(tod.isBefore(setdt.minusMinutes(90))) return TypeOfDay.DAYTIME;
+		if(tod.isBefore(setdt.plusMinutes(30))) return TypeOfDay.EVENING;
 		return TypeOfDay.NIGHTTIME;
 	}
 
