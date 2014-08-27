@@ -102,7 +102,7 @@ var app = angular.module('wlcdm.controllers', [])
 		        	$scope.typeSpecies = $scope.species[i];
 		        }
 		    }
-			$scope.eventId = undefined;
+			//$scope.eventId = undefined;
 			
 			toastr.success(""+idRequest.numberOfAnimals+" "+idRequest.speciesName);
 		}).error(function(data, status, headers, config) {
