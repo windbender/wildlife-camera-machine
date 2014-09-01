@@ -82,7 +82,7 @@ public class GeoNameTimeZoneGetter implements TimeZoneGetter {
 		} catch (IOException e) {
 			log.error("unable to contact the timezone machine",e);
 		} catch (JSONException e) {
-			log.error("unable to parse response from the timezone machine which was: "+obj.toString(),e);
+			log.warn("unable to parse response from the timezone machine which was: "+obj.toString(),e);
 		}
 		
 		return null;
