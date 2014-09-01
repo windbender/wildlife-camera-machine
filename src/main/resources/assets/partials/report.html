@@ -13,13 +13,18 @@
     left:150px;
     top:150px;
 }
+.iLB {
+    display: inline-block;
+    vertical-align:top;
+}
+
     </style>
 <div class="well">
 	<h2>Wildlife Camera Machine Report</h2>
 <div class="well well-sm" >
 	<div class="row"><div class="col-md-12"><h3>data selector</h3></div></div>
 	<div class="row" >
-		<div class="well well-sm col-md-4 col-md-offset-0">
+		<div class="well well-sm col-md-4 col-md-offset-0" style="width:500px">
 		Select a date range to view:
 			<rzslider
 		    rz-slider-floor="1356998400"
@@ -30,18 +35,18 @@
 		    rz-slider-high="params.timeEnd"
 		    rz-slider-translate="sliderTimeFormatting"
 		    ></rzslider>
-		    <div style="display:inline;">
+		    <div style="display:inline; min-width: 500px">
 		    	<div style="display:inline;"><my-dateselect date="params.timeStart"></my-dateselect></div>&nbsp;
-		    	<div style="display:inline; float:right"><<my-dateselect date="params.timeEnd"></my-dateselect></div>
+		    	<div style="display:inline; float:right"><my-dateselect date="params.timeEnd"></my-dateselect></div>
 		    </div>
 		    
 		</div>
-		<div class="well well-sm col-md-2">
+		<div class="well well-sm col-md-2" style="width:255px">
 			Select time of day to view:
-			<div><input type="checkbox" ng-model="params.tod.DAYTIME" >Day&nbsp;&nbsp;&nbsp;</div>
-			<div><input type="checkbox" ng-model="params.tod.EVENING" >Evening&nbsp;&nbsp;&nbsp;</div>
-			<div><input type="checkbox" ng-model="params.tod.NIGHTTIME" >Night&nbsp;&nbsp;&nbsp;</div>
-			<div><input type="checkbox" ng-model="params.tod.MORNING" >Dawn&nbsp;&nbsp;&nbsp;</div>
+			<div class="iLB"><input type="checkbox" ng-model="params.tod.DAYTIME" >Day&nbsp;&nbsp;&nbsp;</div>
+			<div class="iLB"><input type="checkbox" ng-model="params.tod.EVENING" >Evening&nbsp;&nbsp;&nbsp;</div>
+			<div class="iLB"><input type="checkbox" ng-model="params.tod.NIGHTTIME" >Night&nbsp;&nbsp;&nbsp;</div>
+			<div class="iLB"><input type="checkbox" ng-model="params.tod.MORNING" >Dawn&nbsp;&nbsp;&nbsp;</div>
 			
 		</div>
 		<div class="well well-sm col-md-2"  style="box-sizing:content-box;">
@@ -52,7 +57,12 @@
 			</div>
 			<div style="display:inline; box-sizing:content-box;">
 				<table>
-					<tr  ng-repeat="spec in topSpecies" style="display:inline; box-sizing:content-box;" ><td style="width:50px; text-align:right;"><input type="checkbox" ng-click="checkClick(spec.id)" ng-checked="isChecked(spec.id)"></td><td style=" text-align:left;">{{spec.name}}</td></tr>
+					<tr  ng-repeat="rows in topSpecies | pmkr.partition:2"  >
+						<td ng-repeat="spec in rows" style="width:150px">
+							<input style="width:20px;" class="iLB" type="checkbox" ng-click="checkClick(spec.id)" ng-checked="isChecked(spec.id)">
+							<div class="iLB" >{{spec.name}}</div>
+						</td>
+					</tr>
 				</table>
 			</div>
 			

@@ -17,6 +17,7 @@ angular.module('wlcdm', [
   'wlcdm.services',
   'wlcdm.directives',
   'wlcdm.controllers',
+  'pmkr.partition',
   'google-maps'
 ]).
 config(['$routeProvider', function($routeProvider) {
