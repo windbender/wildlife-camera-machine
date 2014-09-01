@@ -104,7 +104,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 			location = gpsDirectory.getGeoLocation();
 		}
 		ImageRecord ir = new ImageRecord();
-		if(location != null) {
+		if( (location != null) && (Math.abs(location.getLatitude()) > 0.001) && (Math.abs(location.getLongitude()) > 0.001) ) {
 			ir.setLat( location.getLatitude());
 			ir.setLon(location.getLongitude());
 		} else {
