@@ -90,10 +90,10 @@ public class S3ImageStore implements ImageStore {
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write(outImage, "jpg", baos);
-			baos.flush();
 			byte[] imageInByteArray = baos.toByteArray();
 			upload(szs,newImage,imageInByteArray);
 			baos.flush();
+			outImage.flush();
 			baos.close();
 		}
 

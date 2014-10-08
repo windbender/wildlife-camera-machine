@@ -52,9 +52,9 @@ public class FileImageStore implements ImageStore {
 			String outName = storeInPlace+"/"+szs+"/"+newImage.getId();
 			FileOutputStream fos = new FileOutputStream(outName);
 			ImageIO.write(outImage, "jpg", fos);
-
 			fos.flush();
 			fos.close();
+			outImage.flush();
 		}
 		
 	}
