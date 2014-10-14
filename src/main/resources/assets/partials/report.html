@@ -49,15 +49,15 @@
 			<div class="iLB"><input type="checkbox" ng-model="params.tod.MORNING" >Dawn&nbsp;&nbsp;&nbsp;</div>
 			
 		</div>
-		<div class="well well-sm col-md-2"  style="box-sizing:content-box;">
+		<div class="well well-sm col-md-3"  style="box-sizing:content-box;">
 			Select species to view:<p>
 			<div >
 				<button type="button" ng-click="selectAllSpecies()" class="btn btn-primary btn-sm">Select ALL Species</button>
 				<button type="button" ng-click="selectNoSpecies()" class="btn btn-primary btn-sm">Select No Species</button>
 			</div>
 			<div style="display:inline; box-sizing:content-box;">
-				<table>
-					<tr  ng-repeat="rows in topSpecies | pmkr.partition:2"  >
+				<table border="1">
+					<tr  ng-repeat="rows in topSpecies | pmkr.partition:3"  >
 						<td ng-repeat="spec in rows" style="width:150px">
 							<input style="width:20px;" class="iLB" type="checkbox" ng-click="checkClick(spec.id)" ng-checked="isChecked(spec.id)">
 							<div class="iLB" >{{spec.name}}</div>

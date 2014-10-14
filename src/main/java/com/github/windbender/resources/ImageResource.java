@@ -155,8 +155,13 @@ public class ImageResource {
 		if(count == null) {
 			count = 10;
 		}
+		if(count == -1) 
 		count = count -2;
-		List<Long> l = reportDAO.makeTopSpeciesIdList(count,currentProject.getId());
+		Integer cnt = null;
+		if(count >0 ) {
+			cnt = count;
+		}
+		List<Long> l = reportDAO.makeTopSpeciesIdList(cnt,currentProject.getId());
 		if(l.size() < 3) {
 			outList = getTopTenForProject();
 		} else {

@@ -46,7 +46,7 @@ public class ReportDAO {
 	
 	
 	
-	public List<Long> makeTopSpeciesIdList(int limitNumber,long project_id) {
+	public List<Long> makeTopSpeciesIdList(Integer limitNumber,long project_id) {
 		String speciesSQL = "select count(*) as cnt,  species_id from (   	" +
 				"select species_id,event_start_time,number   	from identifications,events, cameras where cameras.id=events.camera_id and cameras.project_id = "+project_id+" and identifications.image_event_id=events.id group by image_event_id   " +
 						") x, species s where x.species_id = s.id group by species_id  order by cnt desc";		
@@ -57,9 +57,14 @@ public class ReportDAO {
         int count =0;
         for(Object[] ar: result) {
         	Long id = ((Integer)ar[1]).longValue();
-        	l.add(id);
-        	count++;
-        	if(count > limitNumber) break;
+        	Integer cnt = (Integer)ar[1];
+        	if(cnt > 0) {
+	        	l.add(id);
+	        	count++;
+	        	if(limitNumber != null) {
+	        		if(count > limitNumber) break;
+	        	}
+        	}
         }
         return l;
 	}

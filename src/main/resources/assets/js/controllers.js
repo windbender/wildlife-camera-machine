@@ -480,7 +480,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 		});
 	});
 
-	$http.get('/api/images/topSpecies?includeNone=true').success(function(data) {
+	$http.get('/api/images/topSpecies?includeNone=true&count=-1').success(function(data) {
 		$scope.topSpecies = data;
 	}).error(function(data,status,headers,config) {
 		toastr.error("sorry unable to retrive list");
