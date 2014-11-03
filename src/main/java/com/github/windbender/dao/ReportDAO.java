@@ -17,6 +17,8 @@ import org.hibernate.SessionFactory;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.windbender.core.IdHist;
 import com.github.windbender.core.IdHistEntry;
@@ -34,6 +36,8 @@ import com.github.windbender.domain.ImageRecord;
 import com.github.windbender.domain.Species;
 
 public class ReportDAO {
+
+	Logger log = LoggerFactory.getLogger(ReportDAO.class);
 
 	SessionFactory sessionFactory;
 	private EventDAO eventDAO;
@@ -142,9 +146,10 @@ public class ReportDAO {
 //		String sql = "select count(*) as cnt, hour(event_start_time) as hour from (  select species_id,event_start_time    from identifications,events   where identifications.image_event_id=events.id "+innerSQL+" group by image_event_id  ) x group by hour(event_start_time)";
 		String sql = "select sum(num), hours from (select h.hours, ifnull(number,0) as num from hours h left join (       " +
 				"select number,species_id,CONVERT_TZ(event_start_time,'+00:00','-08:00') as sttime    from identifications,events, cameras where cameras.id=events.camera_id and cameras.project_id = "+limits.getProjectId()+" and identifications.image_event_id=events.id "+innerSQL+" group by image_event_id     " +
-						") x on h.hours = hour(sttime)) y group by hours";
+						") x on h.hours = hour(sttime)) y group by hours order by hours";
+		log.info("it looks like we're going to run this SQL "+sql);
 		Series s = doSQLtoSeries(sql);
-		s.setSeriesName("by day");
+		s.setSeriesName("by hour");
 		List<Series> l = new ArrayList<Series>();
 		l.add(s);
 		return l;
@@ -154,9 +159,11 @@ public class ReportDAO {
 		String innerSQL = limits.makeSQL();
 		String sql = "select sum(num),dates from (   select dates,ifnull(sttime,0) as strt,ifnull(number,0) as num from dates d left join ( " +
 						"select species_id,CONVERT_TZ(event_start_time,'+00:00','-08:00') as sttime, number from identifications, events, cameras where cameras.id=events.camera_id and cameras.project_id = "+limits.getProjectId()+" and identifications.image_event_id=events.id "+innerSQL+" group by image_event_id      " +
-					  ") x on date(d.dates) = date(x.sttime) where d.dates < ? and d.dates > ? ) y group by dates";
+					  ") x on date(d.dates) = date(x.sttime) where d.dates < ? and d.dates > ? ) y group by dates order by dates";
 		
 //		String sql = "select count(*) as cnt, date(event_start_time) from (  select species_id,event_start_time    from identifications,events   where identifications.image_event_id=events.id   "+innerSQL+" group by image_event_id  ) x group by date(event_start_time)";
+		log.info("it looks like we're going to run this SQL "+sql);
+		log.info("the interval will be "+limits.getTimeInterval());
 		Series s = doSQLtoSeriesFromDate(sql, limits.getTimeInterval());
 		s.setSeriesName("by day");
 		List<Series> l = new ArrayList<Series>();
@@ -287,8 +294,6 @@ public class ReportDAO {
 		System.out.println("that took "+delta);
         return lout;
 	}
-
-
 
 	private boolean addIfCan(ImageRec irec, Object[] ar, DateTime now) {
 		Long event_id = ((Integer)ar[0]).longValue();

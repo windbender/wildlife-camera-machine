@@ -107,4 +107,10 @@ public class Limiter {
 		return this.currentProject.getId();
 	}
 
+	@Override
+	public String toString() {
+		return "Limiter [reportParams=" + reportParams + ", currentProject="
+				+ currentProject + ", dtf=" + dtf + "]";
+	}
+	
 }

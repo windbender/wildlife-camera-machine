@@ -1,5 +1,6 @@
 package com.github.windbender.core;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -56,6 +57,12 @@ public class ReportParams {
 	}
 	public void setSpecies(String[] species) {
 		this.species = species;
+	}
+	@Override
+	public String toString() {
+		return "ReportParams [projectId=" + projectId + ", timeStart="
+				+ timeStart + ", timeEnd=" + timeEnd + ", tod=" + tod
+				+ ", species=" + Arrays.toString(species) + "]";
 	}
 	
 	
