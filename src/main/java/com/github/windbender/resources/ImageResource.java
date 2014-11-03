@@ -44,6 +44,7 @@ import com.github.windbender.core.ImageStore;
 import com.github.windbender.core.NextEventRecord;
 import com.github.windbender.core.RegionUtil;
 import com.github.windbender.core.SessionFilteredAuthorization;
+import com.github.windbender.core.SpeciesCount;
 import com.github.windbender.dao.ImageRecordDAO;
 import com.github.windbender.dao.ReportDAO;
 import com.github.windbender.dao.SpeciesDAO;
@@ -89,6 +90,13 @@ public class ImageResource {
 		log.info("attempting to fetch image id = " + id+" with width "+displayWidth);
 		try {
 			ImageRecord ir = this.ds.getRecordFromId(id);
+			ImageEvent e = ir.getEvent();
+			List<SpeciesCount> cd = reportDAO.findCategorizationData(e);
+			for(SpeciesCount sc: cd) {
+				if(sc.getSpecies().getName().equalsIgnoreCase("human")) {
+					//TODO DO SOME SORT OF BLURRING HERE...
+				}
+			}
 			InputStream is = store.getInputStreamFor(ir, id,displayWidth);
 			CacheControl control = new CacheControl();
 			control.setMaxAge(6 * 60 * 60);   // 6 hours
