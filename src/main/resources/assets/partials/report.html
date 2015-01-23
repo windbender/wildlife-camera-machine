@@ -109,7 +109,7 @@
 	</div>
 	<div ng-show="params.showCharts" class="col-md-6 chartBlob" id="bySpecies">
 		<h3>Count By Species</h3>
-		<nvd3-discrete-bar-chart
+		<nvd3-multi-bar-horizontal-chart
 	    	data="bySpeciesData"
 	        id="bySpeciesChart"
 	        showXAxis="true"
@@ -118,7 +118,7 @@
 	        color="colorFunction()"
 	        >
 	        	<svg></svg>
-	    </nvd3-discrete-bar-chart>
+	    </nvd3-multi-bar-horizontal-chart>
 	</div>
 	
 	</div> <!--  row -->
@@ -144,6 +144,7 @@
 	        id="byHourChart"
 	        showXAxis="true"
 	        showYAxis="true"
+	        margin="{'top': 30, 'right': 20, 'bottom': 50, 'left': 300}"
 	        xAxisTickFormat="xAxisNumberTickFormat()"
 	        color="colorFunction()"
 	        >
