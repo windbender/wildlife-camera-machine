@@ -1052,4 +1052,17 @@
 		</addColumn>
 		
 	</changeSet>
+	<changeSet id="27" author="windbender" dbms="mysql" >
+		<createIndex tableName="cameras" indexName="cameras_project_id">
+			<column name="project_id"></column>
+		</createIndex>
+		<createIndex tableName="events" indexName="events_camera_id">
+			<column name="camera_id"></column>
+		</createIndex>
+		<createIndex tableName="identifications" indexName="identifications_image_event_id">
+			<column name="image_event_id"></column>
+		</createIndex>
+		
+		
+	</changeSet>
 </databaseChangeLog>
