@@ -681,8 +681,8 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
     $scope.params.showCharts = true;
     $scope.params.projectId = undefined;
     $scope.params.polyGeoRegion = [];
-    $scope.params.timeStart = 1356998400;
-    $scope.params.timeEnd = 1420070400;
+    $scope.params.timeStart = 1380670262;
+    $scope.params.timeEnd = 1516577462;
     $scope.params.tod = {}
     $scope.params.tod.DAYTIME = true;
     $scope.params.tod.EVENING = true;
@@ -745,7 +745,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
   }]);
   
 // https://github.com/danialfarid/angular-file-upload
-app.controller('UploadController', ['$scope','$upload','$http',function($scope,$upload,$http) {
+app.controller('UploadController', ['$scope','$log','$upload','$http',function($scope,$log,$upload,$http) {
 	$scope.actualProg = 0;
 	$scope.possibleProg = 0;
 	
@@ -766,6 +766,7 @@ app.controller('UploadController', ['$scope','$upload','$http',function($scope,$
 		$scope.actualPercent = 100 *$scope.actualProg / $scope.possibleProg;
 	}
 	$scope.update = function(which, percent) {
+		$log.info("updating "+which+"  with "+percent);
 		$scope.progress[which] = percent;
 		$scope.updateBar();
 	};
@@ -786,39 +787,24 @@ app.controller('UploadController', ['$scope','$upload','$http',function($scope,$
 		$scope.uploads = [];
 		for (var i = 0; i < $files.length; i++) {
 			var file = $files[i];
-			var upload = $upload.upload({
-				url: '/api/images', // upload.php script, node.js route, or
-									// servlet url
-		        method: 'POST',
-		        headers: {'camera_id': $scope.camera_id,'pos_lat': $scope.lat,'pos_lon': $scope.lon},
-		        // withCredentials: true,
-// data: {myObj: $scope.myModelObj},
-		        file: file,
-// file: $files, //upload multiple files, this feature only works in HTML5
-// FromData browsers
-		        /*
-				 * set file formData name for 'Content-Desposition' header.
-				 * Default: 'file'
-				 */
-		        // fileFormDataName: myFile, //OR for HTML5 multiple upload only
-				// a list: ['name1', 'name2', ...]
-		        /*
-				 * customize how data is added to formData. See
-				 * #40#issuecomment-28612000 for example
-				 */
-		        // formDataAppender: function(formData, key, val){}
-				// //#40#issuecomment-28612000
-		      	}).progress(function(evt) {
-		      		$scope.update(this.file.name,parseInt(100.0 * evt.loaded / evt.total));
-		        }).success(function(data, status, headers, config) {
-		        // file is uploaded successfully
-		      		console.log(data);
-		      		// so pull it from the
-		      	}).error(function(data,status,headers,config) {
-		      		toastr.error("sorry can't upload the image because "+data);
-		      	});
-		      	// .then(success, error, progress);
-			$scope.uploads.push(upload);
+			var of = function(daFile) {
+
+				var progfunc = function(evt) {
+					$scope.update(daFile.name,parseInt(100.0 * evt.loaded / evt.total));
+				};
+				var upload = $upload.upload({
+						url: '/api/images', // upload.php script, node.js route, or servlet url
+				        method: 'POST',
+				        headers: {'camera_id': $scope.camera_id,'pos_lat': $scope.lat,'pos_lon': $scope.lon},
+				        file: daFile
+			      	}).progress(progfunc)
+			      	.error(function(data,status,headers,config) {
+			      		toastr.error("sorry can't upload the image because "+data);
+			      	});
+			      	// .then(success, error, progress);
+				$scope.uploads.push(upload);
+			};
+			of(file);
 
 		}
 		// alert(" done starting uploads");

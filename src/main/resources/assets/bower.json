@@ -20,26 +20,26 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "1.2.11",
-    "angular-route": "1.2.11",
-    "angular-cookies": "1.2.11",
-    "angular-resource": "1.2.11",
-    "bootstrap": "3.1.0",
-    "d3": "~3.1.10",
+    "angular": "1.2.26",
+    "angular-route": "1.2.26",
+    "angular-cookies": "1.2.26",
+    "angular-resource": "1.2.26",
+    "bootstrap": "3.3.2",
+    "d3": "3.5.3",
     "nvd3": "1.1.15-beta",
-    "angularjs-nvd3-directives": "0.0.5-beta",
-    "angular-loading-bar": "0.3.0",
-    "angular-google-maps": "1.0.13",
-    "angular-bootstrap": "0.10.0",
-    "angularjs-slider": "0.1.2",
-    "angular-bootstrap-datetimepicker": "0.2.2",
+    "angularjs-nvd3-directives": "0.0.7",
+    "angular-loading-bar": "0.6.0",
+    "angular-bootstrap": "0.12.0",
+    "angularjs-slider": "0.1.6",
+    "isteven-angular-multiselect": "2.0.2",
+    "angular-bootstrap-datetimepicker": "0.3.8",
     "angular-date-time-input": "latest",
-    "moment": "2.5.1",
-    "ng-file-upload": "1.2.8",
-    "toastr": "2.0.1"
+    "moment": "2.9.0",
+    "ng-file-upload": "1.6.12",
+    "toastr": "2.1.0",
+    "underscore":"1.6.0"
   },
   "resolutions": {
-    "angular": "1.2.11",
-    "moment": "2.4.0"
+    "d3": "~3.4.1"
   }
 }
