@@ -258,13 +258,18 @@ public class HibernateDataStore implements Managed, Runnable {
 	public NextEventRecord makeNextEventRecord(User u, Project currentProject, Long lastEventId) {
 		// We want to identify events which are
 		// a) haven't been previously identifed by this user
+		long start = System.currentTimeMillis();
 		List<Integer> done = this.eventDAO.findEventIdsDoneByUser(currentProject.getId(),u);
+		long next = System.currentTimeMillis();
+		log.info("events done took "+(next-start));
 		SortedSet<Integer> doneSet = new TreeSet<Integer>(done);
 		// b) have a number of zero or 1 previous identifications
 		int number =3; 
 		List<Integer> lowNumber = this.eventDAO.findEventsIdsWithFewerThanIdentifications(currentProject.getId(),number);
+		long next2 = System.currentTimeMillis();
 		List<Integer> flagged = this.eventDAO.findFlaggedEventsIdsWithFewerThanIdentifications(currentProject.getId(), number+(number/2 + 1));
-		
+		long next3 = System.currentTimeMillis();
+		log.info("so then low took "+(next2-next)+ " and flagged took "+(next3-next2));
 		SortedSet<Integer> lowNumberSet =  new TreeSet<Integer>(lowNumber);
 		lowNumberSet.addAll(flagged);
 		lowNumberSet.removeAll(doneSet);

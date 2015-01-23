@@ -65,6 +65,9 @@ public class Limiter {
 		}
 		Set<Long> excludeSet = new HashSet<Long>();
 		Set<Long> includeSet = new HashSet<Long>();
+		//the next two lines ensure humans never appear in reports		
+		includeSet.remove(new Long(700));
+		excludeSet.add(new Long(700));
 		StringBuilder s = new StringBuilder();
 		if(excludeMode) {
 			for(String species: reportParams.getSpecies()) {
@@ -85,6 +88,7 @@ public class Limiter {
 			}
 			if(includeSet.size() > 0) s.append(" and ( ");
 			boolean first = true;
+			
 			for(Long id: includeSet) {
   				if(!first) s.append(" or ");
 				s.append(" species_id = "+id+" ");
@@ -97,9 +101,9 @@ public class Limiter {
 	}
 
 	public Interval getTimeInterval() {
-		DateTime st = new DateTime(2013,9,1,0,0);
-		DateTime e = new DateTime(2014,4,1,0,0);
-		Interval i = new Interval(st,e);
+		DateTime en = reportParams.getDateTimeEnd();
+		DateTime st = reportParams.getDateTimeStart();
+		Interval i = new Interval(st,en);
 		return i;
 	}
 
