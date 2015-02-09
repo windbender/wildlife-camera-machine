@@ -138,11 +138,15 @@ public class UserResource {
 			if(up.getCanReport()  || p.getPublicReport() ) {
 				list.add(new MenuItem("report","#/report"));
 			}
+			if(up.getCanReport()  || p.getPublicReport() ) {
+				list.add(new MenuItem("best of","#/bestof"));
+			}
 		} else if (isAdmin ) {
 			list.add(new MenuItem("admin","#/setup"));
 			list.add(new MenuItem("upload","#/upload"));
 			list.add(new MenuItem("categorize","#/categorize"));
 			list.add(new MenuItem("report","#/report"));			
+			list.add(new MenuItem("best of","#/bestof"));
 		}
 		
 

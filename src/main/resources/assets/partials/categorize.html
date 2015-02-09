@@ -57,8 +57,7 @@
 			</div>
 		</div>
 		<div class="well well-sm">
-			<h5>categorize</h5>
-			<div>
+			<div class="well well-sm" >
 				<table>
 					<tr>
 						<td>number of individuals</td>
@@ -70,8 +69,6 @@
 						<td>species latin name:</td><td style="font-weight:bold;">{{typeSpecies.latinName}}</td>						
 					</tr>
 				</table>
-			</div>
-			<div class="well well-sm" >
 				<table>
 					<tr ng-repeat="key in topSpecies">
 						<td><button type="button" ng-click="speciesButtonPush(key)" class="btn btn-primary">{{getKeyText(key)}}</button></td><td>{{key.name}}</td>
@@ -79,8 +76,9 @@
 				</table>
 				<input id="typeSel" tabindex="2" type="text" ng-model="typeSpecies" typeahead="spc as spc.name for spc in species | filter:$viewValue | limitTo:8" class="form-control">
 			</div>
-			<div>
+			<div >
 				<button tabindex="3" type="button" ng-disable="typeSpecies" ng-click="submitTyped(spc)" class="btn btn-primary ">submit selected species</button>
+				<button tabindex="3" type="button" ng-disable="typeSpecies" ng-click="submitTypedPlus(spc)" class="btn btn-primary ">submit and add another</button>
 			</div>
 		</div>
 	</div>

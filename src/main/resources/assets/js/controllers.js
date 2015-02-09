@@ -65,7 +65,19 @@ var app = angular.module('wlcdm.controllers', [])
 	$scope.prevImage = function() {
 		$scope.currentIndex > 0 ? $scope.currentIndex-- : $scope.currentIndex = $scope.images.length - 1;
 	};
+
+	$scope.submitTypedPlus = function() {
+		if(typeof $scope.typeSpecies == 'undefined') return;
+		if(typeof $scope.typeSpecies.id == 'undefined') return;
+		if($scope.logAnimal($scope.typeSpecies.name,$scope.typeSpecies.id,$scope.images[$scope.currentIndex].id,$scope.eventId)) {
+
+		}
 		
+		var elements = angular.element( document.querySelector( '#slide' ) );
+		var el = elements[0]
+		el.focus();
+	}
+
 	$scope.submitTyped = function() {
 		if(typeof $scope.typeSpecies == 'undefined') return;
 		if(typeof $scope.typeSpecies.id == 'undefined') return;
@@ -744,7 +756,12 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
           
   }]);
   
-// https://github.com/danialfarid/angular-file-upload
+app.controller({
+	BestofController: function($rootScope, $scope,$routeParams,$http) {
+		// nothing here yet
+	}
+});
+
 app.controller('UploadController', ['$scope','$log','$upload','$http',function($scope,$log,$upload,$http) {
 	$scope.actualProg = 0;
 	$scope.possibleProg = 0;

@@ -68,7 +68,7 @@ public class HibernateDataStore implements Managed, Runnable {
 		queueForEventSearch(newImage);
 	}
 
-	private int secondsDelta = 5;
+	private int secondsDelta = 45;
 
 
 	private void queueForEventSearch(ImageRecord newImage) {

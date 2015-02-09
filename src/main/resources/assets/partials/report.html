@@ -20,11 +20,9 @@
 
     </style>
 <div class="well">
-	<h2>Wildlife Camera Machine Report</h2>
 <div class="well well-sm" >
-	<div class="row"><div class="col-md-12"><h3>data selector</h3></div></div>
 	<div class="row" >
-		<div class="well well-sm col-md-4 col-md-offset-0" style="width:500px">
+		<div class="well well-sm col-md-2 col-md-offset-0" style="width:500px">
 		Select a date range to view:
 			<rzslider
 		    rz-slider-floor="1380670262"
@@ -41,7 +39,10 @@
 		    </div>
 		    
 		</div>
-		<div class="well well-sm col-md-2" style="width:255px">
+		<div class="well well-sm col-md-1" >
+			Only Show "good" images<input type="checkbox" ng-change="onChange()" ng-model="params.onlyGood">
+		</div>
+		<div class="well well-sm col-md-2" >
 			Select time of day to view:
 			<div class="iLB"><input type="checkbox" ng-model="params.tod.DAYTIME" >Day&nbsp;&nbsp;&nbsp;</div>
 			<div class="iLB"><input type="checkbox" ng-model="params.tod.EVENING" >Evening&nbsp;&nbsp;&nbsp;</div>
@@ -116,6 +117,7 @@
 	        showYAxis="true"
 	        xAxisTickFormat="xAxisNumberTickFormat()"
 	        color="colorFunction()"
+	        margin="{'top': 30, 'right': 20, 'bottom': 20, 'left': 150}"
 	        >
 	        	<svg></svg>
 	    </nvd3-multi-bar-horizontal-chart>
@@ -144,7 +146,6 @@
 	        id="byHourChart"
 	        showXAxis="true"
 	        showYAxis="true"
-	        margin="{'top': 30, 'right': 20, 'bottom': 50, 'left': 300}"
 	        xAxisTickFormat="xAxisNumberTickFormat()"
 	        color="colorFunction()"
 	        >

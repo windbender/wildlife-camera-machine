@@ -19,6 +19,14 @@ public class ReportParams {
 	long projectId;
 	long timeStart;
 	long timeEnd;
+	boolean onlyGood;
+	
+	public boolean isOnlyGood() {
+		return onlyGood;
+	}
+	public void setOnlyGood(boolean onlyGood) {
+		this.onlyGood = onlyGood;
+	}
 	public long getTimeStart() {
 		return timeStart;
 	}

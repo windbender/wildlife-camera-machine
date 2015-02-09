@@ -79,16 +79,8 @@
 <a class="menutext" id="lostpwlink" href="/#/lostpw">lost pw</a></span>
     </div>    
     <div class=" navbar-collapse" id="bs-example-navbar-collapse-1" collapse="isCollapsed">
-      <ul class="nav navbar-nav">
-<!--     		<li><a class="menutext" href="#/setup">setup</a></li> -->
-<!--     		<li><a class="menutext" href="#/upload">upload</a></li> -->
-<!--     		<li><a class="menutext" href="#/categorize">categorize</a></li> -->
-<!--     		<li><a class="menutext" href="#/report">report</a></li> -->
-    		
-                    <li ng-repeat="menu in menus"><a class="menutext" ng-click="doCollapse()" href="{{menu.route}}">{{menu.title}}</a>
-                    </li>
-    		
-    		
+      <ul class="nav navbar-nav">    		
+         <li ng-repeat="menu in menus"><a class="menutext" ng-click="doCollapse()" href="{{menu.route}}">{{menu.title}}</a></li>
       </ul>
       </div>
       </div> <!--  .container -->
