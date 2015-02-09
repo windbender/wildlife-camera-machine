@@ -177,7 +177,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 			
 			hsm.setStoreDirectory(dir);
 			hsm.setIdleSavePeriod(10*60); // 10 minutes
-			hsm.setSavePeriod(30);
+			hsm.setSavePeriod(60);
 		} catch (IOException e) {
 			
 		}
