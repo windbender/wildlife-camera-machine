@@ -2,8 +2,9 @@
 
 /* Controllers */
 
-var app = angular.module('wlcdm.controllers', [])
-.controller('CategorizeController', function($http, $rootScope, $scope, focus) {
+var app = angular.module('wlcdm.controllers', []);
+
+app.controller('CategorizeController', function($http, $rootScope, $scope, focus) {
 
 	$scope.currentIndex = 1; // Initially the index is at the second image,
 								// but this doesn't actually EXIST! :-)
