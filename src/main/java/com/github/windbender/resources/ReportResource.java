@@ -1,6 +1,5 @@
 package com.github.windbender.resources;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +68,15 @@ public class ReportResource {
 		this.goodDao = goodDao;
 	}
 
+	@GET
+	@Timed
+	@UnitOfWork
+	@Path("bestimages")
+	public List<ImageRecord> bestImages(@SessionAuth(required={Priv.REPORT}) SessionFilteredAuthorization auths,@SessionUser User user, @SessionCurProj Project currentProject) {
+		List<ImageRecord> l = imageRecordDAO.findBestByVote(currentProject.getId());
+		return l;
+	}
+	
 	@POST
 	@Timed
 	@UnitOfWork
