@@ -17,31 +17,46 @@ app.directive('slider', function($timeout) {
 	    	scope.bestOfImg = {};
 	    	scope.bestOfImg.imagesrc = '/img/none.png';
 	    	scope.next = function() {    	
-	    		var elements = angular.element( document.querySelector( '#slider' ) );
-	    		var el = elements[0]
-	    		var w = el.clientWidth;
-	    		var size = ''+w;
-
 	    		scope.currentIndex < scope.images.length - 1 ? scope.currentIndex++ : scope.currentIndex = 0;
-	    		scope.bestOfImg.imagesrc = '/api/images/'+scope.images[scope.currentIndex].id+'?sz='+size;	  		
-	    		scope.bestOfImg.width=w-10;
-	    		scope.bestOfImg.height=(w-10) *480 / 640;
-
+	    		scope.sizeAndLoad()
 	    	};
 	    	 
 	    	scope.prev = function() {
+	    		scope.currentIndex > 0 ? scope.currentIndex-- : scope.currentIndex = scope.images.length - 1;
+	    		scope.sizeAndLoad()
+	    	};
+
+	    	scope.sizeAndLoad = function() {
 	    		var elements = angular.element( document.querySelector( '#slider' ) );
 	    		var el = elements[0]
 	    		var w = el.clientWidth;
 	    		var size = ''+w;
+	    		var h = $(window).height();
+	    		var mh = (w-1) * 480 / 640;
+	    		if(h < mh ) {
+	    			// height constrains
+	    			w = h * 640 / 480;
+	    		} 
 	    		
-	    		scope.currentIndex > 0 ? scope.currentIndex-- : scope.currentIndex = scope.images.length - 1;
-	    		scope.bestOfImg.imagesrc = '/api/images/'+scope.images[scope.currentIndex].id+'?sz='+size;
-	    	};
-
+	    		scope.bestOfImg.imagesrc = '/api/images/'+scope.images[scope.currentIndex].id+'?sz='+size;	  		
+	    		scope.bestOfImg.width=w-10;
+	    		scope.bestOfImg.height=(w-10) *480 / 640;
+	    	}
 	    	scope.$watch('images', function() {
 	    		scope.next();
 	    	});
+	    	
+	    	
+	    	function doSomething() {
+	    		scope.sizeAndLoad()
+			};
+
+			var resizeTimer;
+			$(window).resize(function() {
+			    clearTimeout(resizeTimer);
+			    resizeTimer = setTimeout(doSomething, 100);
+			});
+	    	
 	    	var timer;
 	    	var sliderFunc = function() {
 	    	  timer = $timeout(function() {

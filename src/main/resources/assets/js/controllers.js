@@ -772,6 +772,7 @@ app.controller({
 			toastr.error("sorry unable to retrive list of best items");
 		});
 
+		
 	}
 });
 
