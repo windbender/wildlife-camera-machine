@@ -22,7 +22,7 @@ public class ImageRecordDAO extends AbstractDAO<ImageRecord>{
     }
     
     public List<ImageRecord> findBestByVote(Long long1) {
-    	String sql = "select count(*) as vote,image_id from image_flagged_good a, images b, cameras c  where a.image_id=b.id and camera_id=c.id and c.project_id=? group by image_id order by vote desc, imageTime";
+    	String sql = "select count(*) as vote,image_id from image_flagged_good a, images b, cameras c  where a.flagged=1 and a.image_id=b.id and camera_id=c.id and c.project_id=? group by image_id order by vote desc, imageTime";
 
 		SQLQuery sqlQuery = this.currentSession().createSQLQuery(sql);
         Query query = sqlQuery.setParameter(0, long1);
