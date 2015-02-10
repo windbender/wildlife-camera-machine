@@ -39,6 +39,9 @@ app.directive('slider', function($timeout) {
 	    		scope.bestOfImg.imagesrc = '/api/images/'+scope.images[scope.currentIndex].id+'?sz='+size;
 	    	};
 
+	    	scope.$watch('images', function() {
+	    		scope.next();
+	    	});
 	    	var timer;
 	    	var sliderFunc = function() {
 	    	  timer = $timeout(function() {
