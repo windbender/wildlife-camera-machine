@@ -584,7 +584,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 
 		var imgId = $scope.imageEvents[$scope.reportEventIndex].imageEvent.imageRecords[$scope.reportImgIndex].id;
     	var n = $scope.curEventData.goodMap[imgId]
-    	$scope.isGood = (n > 0);
+    	$scope.isGood = n;
     };
     $scope.nextImage = function() {
     	var ar = $scope.imageEvents[$scope.reportEventIndex].imageEvent.imageRecords;
@@ -592,7 +592,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 
 		var imgId = $scope.imageEvents[$scope.reportEventIndex].imageEvent.imageRecords[$scope.reportImgIndex].id;
     	var n = $scope.curEventData.goodMap[imgId]
-    	$scope.isGood = (n > 0);
+    	$scope.isGood = n;
     };
     
     $scope.map = {
@@ -642,13 +642,18 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 			    		}
 			    		var imgId = $scope.imageEvents[$scope.reportEventIndex].imageEvent.imageRecords[$scope.reportImgIndex].id;
 			        	var n = $scope.curEventData.goodMap[imgId]
-			        	$scope.isGood = (n > 0);
+			        	$scope.isGood = n;
 			    	});
 	    		}
     		}
     	}
     }
     $scope.sendGood = function() {
+//    	if($scope.isGood === 1) {
+//    		$scope.isGood = 0;
+//    	} else {
+//    		$scope.isGood = 1;
+//    	}
     	$http.post('/api/report/good',{
 				imageId: $scope.imageEvents[$scope.reportEventIndex].imageEvent.imageRecords[$scope.reportImgIndex].id,
 				good: $scope.isGood
