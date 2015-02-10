@@ -3,10 +3,62 @@
 /* Directives */
 
 
+var app = angular.module('wlcdm.directives', []);
+
+app.directive('slider', function($timeout) {
+	  return {
+	    restrict: 'AE',
+	    replace: true,
+	    scope: {
+	      images: '='
+	    },
+	    link: function(scope, elem, attrs) {
+	    	scope.currentIndex = -1; // Initially the index is at the first image
+	    	scope.bestOfImg = {};
+	    	scope.bestOfImg.imagesrc = '/img/none.png';
+	    	scope.next = function() {    	
+	    		var elements = angular.element( document.querySelector( '#slider' ) );
+	    		var el = elements[0]
+	    		var w = el.clientWidth;
+	    		var size = ''+w;
+
+	    		scope.currentIndex < scope.images.length - 1 ? scope.currentIndex++ : scope.currentIndex = 0;
+	    		scope.bestOfImg.imagesrc = '/api/images/'+scope.images[scope.currentIndex].id+'?sz='+size;	  		
+	    		scope.bestOfImg.width=w-10;
+	    		scope.bestOfImg.height=(w-10) *480 / 640;
+
+	    	};
+	    	 
+	    	scope.prev = function() {
+	    		var elements = angular.element( document.querySelector( '#slider' ) );
+	    		var el = elements[0]
+	    		var w = el.clientWidth;
+	    		var size = ''+w;
+	    		
+	    		scope.currentIndex > 0 ? scope.currentIndex-- : scope.currentIndex = scope.images.length - 1;
+	    		scope.bestOfImg.imagesrc = '/api/images/'+scope.images[scope.currentIndex].id+'?sz='+size;
+	    	};
+
+	    	var timer;
+	    	var sliderFunc = function() {
+	    	  timer = $timeout(function() {
+	    	    scope.next();
+	    	    timer = $timeout(sliderFunc, 5000);
+	    	  }, 5000);
+	    	};
+	    	 
+	    	sliderFunc();
+	    	 
+	    	scope.$on('$destroy', function() {
+	    	  $timeout.cancel(timer); // when the scope is getting destroyed, cancel the timer
+	    	});
+	    },
+	    templateUrl: 'partials/sliderTemplate.html'
+	  };
+	});
 
 
-var app = angular.module('wlcdm.directives', [])
-	.directive('focusOn', function() {
+app.directive('focusOn', function() {
 		   return function(scope, elem, attr) {
 		      scope.$on('focusOn', function(e, name) {
 		        if(name === attr.focusOn) {

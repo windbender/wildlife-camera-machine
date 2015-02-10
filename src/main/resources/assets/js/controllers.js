@@ -759,7 +759,14 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
   
 app.controller({
 	BestofController: function($rootScope, $scope,$routeParams,$http) {
-		// nothing here yet
+		$http.get('/api/report/bestimages').success(function(data) {
+			$scope.images = data;
+	    	
+	    	
+		}).error(function(data,status,headers,config) {
+			toastr.error("sorry unable to retrive list of best items");
+		});
+
 	}
 });
 
@@ -1022,11 +1029,6 @@ app.controller({
 		$scope.usernameIsNoSpace = 'valid';
 		$scope.usernameIsUnique = 'valid';
 
-		// should be one of
-// BARE,
-// UNITS_ONLY,
-// UNIT_AND_ATTRIBUTES,
-// FULL_SAMPLE;
 		$scope.initialData = "FULL_SAMPLE";
 		$scope.submit = function() {
 			$http.post('api/users/signup', {
