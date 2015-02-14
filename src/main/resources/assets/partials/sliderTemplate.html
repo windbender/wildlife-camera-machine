@@ -3,6 +3,12 @@
     <div class="arrowLeft" ng-click="prev()">
       <img src="img/left2.png" />
     </div>
+    <div class="arrowCenter" ng-hide="isPaused" ng-click="pause()">
+		<span class="glyphicon glyphicon-pause" aria-hidden="true" style="font-size:50px;"></span>
+    </div>
+    <div class="arrowCenter" ng-show="isPaused" ng-click="play()">
+		<span class="glyphicon glyphicon-play" aria-hidden="true" style="font-size:50px;"></span>
+    </div>
     <div class="arrowRight" ng-click="next()">
       <img src="img/right2.png" />
     </div>

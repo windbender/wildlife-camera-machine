@@ -13,9 +13,29 @@ app.directive('slider', function($timeout) {
 	      images: '='
 	    },
 	    link: function(scope, elem, attrs) {
+	    	scope.timerDelay=3000;
+	    	scope.isPaused = false;
 	    	scope.currentIndex = -1; // Initially the index is at the first image
 	    	scope.bestOfImg = {};
 	    	scope.bestOfImg.imagesrc = '/img/none.png';
+	    	
+	    	scope.goFaster = function() {
+	    		scope.timerDelay= scope.timerDelay /2;
+	    	}
+	    	
+	    	scope.goSlower = function() {
+	    		scope.timerDelay= scope.timerDelay * 2;
+	    	}
+
+	    	scope.pause = function() {
+	    		scope.isPaused = true;
+	    		$timeout.cancel(timer);
+	    	}
+	    	scope.play = function() {
+	    		scope.isPaused = false;
+	    		scope.next();
+	    		sliderFunc();
+	    	}
 	    	scope.next = function() {    	
 	    		scope.currentIndex < scope.images.length - 1 ? scope.currentIndex++ : scope.currentIndex = 0;
 	    		scope.sizeAndLoad()
@@ -61,8 +81,8 @@ app.directive('slider', function($timeout) {
 	    	var sliderFunc = function() {
 	    	  timer = $timeout(function() {
 	    	    scope.next();
-	    	    timer = $timeout(sliderFunc, 5000);
-	    	  }, 5000);
+	    	    timer = $timeout(sliderFunc, scope.slideDelay);
+	    	  }, scope.timerDelay);
 	    	};
 	    	 
 	    	sliderFunc();
