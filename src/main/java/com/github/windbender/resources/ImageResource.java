@@ -94,7 +94,9 @@ public class ImageResource {
 			List<SpeciesCount> cd = reportDAO.findCategorizationData(e);
 			for(SpeciesCount sc: cd) {
 				if(sc.getSpecies().getName().equalsIgnoreCase("human")) {
-					//TODO DO SOME SORT OF BLURRING HERE...
+					// deliver the small version of this one.
+					// perhaps if you are admin you get to see the full size ?
+					displayWidth = 24;
 				}
 			}
 			InputStream is = store.getInputStreamFor(ir, id,displayWidth);

@@ -7,8 +7,8 @@ import java.io.InputStream;
 import com.github.windbender.domain.ImageRecord;
 
 public interface ImageStore {
-
-	int[] sizes = {-1, 1280, 640, 32};
+	int SMALLEST_SIZE = 64;
+	int[] sizes = {-1, 1280, 640, SMALLEST_SIZE};
 
 	InputStream getInputStreamFor(ImageRecord ir, String id, int displayWidth) throws IOException;
 

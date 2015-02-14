@@ -17,6 +17,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -54,9 +55,10 @@ public class S3ImageStore implements ImageStore {
 	public InputStream getInputStreamFor(ImageRecord ir, String id, int displayWidth)
 			throws IOException {
 		log.info("attempting to get an inpustream for "+id);
+		String szs = "native";
 		try {
 			if(displayWidth == 0) displayWidth=1300;
-			String szs = "native";
+			
 			for(int sz : sizes) {
 				if(sz > displayWidth) {
 					szs = ""+sz;
@@ -67,6 +69,38 @@ public class S3ImageStore implements ImageStore {
 			S3Object object = s3Client.getObject(new GetObjectRequest(bucketName, s3Key));
 			InputStream objectData = object.getObjectContent();
 			return objectData;
+		} catch (AmazonS3Exception e) {
+			if( 404 == e.getStatusCode()) {
+				// com.amazonaws.services.s3.model.AmazonS3Exception: 
+				// Status Code: 404, AWS Service: Amazon S3, AWS Request ID: 4E801215FAEB5EF5, AWS Error Code: NoSuchKey, 
+				// AWS Error Message: The specified key does not exist.
+				try {
+					String s3Key2 = "native"+"/"+ ir.getId();
+				
+					S3Object object = s3Client.getObject(new GetObjectRequest(bucketName, s3Key2));
+					InputStream objectData = object.getObjectContent();
+					BufferedImage bi = ImageIO.read(objectData);
+					BufferedImage outImage = Scalr.resize(bi, SMALLEST_SIZE);
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					ImageIO.write(outImage, "jpg", baos);
+					byte[] imageInByteArray = baos.toByteArray();
+					upload(""+SMALLEST_SIZE,ir,imageInByteArray);
+					baos.flush();
+					outImage.flush();
+					baos.close();
+
+					S3Object object2 = s3Client.getObject(new GetObjectRequest(bucketName, ""+SMALLEST_SIZE+"/"+ ir.getId()));
+					InputStream objectData2 = object2.getObjectContent();
+					return objectData2;
+					
+				} catch(Exception e2) {
+					log.error("failed because ",e2);
+					throw e;				
+				}
+			} else {
+				log.error("failed because ",e);
+				throw e;
+			}
 		} catch (Exception e) {
 			log.error("failed because ",e);
 			throw e;
