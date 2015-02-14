@@ -1,5 +1,6 @@
 package com.github.windbender;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.bazaarvoice.dropwizard.assets.AssetsBundleConfiguration;
@@ -11,6 +12,7 @@ import com.yammer.dropwizard.db.DatabaseConfiguration;
 public class WLCDMServerConfiguration extends Configuration implements
 AssetsBundleConfiguration {
 
+	@Valid
     @NotNull
     @JsonProperty
     private final AssetsConfiguration assets = new AssetsConfiguration();

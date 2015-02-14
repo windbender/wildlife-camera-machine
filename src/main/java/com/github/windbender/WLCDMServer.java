@@ -86,6 +86,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		bootstrap.setName("wlcdm");
 	    //bootstrap.addBundle(new AssetsBundle("/assets", "/"));
         bootstrap.addBundle(new ConfiguredAssetsBundle("/assets/", "/"));
+
         bootstrap.addBundle(hibernate);
 
         bootstrap.addBundle(new MigrationsBundle<WLCDMServerConfiguration>() {
