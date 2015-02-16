@@ -63,6 +63,7 @@ import com.github.windbender.service.SMTPMessageSender;
 import com.github.windbender.service.StartupMessageCreator;
 import com.github.windbender.service.StupidTimeZoneGetter;
 import com.github.windbender.service.TimeZoneGetter;
+import com.sun.jersey.multipart.impl.MultiPartConfigProvider;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
@@ -197,6 +198,8 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
 		environment.addProvider(SessionAuthProvider.class);
 		environment.addProvider(SessionCurProjProvider.class);
 		
+		environment.addProvider(MultiPartConfigProvider.class);
+		environment.addProvider(com.sun.jersey.multipart.impl.MultiPartReaderServerSide.class);
 
 		MakeDatesService mds = new MakeDatesService(hibernate.getSessionFactory());
 		mds.makeDates();
