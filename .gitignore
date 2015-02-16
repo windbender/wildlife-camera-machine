@@ -1,6 +1,12 @@
+node_modules
 src/main/resources/git.properties
 sessions
+node
 src/main/resources/assets/bower_components
+src/main/resources/assets/css/concatted.css
+src/main/resources/assets/js/angular-cookies.min.js.map
+src/main/resources/assets/js/concatted.js
+src/main/resources/assets/fonts/
 *.class
 serverconfig.yml
 target

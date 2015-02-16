@@ -1,4 +1,7 @@
-'use strict';
+/*jshint globalstrict: true*/
+/* global angular */
+
+"use strict";
 
 // Declare app level module which depends on filters, and services
 angular.module('wlcdm', [
@@ -32,12 +35,12 @@ config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/report', {templateUrl: '/partials/report.html', controller: 'ReportController'});
   $routeProvider.when('/bestof', {templateUrl: '/partials/bestof.html', controller: 'BestofController'});
   $routeProvider.when('/signup', {templateUrl: '/partials/signup.html', controller: 'SignupController'});
-  $routeProvider.when('/verify', {templateUrl: '/partials/verify.html', controller: 'VerifyController'})
-  $routeProvider.when('/createJoin', {templateUrl: '/partials/createOrJoin.html', controller: 'CreateJoinController'})
-  $routeProvider.when('/lostpw',{templateUrl: '/partials/lostpw.html', controller:'LostPWController'})
-  $routeProvider.when('/resetpw/:token',{templateUrl: 'partials/resetpw.html', controller:'ResetPWController'})
+  $routeProvider.when('/verify', {templateUrl: '/partials/verify.html', controller: 'VerifyController'});
+  $routeProvider.when('/createJoin', {templateUrl: '/partials/createOrJoin.html', controller: 'CreateJoinController'});
+  $routeProvider.when('/lostpw',{templateUrl: '/partials/lostpw.html', controller:'LostPWController'});
+  $routeProvider.when('/resetpw/:token',{templateUrl: 'partials/resetpw.html', controller:'ResetPWController'});
 
-  $routeProvider.when('/info',{templateUrl: '/partials/info.html', controller:'InfoController'})
+  $routeProvider.when('/info',{templateUrl: '/partials/info.html', controller:'InfoController'});
 
   $routeProvider.otherwise({redirectTo: '/info'});
 }]);
