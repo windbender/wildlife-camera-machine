@@ -18,7 +18,6 @@ var app = angular.module('wlcdm.controllers', []);
 app.controller('CategorizeController', function($http, $rootScope, $scope, focus) {
 
 	$scope.currentIndex = 1; // Initially the index is at the second image,
-	// but this doesn't actually EXIST! :-)
 	$scope.selected = {};
 	$scope.typeSpecies = {};
 	$scope.next = {};
@@ -29,13 +28,11 @@ app.controller('CategorizeController', function($http, $rootScope, $scope, focus
 
 	$scope.$on('imageLoadStart', function() {
 		$scope.showLoad = true;
-		// console.log("start");
 	});
 
 	$scope.$on('imageLoadDone', function() {
 		$scope.$apply(function() {
 			$scope.showLoad = false;
-			// console.log("done");
 		});
 	});
 
@@ -60,11 +57,13 @@ app.controller('CategorizeController', function($http, $rootScope, $scope, focus
 	};
 
 	$scope.getNextEvent();
+
 	$http.get('/api/images/topSpecies?includeNone=true&includeUnknown=true').success(function(data) {
 		$scope.topSpecies = data;
 	}).error(function(data,status,headers,config) {
 		toastr.error("sorry unable to retrive list");
 	});
+
 	$http.get('/api/images/species').success(function(data) {
 		$scope.species = data;
 	}).error(function(data,status,headers,config) {
@@ -80,8 +79,8 @@ app.controller('CategorizeController', function($http, $rootScope, $scope, focus
 	};
 
 	$scope.submitTypedPlus = function() {
-		if(typeof $scope.typeSpecies == 'undefined') return;
-		if(typeof $scope.typeSpecies.id == 'undefined') return;
+		if(typeof $scope.typeSpecies === 'undefined') return;
+		if(typeof $scope.typeSpecies.id === 'undefined') return;
 		if($scope.logAnimal($scope.typeSpecies.name,$scope.typeSpecies.id,$scope.images[$scope.currentIndex].id,$scope.eventId)) {
 
 		}
@@ -92,8 +91,8 @@ app.controller('CategorizeController', function($http, $rootScope, $scope, focus
 	};
 
 	$scope.submitTyped = function() {
-		if(typeof $scope.typeSpecies == 'undefined') return;
-		if(typeof $scope.typeSpecies.id == 'undefined') return;
+		if(typeof $scope.typeSpecies === 'undefined') return;
+		if(typeof $scope.typeSpecies.id === 'undefined') return;
 		if($scope.logAnimal($scope.typeSpecies.name,$scope.typeSpecies.id,$scope.images[$scope.currentIndex].id,$scope.eventId)) {
 			$scope.getNextEvent();
 		}
@@ -108,7 +107,6 @@ app.controller('CategorizeController', function($http, $rootScope, $scope, focus
 			toastr.info("wait until the image shows up before you try to categorize");
 			return false;
 		}
-		console.log("found "+$scope.numberOfAnimals+" of "+speciesname+" on picture "+imageid);
 		var idRequest = {
 				'numberOfAnimals': $scope.numberOfAnimals,
 				'speciesName':speciesname,
@@ -127,7 +125,6 @@ app.controller('CategorizeController', function($http, $rootScope, $scope, focus
 					$scope.typeSpecies = $scope.species[i];
 				}
 			}
-			//$scope.eventId = undefined;
 
 			toastr.success(""+idRequest.numberOfAnimals+" "+idRequest.speciesName);
 		}).error(function(data, status, headers, config) {
@@ -332,7 +329,6 @@ app.controller({
 
 		$scope.userOther = function(val) {
 			return $http.get('/api/users/lookup/?text='+val+'&p='+$scope.current_project.id).then(function(res){
-				// return res.data;
 				return res.data;
 			});
 		};
@@ -487,13 +483,11 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 	$scope.showLoad = false;
 	$scope.$on('imageReportLoadStart', function() {
 		$scope.showLoad = true;
-//		console.log("start");
 	});
 
 	$scope.$on('imageReportLoadDone', function() {
 		$scope.$apply(function() {
 			$scope.showLoad = false;
-//			console.log("done");
 		});
 	});
 
@@ -643,9 +637,9 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 	};
 
 	$scope.loadEventData = function() {
-		if(typeof $scope.imageEvents != 'undefined') {
-			if(typeof $scope.imageEvents[$scope.reportEventIndex] != 'undefined') {
-				if(typeof $scope.imageEvents[$scope.reportEventIndex].imageEvent.id != 'undefined') {
+		if(typeof $scope.imageEvents !== 'undefined') {
+			if(typeof $scope.imageEvents[$scope.reportEventIndex] !== 'undefined') {
+				if(typeof $scope.imageEvents[$scope.reportEventIndex].imageEvent.id !== 'undefined') {
 					$http.get('/api/report/event/'+$scope.imageEvents[$scope.reportEventIndex].imageEvent.id).success(function(data) {
 						$scope.curEventData = data;
 						if($scope.curEventData.flaggedCount > 0) {
@@ -713,7 +707,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 	$scope.params.projectId = undefined;
 	$scope.params.polyGeoRegion = [];
 	$scope.params.timeStart = 1380670262;
-	$scope.params.timeEnd = 1516577462;
+	$scope.params.timeEnd = moment().unix();  // assume no events in the future :-)
 	$scope.params.tod = {};
 	$scope.params.tod.DAYTIME = true;
 	$scope.params.tod.EVENING = true;
@@ -780,13 +774,9 @@ app.controller({
 	BestofController: function($rootScope, $scope,$routeParams,$http) {
 		$http.get('/api/report/bestimages').success(function(data) {
 			$scope.images = data;
-
-
 		}).error(function(data,status,headers,config) {
 			toastr.error("sorry unable to retrive list of best items");
 		});
-
-
 	}
 });
 
@@ -829,8 +819,7 @@ app.controller('UploadController', ['$scope','$log','$upload','$http',function($
 	};
 	
 	$scope.onFileSelect = function($files) {
-		// $files: an array of files selected, each file has name, size, and
-		// type.
+		// $files: an array of files selected, each file has name, size, and type.
 		var i;
 		var file;
 		
@@ -858,7 +847,6 @@ app.controller('UploadController', ['$scope','$log','$upload','$http',function($
 			of(file);
 
 		}
-		// alert(" done starting uploads");
 	};
 
 	$scope.doAbort = function() {
@@ -926,7 +914,7 @@ app.controller({
 			$scope.isCollapsed = !$scope.isCollapsed;
 		};
 		$scope.isLoggedIn = function() {
-			if(CurUser.getCurUser().username == "(none)") return false;
+			if(CurUser.getCurUser().username === "(none)") return false;
 			if(CurUser.getCurUser().username === null) return false;
 			if(CurUser.getCurUser().username === undefined) return false;
 			return true;
@@ -991,8 +979,7 @@ app.controller({
 
 app.config(function(authServiceProvider) {
 	authServiceProvider.addIgnoreUrlExpression(function(response) {
-		// this keeps the auth provider from intercepting the actual login
-		// attempt!
+		// this keeps the auth provider from intercepting the actual login attempt!
 		return response.config.url === "users/login";
 	});
 });
@@ -1009,10 +996,10 @@ app.factory('CurUser',function($http) {
 	});
 
 	CurUser.getLandingPage = function() {
-		if(typeof myCurUser.prefs == 'undefined' || myCurUser.pref === null) {
+		if(typeof myCurUser.prefs === 'undefined' || myCurUser.pref === null) {
 			return "/dash";
 		}
-		if(typeof myCurUser.prefs.landingPage =='undefined' || myCurUser.prefs.landingPage === null) {
+		if(typeof myCurUser.prefs.landingPage ==='undefined' || myCurUser.prefs.landingPage === null) {
 			return "/dash";
 		}
 		return myCurUser.prefs.landingPage;
@@ -1114,7 +1101,6 @@ app.controller({
 app.controller({
 	LostPWController: function( $scope,$http) {
 		$scope.save = function() {
-			// do something with $scope.resetemail
 			$http.post("/api/users/lostpw",$scope.resetemail);
 		};
 	}
@@ -1135,7 +1121,6 @@ app.controller({
 		});
 
 		$scope.submit = function() {
-			// do something with $scope.resetemail
 			$http.post("/api/users/resetpw",{
 				token: $scope.token,
 				pass: $scope.password
@@ -1143,12 +1128,10 @@ app.controller({
 				$scope.validToken = true;
 				toastr.info("reset successful");
 				$scope.isGood = true;
-
 			}).error(function(data, status, headers, config) {
 				$scope.validToken = false;
 				toastr.error("reset failed");
 				$scope.isBad = true;
-
 			});
 		};
 
@@ -1168,13 +1151,11 @@ app.controller({
 			var joinProjectRequest = {
 					'selectedProject':$scope.selectedProject
 			};
-			
 			$http.post('/api/projects/join',joinProjectRequest).success(function(data) {
 				toastr.success("request sent");
 			}).error(function(data, status, headers, config) {
 				toastr.error("failed to post");
 			});
-
 		};
 		
 		$scope.submitCreate = function() {
@@ -1218,13 +1199,9 @@ app.directive(
 				require : 'ngModel',
 				link : function(scope, elm, attrs, ctrl) {
 					ctrl.$parsers.unshift(function(viewValue) {
-
 						scope.pwdValidLength = (viewValue && viewValue.length >= 8 ? 'valid' : undefined);
-
 						scope.pwdHasLetter = (viewValue && /[A-z]/.test(viewValue)) ? 'valid' : undefined;
-
 						scope.pwdHasNumber = (viewValue && /\d/.test(viewValue)) ? 'valid' : undefined;
-
 						if (scope.pwdValidLength && scope.pwdHasLetter && scope.pwdHasNumber) {
 							ctrl.$setValidity('pwd', true);
 							return viewValue;
