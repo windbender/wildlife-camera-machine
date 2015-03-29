@@ -252,7 +252,7 @@
                     <gitDescribe>
 
                         <!-- don't generate the describe property -->
-                        <skip>false</skip>
+                        <skip>true</skip>
 
                         <!-- 
                             if no tag was found "near" this commit, just print the commit's id instead, 
