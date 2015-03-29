@@ -1,5 +1,5 @@
-before_script:
-  - npm install -g bower
-  - npm install -g grunt 
+install:
+  - sudo npm install -g bower
+  - sudo npm install -g grunt 
 language: java
  
