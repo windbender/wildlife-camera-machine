@@ -1,5 +1,7 @@
 install:
   - npm install -g grunt-cli
   - npm install -g bower
+before_script:
+  - which bower
 language: java
  
