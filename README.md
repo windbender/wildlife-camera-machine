@@ -1,6 +1,7 @@
-wildlife-camera-machine ![build status](https://travis-ci.org/windbender/wildlife-camera-machine.svg?branch=master) 
-
+wildlife-camera-machine 
 =======================
+
+![build status](https://travis-ci.org/windbender/wildlife-camera-machine.svg?branch=master) 
 
 This project aims to make the categorization and study of wildlife camera pictures fun and easy.
 
