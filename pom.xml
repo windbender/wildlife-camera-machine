@@ -294,7 +294,7 @@
                                 </execution>
                         </executions>
                         <configuration>
-                                <executable>/usr/local/bin/bower</executable>
+                                <executable>bower</executable>
                                 <arguments>
                                 <argument>install</argument>
                                 </arguments>
