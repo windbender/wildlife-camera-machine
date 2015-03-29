@@ -1,2 +1,5 @@
+before_script:
+  - npm install bower
+  - npm install grunt 
 language: java
  
