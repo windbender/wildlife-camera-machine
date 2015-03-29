@@ -1,5 +1,5 @@
 install:
-  - sudo npm install -g bower
-  - sudo npm install -g grunt 
+  - npm install -g grunt-cli
+  - npm install -g bower
 language: java
  
