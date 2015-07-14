@@ -115,9 +115,18 @@ public class EventDAO extends AbstractDAO<ImageEvent> {
         return l;
     }
 
-	public List<Integer> findEventIdsDoneByUser(Long project_id, User u) {
+	public List<Integer> findEventIdsIdentifiedByUser(Long project_id, User u) {
 		List<ImageEvent> list = new ArrayList<ImageEvent>();
 		String sql = "select image_event_id from identifications i, events e, cameras c where i.image_event_id=e.id and e.camera_id = c.id and c.project_id=? and user_id=? group by e.id order by e.id";
+		SQLQuery sqlQuery = this.currentSession().createSQLQuery(sql);
+        Query query = sqlQuery.setParameter(0, project_id).setParameter(1, u.getId());
+        List<Integer> l = query.list(); 
+        return l;
+	}
+
+	public List<Integer> findEventIdsUploadedByUser(Long project_id, User u) {
+		List<ImageEvent> list = new ArrayList<ImageEvent>();
+		String sql = "select e.id from images i, events e, cameras c where i.event_id = e.id and e.camera_id = c.id and c.project_id=? and i.user_id=? group by e.id order by e.id";
 		SQLQuery sqlQuery = this.currentSession().createSQLQuery(sql);
         Query query = sqlQuery.setParameter(0, project_id).setParameter(1, u.getId());
         List<Integer> l = query.list(); 

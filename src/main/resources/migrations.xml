@@ -1062,7 +1062,12 @@
 		<createIndex tableName="identifications" indexName="identifications_image_event_id">
 			<column name="image_event_id"></column>
 		</createIndex>
-		
-		
 	</changeSet>
+	
+	<changeSet id="28" author="windbender" dbms="mysql" >
+		<addColumn tableName="images">
+			<column name="user_id" type="int(11)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

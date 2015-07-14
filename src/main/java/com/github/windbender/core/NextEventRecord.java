@@ -9,6 +9,14 @@ public class NextEventRecord {
 	ImageEvent imageEvent;
 	int remainingToIdentify;
 	int numberIdentified;
+	int remainingYoursToIdentify;
+	
+	public int getRemainingYoursToIdentify() {
+		return remainingYoursToIdentify;
+	}
+	public void setRemainingYoursToIdentify(int remainingYoursToIdentify) {
+		this.remainingYoursToIdentify = remainingYoursToIdentify;
+	}
 	public ImageEvent getImageEvent() {
 		return imageEvent;
 	}

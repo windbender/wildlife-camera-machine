@@ -259,10 +259,17 @@ public class HibernateDataStore implements Managed, Runnable {
 		// We want to identify events which are
 		// a) haven't been previously identifed by this user
 		long start = System.currentTimeMillis();
-		List<Integer> done = this.eventDAO.findEventIdsDoneByUser(currentProject.getId(),u);
+		List<Integer> done = this.eventDAO.findEventIdsIdentifiedByUser(currentProject.getId(),u);
 		long next = System.currentTimeMillis();
 		log.info("events done took "+(next-start));
 		SortedSet<Integer> doneSet = new TreeSet<Integer>(done);
+		
+		List<Integer> ullist = this.eventDAO.findEventIdsUploadedByUser(currentProject.getId(),u);
+		SortedSet<Integer> yoursRemaining = new TreeSet<Integer>(ullist);
+		
+		yoursRemaining.removeAll(done);
+		
+		
 		// b) have a number of zero or 1 previous identifications
 		int number =3; 
 		List<Integer> lowNumber = this.eventDAO.findEventsIdsWithFewerThanIdentifications(currentProject.getId(),number);
@@ -274,27 +281,39 @@ public class HibernateDataStore implements Managed, Runnable {
 		lowNumberSet.addAll(flagged);
 		lowNumberSet.removeAll(doneSet);
 		// ok, see where we're at
-//		if(lowNumberSet.size() ==0) {
-//			// Look for 
-//			lowNumberSet.removeAll(doneSet);
-//		}
-//OK, so this should be		
+	
 		// all the events with less than number identifications.
 		// PLUS all the vents which have been flagged and have less than number plus number of times flagged.  so one flag means one extra ID.
-		// no one can re-id an event.
+		// no one can re-id an event.											
 		// so once an event is flagged then it basically means new people need to come by and flag that event even more.
 		
-		
 		// Ok we could cache that set... or we could just pick one and go with it for now.
-		if(lowNumberSet.size() == 0) {
+		if((lowNumberSet.size() == 0 && yoursRemaining.size() == 0) ) {
 			NextEventRecord ner = new NextEventRecord(null);
 			ner.setNumberIdentified(doneSet.size());
 			ner.setRemainingToIdentify(0);
+			ner.setRemainingYoursToIdentify(0);
 			return ner;
 		}
-		Long eventId = lowNumberSet.first().longValue();
+		
+		
+		SortedSet<Integer> useSet = null;
+		SortedSet<Integer> totalSet = new TreeSet<Integer>(lowNumberSet);
+		totalSet.addAll(lowNumberSet);
+		
+		if(yoursRemaining.size() ==0) {
+			useSet = lowNumberSet;
+		} else {
+			useSet = yoursRemaining;
+		}
+		
+
+		
+		Long eventId = useSet.first().longValue();
+		
+		// so there could be a race condition given the way event creation happens so we'll check both the current and NEXT events before we give up.
 		if(eventId.equals(lastEventId)) {
-			Iterator<Integer> nit = lowNumberSet.iterator();
+			Iterator<Integer> nit = useSet.iterator();
 			// we know there is at least one so this first next() should always be fine
 			eventId = nit.next().longValue();
 			if(nit.hasNext()) {
@@ -312,7 +331,8 @@ public class HibernateDataStore implements Managed, Runnable {
 //		ImageEvent ie = null;
 		NextEventRecord ner = new NextEventRecord(ie);
 		ner.setNumberIdentified(doneSet.size());
-		ner.setRemainingToIdentify(lowNumberSet.size());
+		ner.setRemainingToIdentify(totalSet.size());
+		ner.setRemainingYoursToIdentify(yoursRemaining.size());
 		return ner;
 	}
 	private SortedSet<Long> makeSetFromId(List<ImageEvent> done) {

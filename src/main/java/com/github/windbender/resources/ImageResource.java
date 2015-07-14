@@ -325,7 +325,7 @@ public class ImageResource {
 						String latStr = request.getHeader("pos_lat");
 						String lonStr = request.getHeader("pos_lon");
 						
-						newImage = ImageRecord.makeImageFromExif(timeZoneGetter, directory,gpsDirectory,filename,cameraId,latStr,lonStr);
+						newImage = ImageRecord.makeImageFromExif(timeZoneGetter, directory,gpsDirectory,filename,cameraId,latStr,lonStr, user.getId());
 					
 						Float distanceFromProjectCenterInMiles = RegionUtil.distanceInMilesBetweenDouble(currentProject.getCenterLat(), currentProject.getCenterLon(), newImage.getLat(), newImage.getLon());
 						if(distanceFromProjectCenterInMiles > currentProject.getProjectRadiusMi()) {

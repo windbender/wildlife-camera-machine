@@ -44,6 +44,13 @@ public class ImageRecord implements Comparable<ImageRecord>{
 	static Logger log = LoggerFactory.getLogger(ImageRecord.class);
 
 	String id;
+
+	@Id
+	@Column(name="id")
+	public String getId() {
+		return id;
+	}
+
 	DateTime datetime;
 	DateTime uploadTime;
 	
@@ -55,13 +62,6 @@ public class ImageRecord implements Comparable<ImageRecord>{
 	
 	Long cameraID;
 	
-	public int compareTo(ImageRecord other) {
-		int x = this.datetime.compareTo(other.datetime);  
-		if (x !=0) return x;
-		x = this.id.compareTo(other.getId());
-		return x;
-	}
-	
 	@Column(name="camera_id", nullable=true)
 	public Long getCameraID() {
 		return cameraID;
@@ -70,16 +70,30 @@ public class ImageRecord implements Comparable<ImageRecord>{
 	public void setCameraID(long cameraID) {
 		this.cameraID = cameraID;
 	}
+	
+	Integer userID;
+	
+	private void setUserId(Integer userId2) {
+		this.userID = userId2;
+	}
 
-	@Id
-	@Column(name="id")
-	public String getId() {
-		return id;
+	@Column(name="user_id", nullable=true)
+	public Integer getUserId() {
+		return this.userID;
 	}
 
 	
+	public int compareTo(ImageRecord other) {
+		int x = this.datetime.compareTo(other.datetime);  
+		if (x !=0) return x;
+		x = this.id.compareTo(other.getId());
+		return x;
+	}
+	
+
+	
 	public static ImageRecord makeImageFromExif(TimeZoneGetter timeZoneGetter, ExifSubIFDDirectory directory,
-			GpsDirectory gpsDirectory, String filename, long cameraId, String latStr, String lonStr) {
+			GpsDirectory gpsDirectory, String filename, long cameraId, String latStr, String lonStr, Integer userId) {
 		Double lat = null;
 		if(latStr != null) {
 			try {
@@ -117,6 +131,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 		ir.setOriginalFileName(filename);
 
 		ir.setCameraID(cameraId);
+		ir.setUserId(userId);
 		
 		String stripped = filename.toUpperCase().replaceAll("[A-Z]", "").replaceAll("[^0-9]","");
 		Long seq = 0l;
@@ -149,6 +164,7 @@ public class ImageRecord implements Comparable<ImageRecord>{
 		ir.setUploadTime(new DateTime());
 		return ir;
 	}
+
 
 	private void setDateTimeViaMillis(long millis) {
 		datetime = new DateTime(millis);
