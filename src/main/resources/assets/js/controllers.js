@@ -49,6 +49,7 @@ app.controller('CategorizeController', function($http, $rootScope, $scope, focus
 				$scope.noMoreImages = true;
 			}
 			$scope.remainingToIdentify = data.remainingToIdentify;
+			$scope.remainingYoursToIdentify = data.remainingYoursToIdentify;
 			$scope.numberIdentified = data.numberIdentified;
 			$scope.percentIdentified = 100.0 *$scope.numberIdentified / ($scope.remainingToIdentify + $scope.numberIdentified);
 		}).error(function(data,status,headers,config) {
