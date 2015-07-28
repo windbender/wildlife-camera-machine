@@ -101,7 +101,18 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
       
 
 	private final HibernateBundle<WLCDMServerConfiguration> hibernate = new HibernateBundle<WLCDMServerConfiguration>(
-			Identification.class,ImageRecord.class,Invite.class,ImageEvent.class,User.class,Species.class,Project.class, UserProject.class, Camera.class, ResetPasswordToken.class, Review.class, Good.class) {
+			Identification.class,
+			ImageRecord.class,
+			Invite.class,
+			ImageEvent.class,
+			User.class,
+			Species.class,
+			Project.class, 
+			UserProject.class, 
+			Camera.class, 
+			ResetPasswordToken.class, 
+			Review.class, 
+			Good.class) {
 	    @Override
 	    public DatabaseConfiguration getDatabaseConfiguration(WLCDMServerConfiguration configuration) {
 	        return configuration.getDatabaseConfiguration();
