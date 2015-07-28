@@ -363,5 +363,20 @@ public class ReportDAO {
 
 
 
+	public List<Series> makeByMonth(Limiter limits) {
+		String innerSQL = limits.makeSQL();
+		String sql = "select sum(num), months from (select m.months, ifnull(number,0) as num from months m left join (       " +
+				"select number,species_id,CONVERT_TZ(event_start_time,'+00:00','-08:00') as sttime    from identifications,events, cameras where cameras.id=events.camera_id and cameras.project_id = "+limits.getProjectId()+" and identifications.image_event_id=events.id "+innerSQL+" group by image_event_id     " +
+						") x on m.months = month(sttime)) y group by months order by months";
+		log.info("it looks like we're going to run this SQL "+sql);
+		Series s = doSQLtoSeries(sql);
+		s.setSeriesName("by month");
+		List<Series> l = new ArrayList<Series>();
+		l.add(s);
+		return l;
+	}
+
+
+
 
 }

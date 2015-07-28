@@ -1069,5 +1069,14 @@
 			<column name="user_id" type="int(11)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="29" author="windbender" dbms="mysql" >
+		<createTable tableName="months">
+			<column name="months" type="int(11)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
+		<sql >insert into months (months) values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12)</sql>
+		
+	</changeSet>
 	
 </databaseChangeLog>

@@ -3,7 +3,6 @@ package com.github.windbender.core;
 import java.util.List;
 
 import com.github.windbender.dao.StringSeries;
-import com.github.windbender.domain.ImageEvent;
 
 public class ReportResponse {
 	
@@ -12,7 +11,13 @@ public class ReportResponse {
 	List<Series> byHourData;
 	List<Series> byDayData;
 	List<ImageRec> imageEvents;
+	List<Series> byMonthData;
 	
+
+	public List<Series> getByMonthData() {
+		return byMonthData;
+	}
+
 	public List<ImageRec> getImageEvents() {
 		return imageEvents;
 	}
@@ -44,6 +49,11 @@ public class ReportResponse {
 
 	public void setByDayData(List<Series> byDay) {
 		this.byDayData = byDay;
+	}
+
+	public void setByMonthData(List<Series> byMonth) {
+		this.byMonthData = byMonth;
+		
 	}
 	
 }

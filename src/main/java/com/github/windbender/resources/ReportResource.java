@@ -135,6 +135,7 @@ public class ReportResource {
 		List<StringSeries> bySpecies = rd.makeBySpecies(limits);
 		List<Series> byHour = rd.makeByHour(limits);
 		List<Series> byDay = rd.makeByDay(limits);
+		List<Series> byMonth = rd.makeByMonth(limits);
 		//List<Long> l = rd.makeImageEvents(limits);
 		
 		List<ImageRec> lout = rd.makeImageRecs(limits);
@@ -153,6 +154,7 @@ public class ReportResource {
 		rr.setBySpeciesData(bySpecies);
 		rr.setByHourData(byHour);
 		rr.setByDayData(byDay);
+		rr.setByMonthData(byMonth);
 		rr.setImageEvents(lout);
 
 		return rr;
