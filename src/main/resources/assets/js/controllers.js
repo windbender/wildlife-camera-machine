@@ -486,6 +486,10 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 		$scope.showLoad = true;
 	});
 
+	$scope.$on('elementClick.directive',function(angularEvent, event) {
+		//console.log("ON BOy A clicke! ",angularEvent.targetScope.id,event.point[0],event.point[1]);
+	});
+	
 	$scope.$on('imageReportLoadDone', function() {
 		$scope.$apply(function() {
 			$scope.showLoad = false;
@@ -565,6 +569,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 			// this next thing works for species.  it will need to be generalized for TOD and Date
 			// However, I don't know how to force a redraw...so changing to a new event doesn't change the charts
 			//if(d[0] == $scope.imageEvents[$scope.reportEventIndex].nameHist[0].name ) return "#DD0000";
+			//console.log("ok drawing with d="+d+" and i="+i);
 			return "#0088DD";
 		};
 	};
@@ -572,6 +577,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 	$scope.bySpeciesData = [];
 	$scope.byHourData = [];
 	$scope.byDayData = [];
+	$scope.byMonthData = [];
 	$scope.reportImg = {};
 	$scope.imageEvents = [];
 	$scope.reportEventIndex = 0;
@@ -757,7 +763,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 			$scope.bySpeciesData = data.bySpeciesData;
 			$scope.byHourData = data.byHourData;
 			$scope.byDayData = data.byDayData;
-
+			$scope.byMonthData = data.byMonthData;
 			$scope.imageEvents = data.imageEvents;
 			$scope.reportEventIndex = 0;
 			$scope.reportImgIndex = 0;

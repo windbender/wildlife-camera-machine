@@ -125,14 +125,14 @@
 	
 	</div> <!--  row -->
 	<div ng-show="params.showCharts" class="row">
-	<div class="col-md-6 chartBlob" id="byDay">
-		<h3>Count By Day</h3>
+	<div class="col-md-6 chartBlob" id="byMonth">
+		<h3>Count By Month</h3>
 		<nvd3-discrete-bar-chart
-	    	data="byDayData"
-	        id="byDayChart"
+	    	data="byMonthData"
+	        id="byMonthChart"
 	        showXAxis="true"
 	        showYAxis="true"
-	        xAxisTickFormat="xAxisDateTickFormat()"
+	        xAxisTickFormat="xAxisNumberTickFormat()"
 	        color="colorFunction()"
 	        >
 	        	<svg></svg>
