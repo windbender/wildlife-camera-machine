@@ -13,6 +13,21 @@ public class RegionUtil {
 	    float dist = (float) (earthRadius * c);
 	    return dist;
 	}
+	
+	public static LatLonPair movePoint(LatLonPair in, double distanceMi, double angleDegrees) {
+
+		double brng = Math.PI * angleDegrees / 180;
+		double d = distanceMi;
+		double R = 3959;
+		double oldLat = in.getLat();
+		double oldLon = in.getLon();
+		double newLatRad = Math.asin( Math.sin(oldLat)*Math.cos(d/R) +
+                Math.cos(oldLat)*Math.sin(d/R)*Math.cos(brng) );
+		
+		double newLonRad =  oldLon + Math.atan2(Math.sin(brng)*Math.sin(d/R)*Math.cos(oldLat),
+                     Math.cos(d/R)-Math.sin(oldLat)*Math.sin(newLatRad));
+		return new LatLonPair(newLatRad * 180/Math.PI,newLonRad* 180/Math.PI);
+	}
 
 	public static Float distanceInMilesBetweenDouble(Float centerLat,
 			Float centerLon, double lat, double lon) {
