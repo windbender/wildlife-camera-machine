@@ -51,6 +51,9 @@ public class Project implements Serializable,Comparable<Project> {
 	@Column(name="projectRadiusMi", nullable = false)
 	private Float projectRadiusMi;
 	
+	@Column(name="obfucateRadiusMi", nullable = false)
+	private Float obfucateRadiusMi;
+	
 	
 	
 	public Float getCenterLat() {
@@ -216,6 +219,14 @@ public class Project implements Serializable,Comparable<Project> {
 			x = this.getId().compareTo(o.getId());
 		}
 		return x;
+	}
+
+	public Float getObfucateRadiusMi() {
+		return obfucateRadiusMi;
+	}
+
+	public void setObfucateRadiusMi(Float obfucateRadiusMi) {
+		this.obfucateRadiusMi = obfucateRadiusMi;
 	}
 	
 	

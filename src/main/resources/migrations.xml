@@ -1078,5 +1078,10 @@
 		<sql >insert into months (months) values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12)</sql>
 		
 	</changeSet>
+	<changeSet id="30" author="windbender" dbms="mysql" >
+		<addColumn tableName="projects">
+			<column name="obfucateRadiusMi" type="float" />
+		</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>
