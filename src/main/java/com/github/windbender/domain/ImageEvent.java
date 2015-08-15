@@ -1,5 +1,6 @@
 package com.github.windbender.domain;
 
+import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -18,6 +19,8 @@ import org.hibernate.annotations.SortType;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.windbender.core.LatLonPair;
+import com.github.windbender.core.RegionUtil;
 import com.github.windbender.core.TypeOfDay;
 
 
@@ -150,6 +153,21 @@ public class ImageEvent {
 		
 	}
 
-	
+	@JsonProperty
+	public LatLonPair getObfuscatedLocation() {
+		double distanceMi =  0.1;
+		if(imageRecords.size() > 0) {
+			double lat = imageRecords.first().getLat();
+			double lon = imageRecords.first().getLon();
+			LatLonPair in = new LatLonPair(lat,lon);
+			long seed = Double.doubleToLongBits(lat + lon *1000);
+			Random r = new Random(seed);
+//TODO  hardwired distance to obfuscate. need to hook up to project somehow		
+			LatLonPair out = RegionUtil.movePoint(in, r.nextDouble() * distanceMi, 360 * r.nextDouble());
+//			LatLonPair out = RegionUtil.movePoint(in,  distanceMi, 0);
+			return out;
+		}
+		return null;
+	}
 
 }
