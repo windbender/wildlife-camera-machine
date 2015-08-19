@@ -13,7 +13,7 @@
 
 /* Controllers */
 
-var app = angular.module('wlcdm.controllers', []);
+var app = angular.module('wlcdm.controllers', ['uiGmapgoogle-maps']);
 
 app.controller('CategorizeController', function($http, $rootScope, $scope, focus) {
 
@@ -478,9 +478,19 @@ app.controller({
 
 });
 
-app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',function($scope,$rootScope,$http,$timeout) {
+app.controller('ReportController', ['$scope','$rootScope','$http','$timeout','uiGmapGoogleMapApi',
+                                    function($scope,$rootScope,$http,$timeout,uiGmapGoogleMapApi) {
 	$scope.options = {width: 500, height: 300, 'bar': 'aaa'};
 
+	$scope.map = {
+		center: {
+			latitude: 38.5,
+			longitude: -122.55
+		},
+		zoom: 12,
+		mapTypeId: "satellite"
+	};	
+	
 	$scope.showLoad = false;
 	$scope.$on('imageReportLoadStart', function() {
 		$scope.showLoad = true;
@@ -608,13 +618,7 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 		$scope.isGood = n;
 	};
 
-	$scope.map = {
-			center: {
-				latitude: 38.5,
-				longitude: -122.55
-			},
-			zoom: 8
-	};	
+
 
 	$scope.showImageControls = function() {
 		if(typeof $scope.imageEvents[$scope.reportEventIndex] == 'undefined') return true;
@@ -750,11 +754,15 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 		},30);
 	});
 
-
+	uiGmapGoogleMapApi.then(function(maps) {
+		$scope.onChange();
+    });
+	
 	$scope.onChange = function() {
 		$timeout.cancel($scope.updateTimer);
 		$scope.updateTimer = $timeout(function() {
 			$scope.doUpdate();
+			console.log("google maps loaded");
 		},100);
 	};
 	
@@ -765,6 +773,10 @@ app.controller('ReportController', ['$scope','$rootScope','$http','$timeout',fun
 			$scope.byDayData = data.byDayData;
 			$scope.byMonthData = data.byMonthData;
 			$scope.imageEvents = data.imageEvents;
+			$scope.locationSpeciesCount = data.locationSpeciesCount;
+			$scope.map.center.latitude = data.mapCenterLat;
+			$scope.map.center.longitude = data.mapCenterLon;
+			$scope.map.zoom = data.googleZoom;
 			$scope.reportEventIndex = 0;
 			$scope.reportImgIndex = 0;
 			$scope.setImageLength();
