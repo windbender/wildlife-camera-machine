@@ -12,6 +12,10 @@ public class ReportResponse {
 	List<Series> byDayData;
 	List<ImageRec> imageEvents;
 	List<Series> byMonthData;
+	private List<LocationSpeciesCount> locationSpeciesCount;
+	private Float mapCenterLat;
+	private Float mapCenterLon;
+	private int googleZoom =12;
 	
 
 	public List<Series> getByMonthData() {
@@ -54,6 +58,32 @@ public class ReportResponse {
 	public void setByMonthData(List<Series> byMonth) {
 		this.byMonthData = byMonth;
 		
+	}
+
+	public void setLocationSpeciesCount(List<LocationSpeciesCount> lsc) {
+		this.locationSpeciesCount= lsc;
+	}
+
+	public List<LocationSpeciesCount> getLocationSpeciesCount() {
+		return locationSpeciesCount;
+	}
+
+	public void setMapCenter(Float centerLat, Float centerLon) {
+		this.mapCenterLat = centerLat;
+		this.mapCenterLon = centerLon;
+		
+	}
+
+	public Float getMapCenterLat() {
+		return mapCenterLat;
+	}
+
+	public Float getMapCenterLon() {
+		return mapCenterLon;
+	}
+
+	public int getGoogleZoom() {
+		return googleZoom;
 	}
 	
 }

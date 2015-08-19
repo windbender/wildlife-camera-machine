@@ -140,7 +140,7 @@ public class WLCDMServer extends Service<WLCDMServerConfiguration> {
         final TokenDAO tokenDAO = new TokenDAO(hibernate.getSessionFactory());
         final ProjectDAO projDAO = new ProjectDAO(hibernate.getSessionFactory());
         final UserProjectDAO upDAO = new UserProjectDAO(hibernate.getSessionFactory());
-        final ReportDAO reportDAO = new ReportDAO(hibernate.getSessionFactory(), ieDAO, idDAO);
+        final ReportDAO reportDAO = new ReportDAO(hibernate.getSessionFactory(), ieDAO, idDAO, projDAO);
         final CameraDAO cameraDAO = new CameraDAO(hibernate.getSessionFactory());
         final ReviewDAO reviewDAO = new ReviewDAO(hibernate.getSessionFactory());
         final GoodDAO goodDAO = new GoodDAO(hibernate.getSessionFactory());

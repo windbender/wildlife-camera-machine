@@ -23,7 +23,9 @@ import org.slf4j.LoggerFactory;
 import com.github.windbender.core.IdHist;
 import com.github.windbender.core.IdHistEntry;
 import com.github.windbender.core.ImageRec;
+import com.github.windbender.core.LatLonPair;
 import com.github.windbender.core.Limiter;
+import com.github.windbender.core.LocationSpeciesCount;
 import com.github.windbender.core.NV;
 import com.github.windbender.core.NameHist;
 import com.github.windbender.core.NameHistEntry;
@@ -33,6 +35,7 @@ import com.github.windbender.core.TypeOfDay;
 import com.github.windbender.domain.Identification;
 import com.github.windbender.domain.ImageEvent;
 import com.github.windbender.domain.ImageRecord;
+import com.github.windbender.domain.Project;
 import com.github.windbender.domain.Species;
 
 public class ReportDAO {
@@ -42,10 +45,13 @@ public class ReportDAO {
 	SessionFactory sessionFactory;
 	private EventDAO eventDAO;
 	private IdentificationDAO identificationDAO;
-	public ReportDAO(SessionFactory sessionFactory, EventDAO eventDAO,IdentificationDAO identificationDAO) {
+	private ProjectDAO projectDAO;
+	
+	public ReportDAO(SessionFactory sessionFactory, EventDAO eventDAO,IdentificationDAO identificationDAO, ProjectDAO projectDAO) {
 		this.sessionFactory = sessionFactory;
 		this.eventDAO = eventDAO;
 		this.identificationDAO = identificationDAO;
+		this.projectDAO = projectDAO;
 	}
 	
 	
@@ -374,6 +380,39 @@ public class ReportDAO {
 		List<Series> l = new ArrayList<Series>();
 		l.add(s);
 		return l;
+	}
+
+
+
+	public List<LocationSpeciesCount> makeLocations(Limiter limits) {
+		String innerSQL = limits.makeSQL();
+
+		String sql = "select lat,lon,species_id, sum(number) from ( "
+			    +"select lat,lon,  species_id,number from images, identifications,events,  cameras "
+			    + "where cameras.id=events.camera_id and "
+			    + "cameras.project_id = "+limits.getProjectId()+"  and identifications.image_event_id=events.id   and images.event_id = events.id "
+			    + innerSQL+"  group by image_event_id "
+			    +") x group by lat,lon,species_id";
+		log.info("we have SQL "+sql);
+		Project p = projectDAO.findById(limits.getProjectId());
+		SQLQuery sqlQuery = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
+        Query query = sqlQuery;
+        List<Object[]> result = query.list();
+        
+        List<LocationSpeciesCount> l = new ArrayList<LocationSpeciesCount>();
+        for(Object[] ar: result) {
+        	double lat = (Double) ar[0];
+        	double lon = (Double) ar[1];
+        	int species_id = (Integer) ar[2];
+        	BigDecimal cnt = (BigDecimal) ar[3];
+        	Integer count = cnt.intValue();
+        	LatLonPair in = new LatLonPair(lat,lon);
+    		LatLonPair ob = ImageEvent.obfuscate(p.getObfucateRadiusMi(),  in);
+    		double radiusM = p.getObfucateRadiusMi() * 1609.34;
+    		LocationSpeciesCount lsc = new LocationSpeciesCount(ob,species_id,count,radiusM);
+        	l.add(lsc);
+        }
+        return l;
 	}
 
 

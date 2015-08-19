@@ -155,19 +155,23 @@ public class ImageEvent {
 
 	@JsonProperty
 	public LatLonPair getObfuscatedLocation() {
+		//TODO  hardwired distance to obfuscate. need to hook up to project somehow		
 		double distanceMi =  0.1;
 		if(imageRecords.size() > 0) {
 			double lat = imageRecords.first().getLat();
 			double lon = imageRecords.first().getLon();
-			LatLonPair in = new LatLonPair(lat,lon);
-			long seed = Double.doubleToLongBits(lat + lon *1000);
-			Random r = new Random(seed);
-//TODO  hardwired distance to obfuscate. need to hook up to project somehow		
-			LatLonPair out = RegionUtil.movePoint(in, r.nextDouble() * distanceMi, 360 * r.nextDouble());
-//			LatLonPair out = RegionUtil.movePoint(in,  distanceMi, 0);
-			return out;
+			LatLonPair start = new LatLonPair(lat,lon);
+
+			return obfuscate(distanceMi, start);
 		}
 		return null;
+	}
+
+	public static LatLonPair obfuscate(double distanceMi, LatLonPair in) {
+		long seed = Double.doubleToLongBits(in.getLat() + in.getLon() *1000);
+		Random r = new Random(seed);
+		LatLonPair out = RegionUtil.movePoint(in, r.nextDouble() * distanceMi, 360 * r.nextDouble());
+		return out;
 	}
 
 }

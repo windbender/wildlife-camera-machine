@@ -10,7 +10,7 @@ public class TestReport extends DAOTests {
 
 	
 	public void testMakeByMonth() {
-		ReportDAO rd = new ReportDAO( sessionFactory, null,null);
+		ReportDAO rd = new ReportDAO( sessionFactory, null,null,null);
 		
 		ReportParams reportParams = new ReportParams();
 		Project currentProject = new Project();

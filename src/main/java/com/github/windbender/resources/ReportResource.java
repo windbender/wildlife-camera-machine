@@ -25,6 +25,7 @@ import com.github.windbender.core.CurrentEventInfo;
 import com.github.windbender.core.GoodParams;
 import com.github.windbender.core.ImageRec;
 import com.github.windbender.core.Limiter;
+import com.github.windbender.core.LocationSpeciesCount;
 import com.github.windbender.core.ReportParams;
 import com.github.windbender.core.ReportResponse;
 import com.github.windbender.core.ReviewParams;
@@ -137,6 +138,8 @@ public class ReportResource {
 		List<Series> byDay = rd.makeByDay(limits);
 		List<Series> byMonth = rd.makeByMonth(limits);
 		//List<Long> l = rd.makeImageEvents(limits);
+		List<LocationSpeciesCount> lsc = rd.makeLocations(limits);
+		
 		
 		List<ImageRec> lout = rd.makeImageRecs(limits);
 		
@@ -156,6 +159,8 @@ public class ReportResource {
 		rr.setByDayData(byDay);
 		rr.setByMonthData(byMonth);
 		rr.setImageEvents(lout);
+		rr.setLocationSpeciesCount(lsc);
+		rr.setMapCenter(currentProject.getCenterLat(),currentProject.getCenterLon());
 
 		return rr;
 	}

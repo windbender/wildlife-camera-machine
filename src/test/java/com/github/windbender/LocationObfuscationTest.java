@@ -37,14 +37,14 @@ public class LocationObfuscationTest {
 			minLat = Math.min(minLat, ol.getLat());
 			minLon = Math.min(minLon, ol.getLon());	
 		}
-		int mlat = new Double(maxLat * 1000).intValue();
-		int nlat = new Double(minLat * 1000).intValue();
-		int mlon = new Double(maxLon * 1000).intValue();
-		int nlon = new Double(minLon * 1000).intValue();
-		assertEquals(7,mlat);
-		assertEquals(-1,nlat);
-		assertEquals(7,mlon);
-		assertEquals(-1,nlon);
+		int mlat = new Double(maxLat * 10000).intValue();
+		int nlat = new Double(minLat * 10000).intValue();
+		int mlon = new Double(maxLon * 10000).intValue();
+		int nlon = new Double(minLon * 10000).intValue();
+		assertEquals(15,mlat);
+		assertEquals(-14,nlat);
+		assertEquals(15,mlon);
+		assertEquals(-14,nlon);
 		
 		
 	}

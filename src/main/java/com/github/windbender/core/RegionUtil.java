@@ -19,8 +19,8 @@ public class RegionUtil {
 		double brng = Math.PI * angleDegrees / 180;
 		double d = distanceMi;
 		double R = 3959;
-		double oldLat = in.getLat();
-		double oldLon = in.getLon();
+		double oldLat = in.getLat() * Math.PI/ 180;
+		double oldLon = in.getLon() * Math.PI/ 180;
 		double newLatRad = Math.asin( Math.sin(oldLat)*Math.cos(d/R) +
                 Math.cos(oldLat)*Math.sin(d/R)*Math.cos(brng) );
 		

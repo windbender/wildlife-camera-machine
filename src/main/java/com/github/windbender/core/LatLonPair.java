@@ -14,6 +14,8 @@ public class LatLonPair {
 	public Double getLon() {
 		return lon;
 	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -42,6 +44,16 @@ public class LatLonPair {
 		} else if (!lon.equals(other.lon))
 			return false;
 		return true;
+	}
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("LatLonPair [lat=");
+		builder.append(lat);
+		builder.append(", lon=");
+		builder.append(lon);
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }
