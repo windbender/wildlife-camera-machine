@@ -84,7 +84,10 @@ module.exports = function(grunt) {
 			'src/main/resources/assets/bower_components/angular-date-time-input/src/dateTimeInput.js',
 
 			'src/main/resources/assets/bower_components/underscore/underscore.js',
-
+			
+			'src/main/resources/assets/bower_components/lodash/lodash.js',
+			'src/main/resources/assets/bower_components/angular-google-maps/dist/angular-google-maps.js',
+			
 			'src/main/resources/assets/js/app.js',
 			'src/main/resources/assets/js/services.js',
 			'src/main/resources/assets/js/controllers.js',
